@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +31,8 @@ namespace Tgs.BrandCertificateService
 					builder.UseNpgsql(config.GetConnectionString("Tgs"));
 				});
 
-			services.AddControllers();
+			services
+				.AddControllers();
 
 			services.AddSwaggerGen(c =>
 			{
@@ -46,9 +48,9 @@ namespace Tgs.BrandCertificateService
 				var path = Path.Combine(AppContext.BaseDirectory, xml);
 
 				if (File.Exists(path))
-				{
 					c.IncludeXmlComments(path);
-				}
+
+				c.ApplyWebApiToolkitSupport();
 			});
 		}
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.Repositories;

@@ -12,11 +12,18 @@
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.13.1" />
+    <PackageReference Include="Tgs.WebApi.Toolkits" Version="0.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BrandCertificate.Core\BrandCertificate.Core.csproj" />
     <ProjectReference Include="..\BrandCertificate.Repositories\BrandCertificate.Repositories.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Demo\key.pem">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
