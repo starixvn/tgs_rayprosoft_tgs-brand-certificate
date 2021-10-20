@@ -4,7 +4,7 @@ pipeline {
     agent any
     environment {
         BuildConfiguration='Debug'
-        ImageName="registry.gitlab.com/rayprosoft/turnkey-gaming-system/brand-cert-api"
+        ImageName="harbor.rpgp.cc/tgs/brand-cert-api"
     }
     stages {
         stage('Prepare') {
@@ -60,17 +60,14 @@ pipeline {
 		
 		stage('Push packages') {
 			steps {
-				sh 'dotnet pack -c $BuildConfiguration "Tgs.Payment.Client/Tgs.Payment.Client.csproj" --no-build'
-				sh 'dotnet nuget push "Tgs.Payment.Client/bin/$BuildConfiguration/*.nupkg" -s "raypro-baget" -k admin --skip-duplicate'
-
-				sh 'dotnet pack -c $BuildConfiguration "PaymentService.Client/PaymentService.Client.csproj" --no-build'
-				sh 'dotnet nuget push "PaymentService.Client/bin/$BuildConfiguration/*.nupkg" -s "raypro-baget" -k admin --skip-duplicate'
+				sh 'dotnet pack -c $BuildConfiguration "Tgs.BrandCertificateClient/Tgs.BrandCertificateClient.csproj" --no-build'
+				sh 'dotnet nuget push "Tgs.BrandCertificateClient/bin/$BuildConfiguration/*.nupkg" -s "raypro-baget" -k admin --skip-duplicate'
 			}
 		}
 
 		stage('Build Docker Image') {
 			steps {
-				sh 'dotnet build "PaymentService/PaymentService.csproj" -c $BuildConfiguration -t:ContainerBuild -p:DockerfileTag="$ImageName:${TAG}" --no-restore '
+				sh 'dotnet build "Tgs.BrandCertificateService/Tgs.BrandCertificateService.csproj" -c $BuildConfiguration -t:ContainerBuild -p:DockerfileTag="$ImageName:${TAG}" --no-restore '
 			}
 		}
 

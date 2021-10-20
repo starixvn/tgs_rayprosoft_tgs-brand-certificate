@@ -31,8 +31,9 @@ namespace Tgs.BrandCertificateService
 					builder.UseNpgsql(config.GetConnectionString("Tgs"));
 				});
 
-			services
-				.AddControllers();
+			services.AddControllers();
+
+			services.AddHealthChecks();
 
 			services.AddSwaggerGen(c =>
 			{
@@ -75,6 +76,7 @@ namespace Tgs.BrandCertificateService
 			{
 				endpoints.MapControllers();
 				endpoints.MapSwagger();
+				endpoints.MapHealthChecks("/healthz");
 			});
 		}
 	}

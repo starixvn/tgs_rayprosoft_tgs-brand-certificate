@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-{{ include "brand-cert-api.fullname" . }}
+  namespace: {{ .Values.namespace }}
+data:
+  appsettings.json: |
+    {
+      "ConnectionStrings": {
+        "Tgs": "{{ .Values.connectionStrings.tgs }}"
+      },
+      "Brand": {
+        "SecurityKeyPath": "{{ .Values.brand.securityKeyPath }}"
+      }
+    }
