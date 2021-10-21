@@ -55,10 +55,10 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls:
+    - secretName: dev-brand-cert.rpgp.cc
+      hosts:
+        - dev-brand-cert.rpgp.cc
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
