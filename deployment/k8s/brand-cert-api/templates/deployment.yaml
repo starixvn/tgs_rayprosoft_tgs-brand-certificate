@@ -60,6 +60,10 @@ spec:
               name: appsettings
               readOnly: true
               subPath: appsettings.json
+            - name: cert
+              mountPath: /config/certs/key.pem
+              subPath: key.pem
+              readOnly: true
           livenessProbe:
             httpGet:
               path: /healthz
@@ -74,6 +78,9 @@ spec:
         - name: appsettings
           configMap:
             name: configmap-{{ include "brand-cert-api.fullname" . }}
+        - name: cert
+          secret:
+            secretName: brand-cert
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

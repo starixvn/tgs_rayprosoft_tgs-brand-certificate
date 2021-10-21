@@ -13,7 +13,7 @@ image:
 namespace: dev
 
 imagePullSecrets:
-  - name: registry-credentials
+  - name: secret-tgs-harbor
 
 nameOverride: "brand-cert-api"
 fullnameOverride: "brand-cert-api"
@@ -22,7 +22,7 @@ connectionStrings:
   tgs: Server=localhost;Database=tgs;User Id=tgs;Password=1qaz2wsx!@
 
 brand:
-  securityKeyPath: Demo/key.pem
+  securityKeyPath: /config/certs/key.pem
 
 podAnnotations: {}
 
