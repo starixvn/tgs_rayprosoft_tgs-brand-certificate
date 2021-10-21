@@ -16,14 +16,17 @@ pipeline {
                         case ['origin/main','main']:
                             env.kube_ns = "prod";
                             env.k8s_config = 'stag-k8s-config';
+                            env.ingress_host = 'brand-cert.rpgp.cc';
                             break;
                         case ['origin/release','release']:
                             env.kube_ns = "staging";
                             env.k8s_config = 'stag-k8s-config';
+                            env.ingress_host = 'stg-brand-cert.rpgp.cc';
                             break;
                         default:
                             env.kube_ns = "dev";
                             env.k8s_config = 'k8s-kube-config' 
+                            env.ingress_host = 'dev-brand-cert.rpgp.cc';
                             break;
                     }
                 }
@@ -101,13 +104,19 @@ pipeline {
                             helm template deployment/k8s/brand-cert-api \
                                 --set image.tag=${TAG} \
                                 --set namespace=${kube_ns} \
-                                --set connectionStrings.tgs="${conn}" 
+                                --set connectionStrings.tgs="${conn}" \
+                                --set ingress.hosts[0].host=$ingress_host \
+                                --set ingress.tls[0].secretName=$ingress_host \
+                                --set ingress.tls[0].hosts={$ingress_host}
                         '''
                         sh '''
                             helm template deployment/k8s/brand-cert-api \
                                 --set image.tag=${TAG} \
                                 --set namespace=${kube_ns} \
                                 --set connectionStrings.tgs="${conn}"  \
+                                --set ingress.hosts[0].host=$ingress_host \
+                                --set ingress.tls[0].secretName=$ingress_host \
+                                --set ingress.tls[0].hosts={$ingress_host} \
                             | kubectl -n ${kube_ns} apply -f -
                         '''
                     }
