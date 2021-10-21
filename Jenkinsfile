@@ -105,7 +105,7 @@ pipeline {
                                 --set image.tag=${TAG} \
                                 --set namespace=${kube_ns} \
                                 --set connectionStrings.tgs="${conn}" \
-                                --set ingress.hosts[0].host=$ingress_host \
+                                --set ingress.hosts="{$ingress_host}" \
                                 --set ingress.tls[0].secretName=$ingress_host \
                                 --set ingress.tls[0].hosts="{$ingress_host}"
                         '''
@@ -114,7 +114,7 @@ pipeline {
                                 --set image.tag=${TAG} \
                                 --set namespace=${kube_ns} \
                                 --set connectionStrings.tgs="${conn}"  \
-                                --set ingress.hosts[0].host=$ingress_host \
+                                --set ingress.hosts="{$ingress_host}" \
                                 --set ingress.tls[0].secretName=$ingress_host \
                                 --set ingress.tls[0].hosts="{$ingress_host}" \
                             | kubectl -n ${kube_ns} apply -f -

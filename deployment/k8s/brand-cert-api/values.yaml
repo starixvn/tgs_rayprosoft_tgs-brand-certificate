@@ -51,10 +51,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: dev-brand-cert.rpgp.cc
-      paths:
-        - path: /
-          pathType: Prefix
+    - dev-brand-cert.rpgp.cc
   tls:
     - secretName: dev-brand-cert.rpgp.cc
       hosts:
