@@ -96,5 +96,48 @@ namespace Tgs.BrandCertificateService.IntegrationTests
 
 			Assert.AreEqual(brandId, Guid.Parse(actual.Identity.Name));
 		}
+
+		[Test]
+		public async Task Client_Invalid_Token()
+		{
+			using var testHost = TestSiteHelper.GetBrandCertificateTestHost();
+			_ = testHost.StartAsync();
+
+			var dbContext = testHost.Services.GetRequiredService<TgsContext>();
+
+			var brandId = Guid.NewGuid();
+
+			await dbContext.Brands.AddAsync(new Brand
+			{
+				Id = brandId,
+				Code = "Test"
+			});
+
+			await dbContext.SaveChangesAsync();
+
+			var testClient = new BrandCertificateClient(
+				testHost.GetTestClient());
+
+			var handler = new JwtSecurityTokenHandler();
+
+			var securityKey = await testClient.GetSystemValidateSecurityKeyAsync();
+
+			var token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCIsInN1YiI6IjNiY2JkZmY4LTRlZTktNGYwOC1hNWE0LWJiZmEwMWFhN2I5MyIsIm5iZiI6MTYzNTE0MTI1MywiZXhwIjoxNjM1MTQ0ODUzLCJpYXQiOjE2MzUxNDEyNTMsImlzcyI6InRncyJ9.icMql0JpHvjomQSayBvsQ8TQAseGUimhHdjRaDqYZy9_OxTPGj9y_A0c5jdBW6FlgVBbrZZWeoHaiiZFAr7xzq";
+
+			Assert.That(
+				() => handler.ValidateToken(
+					token,
+					new TokenValidationParameters
+					{
+						ValidateIssuer = true,
+						ValidateAudience = false,
+						ValidateLifetime = false,
+						ValidIssuers = new[] { "tgs" },
+						NameClaimType = ClaimTypes.NameIdentifier,
+						IssuerSigningKey = securityKey
+					},
+					out _),
+				Throws.Exception);
+		}
 	}
 }
