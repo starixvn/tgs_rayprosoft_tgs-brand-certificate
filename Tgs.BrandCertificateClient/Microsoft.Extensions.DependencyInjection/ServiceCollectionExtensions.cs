@@ -22,9 +22,9 @@ namespace Microsoft.Extensions.DependencyInjection
 				})
 				.Services
 				.AddMemoryCache()
-				.AddTransient(sp => ActivatorUtilities.CreateInstance<CachedBrandCertificateClient>(
-					sp,
-					sp.GetRequiredService<BrandCertificateClient>()))
-				.AddTransient<IBrandCertificateClient, CachedBrandCertificateClient>();
+				.AddTransient<IBrandCertificateClient>(
+					sp => ActivatorUtilities.CreateInstance<CachedBrandCertificateClient>(
+						sp,
+						sp.GetRequiredService<BrandCertificateClient>()));
 	}
 }
