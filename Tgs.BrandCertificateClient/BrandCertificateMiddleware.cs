@@ -22,13 +22,13 @@ namespace Tgs.BrandCertificate.Clients
 
 		public async Task InvokeAsync(HttpContext context, IBrandCertificateClient brandCertificateClient)
 		{
-			if (context.Request.Headers.TryGetValue("Brand-Token", out var values))
+			if (context.Request.Headers.TryGetValue("brand-token", out var values))
 			{
 				var jwt = values.FirstOrDefault();
 
 				if (!string.IsNullOrWhiteSpace(jwt))
 				{
-					_logger.LogDebug($"Receive Brand-Token: {jwt}");
+					_logger.LogDebug($"Receive brand-token: {jwt}");
 
 					var securityKey = await brandCertificateClient.GetSystemValidateSecurityKeyAsync();
 
@@ -62,7 +62,7 @@ namespace Tgs.BrandCertificate.Clients
 					catch (Exception ex)
 					{
 						if (_logger.IsEnabled(LogLevel.Debug))
-							_logger.LogError(ex, "Valid Brand-Token occur error!");
+							_logger.LogError(ex, "Valid brand-token occur error!");
 					}
 				}
 			}
