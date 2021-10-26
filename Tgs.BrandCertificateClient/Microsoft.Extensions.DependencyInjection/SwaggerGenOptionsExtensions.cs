@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
 		{
 			options.AddSecurityDefinition("Brand", new OpenApiSecurityScheme
 			{
-				Name = "Brand-Token",
+				Name = "brand-token",
 				Description = "Brand certificate",
 				In = ParameterLocation.Header
 			});
