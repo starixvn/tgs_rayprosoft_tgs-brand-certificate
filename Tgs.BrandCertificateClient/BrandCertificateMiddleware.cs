@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Tgs.BrandCertificate.Clients
@@ -11,10 +12,12 @@ namespace Tgs.BrandCertificate.Clients
 	internal class BrandCertificateMiddleware
 	{
 		private readonly RequestDelegate _next;
+		private readonly ILogger<BrandCertificateMiddleware> _logger;
 
-		public BrandCertificateMiddleware(RequestDelegate next)
+		public BrandCertificateMiddleware(RequestDelegate next, ILogger<BrandCertificateMiddleware> logger)
 		{
 			_next = next;
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
 		public async Task InvokeAsync(HttpContext context, IBrandCertificateClient brandCertificateClient)
@@ -25,6 +28,8 @@ namespace Tgs.BrandCertificate.Clients
 
 				if (!string.IsNullOrWhiteSpace(jwt))
 				{
+					_logger.LogDebug($"Receive Brand-Token: {jwt}");
+
 					var securityKey = await brandCertificateClient.GetSystemValidateSecurityKeyAsync();
 
 					var handler = new JwtSecurityTokenHandler();
@@ -50,9 +55,14 @@ namespace Tgs.BrandCertificate.Clients
 						{
 							BrandId = brandId
 						});
+
+
+						_logger.LogDebug($"Catch brand id is {brandId}");
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
+						if (_logger.IsEnabled(LogLevel.Debug))
+							_logger.LogError(ex, "Valid Brand-Token occur error!");
 					}
 				}
 			}
