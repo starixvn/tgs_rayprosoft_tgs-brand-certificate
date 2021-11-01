@@ -16,14 +16,17 @@ pipeline {
                         case ['origin/main','main']:
                             env.kube_ns = "prod";
                             env.k8s_config = 'stag-k8s-config';
+                            env.ingress_host = 'brand-cert.rpgp.cc';
                             break;
                         case ['origin/release','release']:
                             env.kube_ns = "staging";
                             env.k8s_config = 'stag-k8s-config';
+                            env.ingress_host = 'stg-brand-cert.rpgp.cc';
                             break;
                         default:
                             env.kube_ns = "dev";
                             env.k8s_config = 'k8s-kube-config' 
+                            env.ingress_host = 'dev-brand-cert.rpgp.cc';
                             break;
                     }
                 }
@@ -98,19 +101,23 @@ pipeline {
                 withKubeConfig([credentialsId: env.k8s_config]) {
                     withCredentials([string(credentialsId: "tgs-${kube_ns}-connectionstring", variable: "conn")]) {
                         sh '''
-                            helm template deployment/k8s/payment-api \
+                            helm template deployment/k8s/brand-cert-api \
                                 --set image.tag=${TAG} \
                                 --set namespace=${kube_ns} \
                                 --set connectionStrings.tgs="${conn}" \
-                                --set connectionStrings.nats="$tgs_nats" 
+                                --set ingress.hosts="{$ingress_host}" \
+                                --set ingress.tls[0].secretName=$ingress_host \
+                                --set ingress.tls[0].hosts="{$ingress_host}"
                         '''
                         sh '''
-                            helm template deployment/k8s/payment-api \
+                            helm template deployment/k8s/brand-cert-api \
                                 --set image.tag=${TAG} \
                                 --set namespace=${kube_ns} \
-                                --set connectionStrings.tgs="${conn}" \
-                                --set connectionStrings.nats="$tgs_nats" \
-                                | kubectl -n ${kube_ns} apply -f -
+                                --set connectionStrings.tgs="${conn}"  \
+                                --set ingress.hosts="{$ingress_host}" \
+                                --set ingress.tls[0].secretName=$ingress_host \
+                                --set ingress.tls[0].hosts="{$ingress_host}" \
+                            | kubectl -n ${kube_ns} apply -f -
                         '''
                     }
                 }
@@ -127,13 +134,6 @@ pipeline {
                 sshagent(['ssh-jenkins']) {
                     sh "git tag -a ${TAG} -m ${TAG}"
                     sh "git push ${GIT_URL} ${TAG} HEAD:${GIT_BRANCH}"
-                }
-            }
-        }
-        stage('Remove Image Tags') {					
-            steps {	
-                withCredentials([string(credentialsId: "GitLabToken", variable: "GitLabToken")]) {					
-                    sh "curl --request DELETE --data \'name_regex_delete=.*\' --data \'keep_n=10\' --header \'PRIVATE-TOKEN: ${GitLabToken}\' ${ImageTagUrl}"
                 }
             }
         }
