@@ -42,7 +42,9 @@ spec:
       http:
         paths:
           - path: /
+            {{- if eq $namespace "dev" }}
             pathType: Prefix
+            {{- end }}
             backend:
               {{- if eq $namespace "dev" }}
               service:
