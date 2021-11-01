@@ -41,11 +41,9 @@ spec:
       http:
         paths:
           - path: /
-            {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
             pathType: Prefix
-            {{- end }}
             backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              {{- if eq .Values.namespace "dev" }}
               service:
                 name: {{ $fullName }}
                 port:
