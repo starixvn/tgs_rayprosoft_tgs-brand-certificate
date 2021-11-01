@@ -47,9 +47,8 @@ ingress:
   enabled: true
   className: ""
   annotations:
-    {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt
+    kubernetes.io/ingress.class: "nginx"
   hosts:
     - dev-brand-cert.rpgp.cc
   tls:
