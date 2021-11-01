@@ -1,12 +1,13 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "brand-cert-api.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
+{{- $namespace := .Values.namespace -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
   {{- end }}
 {{- end }}
-{{- if eq .Values.namespace "dev" -}}
+{{- if eq $namespace "dev" -}}
 apiVersion: networking.k8s.io/v1
 {{- else -}}
 apiVersion: extensions/v1beta1
@@ -14,7 +15,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ingress-{{ $fullName }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ $namespace }}
   labels:
     {{- include "brand-cert-api.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -41,11 +42,11 @@ spec:
       http:
         paths:
           - path: /
-            {{- if semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion }}
+            {{- if eq $namespace "dev" }}
             pathType: Prefix
             {{- end }}
             backend:
-              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              {{- if eq $namespace "dev" }}
               service:
                 name: {{ $fullName }}
                 port:
