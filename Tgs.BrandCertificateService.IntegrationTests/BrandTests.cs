@@ -2,6 +2,7 @@
 using ExpectedObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.Clients;
 using Tgs.BrandCertificate.Repositories.Entities;
 
@@ -94,5 +95,38 @@ public class BrandTests
 		var actual = await sut.GetBrandFrontendInfoAsync(brandId);
 
 		brandLogoSettings.ToExpectedObject().ShouldMatch(actual);
+	}
+
+	[Test]
+	public async Task Get_BrandStatus_By_Id()
+	{
+		var brandId = Guid.NewGuid();
+
+		using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
+		{
+			Id = brandId,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Archived
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandStatusAsync(brandId);
+
+		Assert.AreEqual(BrandStatus.Archived, actual);
 	}
 }

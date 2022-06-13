@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Tgs.BrandCertificate.Clients;
 
@@ -7,7 +8,8 @@ internal class BrandServiceClient : IBrandServiceClient
 	private static readonly JsonSerializerOptions _SerializerOptions = new()
 	{
 		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-		WriteIndented = true
+		WriteIndented = true,
+		Converters = { new JsonStringEnumConverter() }
 	};
 
 	private readonly HttpClient _httpClient;
@@ -45,5 +47,20 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ConfigureAwait(false);
 
 		return JsonSerializer.Deserialize<BrandFrontendInfo>(json, _SerializerOptions)!;
+	}
+
+	public async ValueTask<BrandStatus> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/status/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var json = await response.Content
+			.ReadAsStringAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+		return JsonSerializer.Deserialize<BrandStatus>(json, _SerializerOptions)!;
 	}
 }

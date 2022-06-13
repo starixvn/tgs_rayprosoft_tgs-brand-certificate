@@ -52,4 +52,15 @@ internal class TgsRepository : ITgsRepository
 				logoSettings.MobileLogoUrl,
 				logoSettings.LoadingUrl);
 	}
+
+	public async ValueTask<BrandStatus?> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands
+			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		return brand is null
+			? null
+			: (BrandStatus)brand.Status;
+	}
 }

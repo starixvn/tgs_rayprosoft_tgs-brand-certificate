@@ -54,4 +54,14 @@ public class BrandController : ControllerBase
 				LoadingUrl = info.LoadingUrl
 			};
 	}
+
+	[HttpGet("status/{brandId}", Name = "GetBrandStatus")]
+	public ValueTask<BrandStatus> GetBrandStatusAsync(
+		[FromServices] IGetService<GetBrandStatusQuery, BrandStatus> getService,
+		Guid brandId)
+	{
+		var query = new GetBrandStatusQuery(brandId);
+
+		return getService.GetAsync(query, HttpContext.RequestAborted);
+	}
 }
