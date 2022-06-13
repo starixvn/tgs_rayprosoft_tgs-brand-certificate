@@ -1,7 +1,6 @@
-﻿namespace Tgs.BrandCertificateService
+﻿namespace Tgs.BrandCertificateService;
+
+public class BrandCertificateOptions
 {
-	public class BrandCertificateOptions
-	{
-		public string SecurityKeyPath { get; set; } = default!;
-	}
+	public string SecurityKeyPath { get; set; } = default!;
 }

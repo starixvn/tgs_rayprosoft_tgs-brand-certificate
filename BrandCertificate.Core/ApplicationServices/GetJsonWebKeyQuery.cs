@@ -1,4 +1,3 @@
-﻿namespace Tgs.BrandCertificate.ApplicationServices
-{
-	public record GetJsonWebKeyQuery();
-}
+﻿namespace Tgs.BrandCertificate.ApplicationServices;
+
+public record GetJsonWebKeyQuery();

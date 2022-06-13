@@ -1,72 +1,66 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Tgs.BrandCertificate.Clients
+namespace Tgs.BrandCertificate.Clients;
+
+internal class BrandCertificateMiddleware
 {
-	internal class BrandCertificateMiddleware
+	private readonly RequestDelegate _next;
+	private readonly ILogger<BrandCertificateMiddleware> _logger;
+
+	public BrandCertificateMiddleware(RequestDelegate next, ILogger<BrandCertificateMiddleware> logger)
 	{
-		private readonly RequestDelegate _next;
-		private readonly ILogger<BrandCertificateMiddleware> _logger;
+		_next = next;
+		_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+	}
 
-		public BrandCertificateMiddleware(RequestDelegate next, ILogger<BrandCertificateMiddleware> logger)
+	public async Task InvokeAsync(HttpContext context, IBrandCertificateClient brandCertificateClient)
+	{
+		if (context.Request.Headers.TryGetValue("brand-token", out var values))
 		{
-			_next = next;
-			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
-		}
+			var jwt = values.FirstOrDefault();
 
-		public async Task InvokeAsync(HttpContext context, IBrandCertificateClient brandCertificateClient)
-		{
-			if (context.Request.Headers.TryGetValue("brand-token", out var values))
+			if (!string.IsNullOrWhiteSpace(jwt))
 			{
-				var jwt = values.FirstOrDefault();
+				_logger.LogDebug("Receive brand-token: {jwt}", jwt);
 
-				if (!string.IsNullOrWhiteSpace(jwt))
+				var securityKey = await brandCertificateClient.GetSystemValidateSecurityKeyAsync();
+
+				var handler = new JwtSecurityTokenHandler();
+
+				try
 				{
-					_logger.LogDebug($"Receive brand-token: {jwt}");
-
-					var securityKey = await brandCertificateClient.GetSystemValidateSecurityKeyAsync();
-
-					var handler = new JwtSecurityTokenHandler();
-
-					try
-					{
-						var principal = handler.ValidateToken(
-							jwt,
-							new TokenValidationParameters
-							{
-								ValidateIssuer = true,
-								ValidateAudience = false,
-								ValidateLifetime = false,
-								ValidIssuers = new[] { "tgs" },
-								NameClaimType = ClaimTypes.NameIdentifier,
-								IssuerSigningKey = securityKey
-							},
-							out _);
-
-						var brandId = Guid.Parse(principal.Identity!.Name!);
-
-						context.Features.Set<IBrandFeature>(new BrandFeature
+					var result = await handler.ValidateTokenAsync(
+						jwt,
+						new TokenValidationParameters
 						{
-							BrandId = brandId
-						});
+							ValidateIssuer = true,
+							ValidateAudience = false,
+							ValidateLifetime = false,
+							ValidIssuers = new[] { "tgs" },
+							NameClaimType = ClaimTypes.NameIdentifier,
+							IssuerSigningKey = securityKey
+						}).ConfigureAwait(false);
 
+					var brandId = Guid.Parse(result.ClaimsIdentity.Name!);
 
-						_logger.LogDebug($"Catch brand id is {brandId}");
-					}
-					catch (Exception ex)
+					context.Features.Set<IBrandFeature>(new BrandFeature
 					{
-						if (_logger.IsEnabled(LogLevel.Debug))
-							_logger.LogError(ex, "Valid brand-token occur error!");
-					}
+						BrandId = brandId
+					});
+
+					_logger.LogDebug("Catch brand id is {brandId}", brandId);
+				}
+				catch (Exception ex)
+				{
+					if (_logger.IsEnabled(LogLevel.Debug))
+						_logger.LogError(ex, "Valid brand-token occur error!");
 				}
 			}
-			await _next(context);
 		}
+		await _next(context);
 	}
 }

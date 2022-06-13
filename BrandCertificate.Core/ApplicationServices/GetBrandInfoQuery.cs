@@ -1,6 +1,3 @@
-﻿using System;
+﻿namespace Tgs.BrandCertificate.ApplicationServices;
 
-namespace Tgs.BrandCertificate.ApplicationServices
-{
-	public record GetBrandInfoQuery(Guid BrandId);
-}
+public record GetBrandInfoQuery(Guid BrandId);
