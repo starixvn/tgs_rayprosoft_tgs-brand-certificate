@@ -14,7 +14,7 @@ internal class BrandCertificateClient : IBrandCertificateClient
 		_httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 	}
 
-	public async Task<string?> MakeJsonWebTokenAsync(Guid brandId)
+	public async Task<string?> MakeJsonWebTokenAsync(Guid brandId, CancellationToken cancellationToken = default)
 	{
 		var requestContent = new StringContent(
 			string.Empty,
@@ -22,7 +22,7 @@ internal class BrandCertificateClient : IBrandCertificateClient
 			MediaTypeNames.Application.Json);
 
 		var response = await _httpClient
-			.PostAsync($"/cert/{brandId}", requestContent)
+			.PostAsync($"/cert/{brandId}", requestContent, cancellationToken)
 			.ConfigureAwait(false);
 
 		_ = response.EnsureSuccessStatusCode();
@@ -31,15 +31,15 @@ internal class BrandCertificateClient : IBrandCertificateClient
 			return null;
 
 		var jwtJson = await response.Content
-			.ReadAsStringAsync()
+			.ReadAsStringAsync(cancellationToken)
 			.ConfigureAwait(false);
 
 		return jwtJson;
 	}
 
-	public async Task<SecurityKey> GetSystemValidateSecurityKeyAsync()
+	public async Task<SecurityKey> GetSystemValidateSecurityKeyAsync(CancellationToken cancellationToken = default)
 	{
-		var jwk = await GetSystemJsonWebKeyAsync().ConfigureAwait(false);
+		var jwk = await GetSystemJsonWebKeyAsync(cancellationToken).ConfigureAwait(false);
 
 		var jwks = new JsonWebKeySet();
 		jwks.Keys.Add(jwk);
@@ -47,16 +47,16 @@ internal class BrandCertificateClient : IBrandCertificateClient
 		return jwks.GetSigningKeys().First();
 	}
 
-	private async Task<JsonWebKey> GetSystemJsonWebKeyAsync()
+	private async Task<JsonWebKey> GetSystemJsonWebKeyAsync(CancellationToken cancellationToken = default)
 	{
 		var response = await _httpClient
-			.GetAsync("/cert/jwk")
+			.GetAsync("/cert/jwk", cancellationToken)
 			.ConfigureAwait(false);
 
 		_ = response.EnsureSuccessStatusCode();
 
 		var jwkJson = await response.Content
-			.ReadAsStringAsync()
+			.ReadAsStringAsync(cancellationToken)
 			.ConfigureAwait(false);
 
 		return new JsonWebKey(jwkJson);

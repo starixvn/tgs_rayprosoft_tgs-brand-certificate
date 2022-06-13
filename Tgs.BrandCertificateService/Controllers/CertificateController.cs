@@ -18,7 +18,7 @@ public class CertificateController : ControllerBase
 		[FromServices] IGetService<GetJsonWebKeyQuery, string> getJwkService)
 		=> JsonDocument.Parse(
 			await getJwkService
-				.GetAsync(new GetJsonWebKeyQuery())
+				.GetAsync(new GetJsonWebKeyQuery(), HttpContext.RequestAborted)
 				.ConfigureAwait(false));
 
 	[HttpPost("{brandId}")]
@@ -29,12 +29,12 @@ public class CertificateController : ControllerBase
 		[FromServices] IGetService<MakeBrandTokenCommand, string> generateTokenService,
 		Guid brandId)
 	{
-		var brandInfo = await getBrandService.GetAsync(new GetBrandInfoQuery(brandId));
+		var brandInfo = await getBrandService.GetAsync(new GetBrandInfoQuery(brandId), HttpContext.RequestAborted);
 
 		return brandInfo == null
 			? null
 			: await generateTokenService
-			.GetAsync(new MakeBrandTokenCommand(brandInfo.Id, brandInfo.Code))
+			.GetAsync(new MakeBrandTokenCommand(brandInfo.Id, brandInfo.Code), HttpContext.RequestAborted)
 			.ConfigureAwait(false);
 	}
 }

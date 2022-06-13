@@ -40,6 +40,7 @@ builder.Services
 	});
 
 builder.Services
+	.AddRouting(options => options.LowercaseUrls = true)
 	.AddControllers();
 
 builder.Services

@@ -25,4 +25,20 @@ public static class ServiceCollectionExtensions
 				sp => ActivatorUtilities.CreateInstance<CachedBrandCertificateClient>(
 					sp,
 					sp.GetRequiredService<BrandCertificateClient>()));
+
+	public static IServiceCollection AddBrandServiceClient(
+		this IServiceCollection services,
+		Action<BrandCertificateClientOptions, IServiceProvider> configure)
+		=> services
+			.AddOptions<BrandCertificateClientOptions>()
+			.Configure(configure)
+			.Services
+			.AddHttpClient<IBrandServiceClient, BrandServiceClient>()
+			.ConfigureHttpClient((sp, httpClient) =>
+			{
+				var options = sp.GetRequiredService<IOptions<BrandCertificateClientOptions>>().Value;
+
+				httpClient.BaseAddress = options.BrandCertificateBaseUrl;
+			})
+			.Services;
 }

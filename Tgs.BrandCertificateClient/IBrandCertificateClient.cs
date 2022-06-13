@@ -4,7 +4,7 @@ namespace Tgs.BrandCertificate.Clients;
 
 public interface IBrandCertificateClient
 {
-	Task<SecurityKey> GetSystemValidateSecurityKeyAsync();
+	Task<SecurityKey> GetSystemValidateSecurityKeyAsync(CancellationToken cancellationToken = default);
 
-	Task<string?> MakeJsonWebTokenAsync(Guid brandId);
+	Task<string?> MakeJsonWebTokenAsync(Guid brandId, CancellationToken cancellationToken = default);
 }

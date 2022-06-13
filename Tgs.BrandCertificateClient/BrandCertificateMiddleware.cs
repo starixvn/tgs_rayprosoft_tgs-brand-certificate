@@ -27,7 +27,7 @@ internal class BrandCertificateMiddleware
 			{
 				_logger.LogDebug("Receive brand-token: {jwt}", jwt);
 
-				var securityKey = await brandCertificateClient.GetSystemValidateSecurityKeyAsync();
+				var securityKey = await brandCertificateClient.GetSystemValidateSecurityKeyAsync(context.RequestAborted);
 
 				var handler = new JwtSecurityTokenHandler();
 

@@ -15,15 +15,15 @@ internal class CachedBrandCertificateClient : IBrandCertificateClient
 		_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
 	}
 
-	public Task<string?> MakeJsonWebTokenAsync(Guid brandId)
-		=> _baseClient.MakeJsonWebTokenAsync(brandId);
+	public Task<string?> MakeJsonWebTokenAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> _baseClient.MakeJsonWebTokenAsync(brandId, cancellationToken);
 
-	public async Task<SecurityKey> GetSystemValidateSecurityKeyAsync()
+	public async Task<SecurityKey> GetSystemValidateSecurityKeyAsync(CancellationToken cancellationToken = default)
 	{
 		if (_memoryCache.TryGetValue<SecurityKey>("Brand:Varify:Key", out var securityKey))
 			return securityKey;
 
-		await _LockObject.WaitAsync().ConfigureAwait(false);
+		await _LockObject.WaitAsync(cancellationToken).ConfigureAwait(false);
 
 		try
 		{
@@ -31,7 +31,7 @@ internal class CachedBrandCertificateClient : IBrandCertificateClient
 				return securityKey!;
 
 			securityKey = await _baseClient
-				.GetSystemValidateSecurityKeyAsync()
+				.GetSystemValidateSecurityKeyAsync(cancellationToken)
 				.ConfigureAwait(false);
 
 			_ = _memoryCache.Set("Brand:Varify:Key", securityKey, DateTimeOffset.Now.AddHours(1));
