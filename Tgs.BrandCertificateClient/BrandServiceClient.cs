@@ -31,4 +31,19 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		return JsonSerializer.Deserialize<BrandInfo>(json, _SerializerOptions);
 	}
+
+	public async ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/front/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var json = await response.Content
+			.ReadAsStringAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+		return JsonSerializer.Deserialize<BrandFrontendInfo>(json, _SerializerOptions)!;
+	}
 }

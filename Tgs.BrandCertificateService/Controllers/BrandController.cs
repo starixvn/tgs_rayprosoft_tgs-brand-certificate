@@ -33,4 +33,25 @@ public class BrandController : ControllerBase
 				SmsRegisterFlowEnabled = brandInfo.SmsRegisterFlowEnabled
 			};
 	}
+
+	[HttpGet("front/{brandId}", Name = "GetBrandFrontendInfo")]
+	public async Task<BrandFrontendViewModel> GetBrandFrontendInfoAsync(
+		[FromServices] IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo?> getBrandFrontendService,
+		Guid brandId)
+	{
+		var query = new GetBrandFrontendInfoQuery(brandId);
+
+		var info = await getBrandFrontendService
+			.GetAsync(query, HttpContext.RequestAborted)
+			.ConfigureAwait(false);
+
+		return info is null
+			? new BrandFrontendViewModel()
+			: new BrandFrontendViewModel
+			{
+				DesktopLogoUrl = info.DesktopLogoUrl,
+				MobileLogoUrl = info.MobileLogoUrl,
+				LoadingUrl = info.LoadingUrl
+			};
+	}
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Tgs.BrandCertificate.Repositories.Entities;
 
 namespace Tgs.BrandCertificate.Repositories;
@@ -12,14 +13,14 @@ internal class TgsRepository : ITgsRepository
 		_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 	}
 
-	public async ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId)
+	public async ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
-			.FindAsync(brandId)
+			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
 		var brandCurrency = await _dbContext.BrandCurrencies
-			.FirstAsync(bc => bc.BrandId == brandId)
+			.FirstAsync(bc => bc.BrandId == brandId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
 		return brand == null
@@ -31,5 +32,24 @@ internal class TgsRepository : ITgsRepository
 				brand.EnableSms,
 				brand.EnableSmsRegisterFlow,
 				brand.EnableSmsRegisterFlow);
+	}
+
+	public async ValueTask<BrandFrontendInfo?> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands
+			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		if (brand is null || string.IsNullOrWhiteSpace(brand.LogoInfo))
+			return new BrandFrontendInfo(null, null, null);
+
+		var logoSettings = JsonSerializer.Deserialize<BrandLogoSettings>(brand.LogoInfo);
+
+		return logoSettings is null
+			? null
+			: new BrandFrontendInfo(
+				logoSettings.DesktopLogoUrl,
+				logoSettings.MobileLogoUrl,
+				logoSettings.LoadingUrl);
 	}
 }

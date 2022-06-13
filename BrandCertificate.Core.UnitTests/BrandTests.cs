@@ -6,7 +6,7 @@ using Tgs.BrandCertificate.ApplicationServices;
 namespace BrandCertificate.Core.UnitTests;
 
 [TestFixture]
-public class BrandInfoTests
+public class BrandTests
 {
     [Test]
     public async Task Get_BrandInfo_From_Repository()
@@ -21,5 +21,20 @@ public class BrandInfoTests
 
         _ = fakeTgsRepository.Received(1)
             .GetBrandInfoAsync(Arg.Is(query.BrandId));
+    }
+
+    [Test]
+    public async Task Get_BrandFrontendInfo_From_Repository()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandFrontendInfoQueryService(fakeTgsRepository);
+
+        var query = new GetBrandFrontendInfoQuery(Guid.NewGuid());
+
+        _ = await sut.GetAsync(query);
+
+        _ = fakeTgsRepository.Received(1)
+            .GetBrandFrontendInfoAsync(Arg.Is(query.BrandId));
     }
 }

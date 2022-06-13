@@ -2,5 +2,7 @@
 
 public interface ITgsRepository
 {
-	public ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId);
+	ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask<BrandFrontendInfo?> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 }

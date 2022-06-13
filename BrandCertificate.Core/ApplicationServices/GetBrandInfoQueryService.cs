@@ -12,5 +12,5 @@ internal class GetBrandInfoQueryService : IGetService<GetBrandInfoQuery, BrandIn
 	}
 
 	public ValueTask<BrandInfo?> GetAsync(GetBrandInfoQuery query, CancellationToken cancellationToken = default)
-		=> _tgsRepository.GetBrandInfoAsync(query.BrandId);
+		=> _tgsRepository.GetBrandInfoAsync(query.BrandId, cancellationToken);
 }
