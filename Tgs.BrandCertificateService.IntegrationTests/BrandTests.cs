@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using ExpectedObjects;
+using ExpectedObjects.Strategies;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Tgs.BrandCertificate;
@@ -59,7 +60,8 @@ public class BrandTests
 		{
 			DesktopLogoUrl = new Uri("https://localhost/1.png"),
 			MobileLogoUrl = new Uri("https://localhost/2.png"),
-			LoadingUrl = new Uri("https://localhost/3.png")
+			LoadingUrl = new Uri("https://localhost/3.png"),
+			PlayerRegisterFlowSettings = JsonDocument.Parse(@"[{""type"":""Test1""}]")
 		};
 
 		using var web = new TestBrandCertificateApplication();
@@ -78,7 +80,8 @@ public class BrandTests
 			Name = "Test",
 			SecretKey = string.Empty,
 			UpdatedByUsername = string.Empty,
-			LogoInfo = JsonSerializer.Serialize(brandLogoSettings)
+			LogoInfo = JsonSerializer.Serialize(brandLogoSettings),
+			PlayerRegisterFlowSettings = JsonSerializer.Serialize(brandLogoSettings.PlayerRegisterFlowSettings)
 		});
 
 		_ = await dbContext.BrandCurrencies.AddAsync(new BrandCurrency
@@ -94,7 +97,10 @@ public class BrandTests
 
 		var actual = await sut.GetBrandFrontendInfoAsync(brandId);
 
-		brandLogoSettings.ToExpectedObject().ShouldMatch(actual);
+		brandLogoSettings.ToExpectedObject(ctx =>
+		{
+			ctx.MapStrategy<JsonDocument>(new JsonDocumentComparisionStrategy());
+		}).ShouldMatch(actual);
 	}
 
 	[Test]
