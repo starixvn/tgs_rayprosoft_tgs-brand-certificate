@@ -1,5 +1,8 @@
-﻿namespace Tgs.BrandCertificate;
+﻿using System.Text.Json;
+
+namespace Tgs.BrandCertificate;
 public record BrandFrontendInfo(
 	Uri? DesktopLogoUrl,
 	Uri? MobileLogoUrl,
-	Uri? LoadingUrl);
+	Uri? LoadingUrl,
+	JsonDocument? PlayerRegisterFlowSettings);

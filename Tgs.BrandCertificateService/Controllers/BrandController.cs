@@ -51,7 +51,8 @@ public class BrandController : ControllerBase
 			{
 				DesktopLogoUrl = info.DesktopLogoUrl,
 				MobileLogoUrl = info.MobileLogoUrl,
-				LoadingUrl = info.LoadingUrl
+				LoadingUrl = info.LoadingUrl,
+				PlayerRegisterFlowSettings = info.PlayerRegisterFlowSettings
 			};
 	}
 

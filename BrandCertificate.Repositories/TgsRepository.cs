@@ -41,7 +41,7 @@ internal class TgsRepository : ITgsRepository
 			.ConfigureAwait(false);
 
 		if (brand is null || string.IsNullOrWhiteSpace(brand.LogoInfo))
-			return new BrandFrontendInfo(null, null, null);
+			return new BrandFrontendInfo(null, null, null, null);
 
 		var logoSettings = JsonSerializer.Deserialize<BrandLogoSettings>(brand.LogoInfo);
 
@@ -50,7 +50,10 @@ internal class TgsRepository : ITgsRepository
 			: new BrandFrontendInfo(
 				logoSettings.DesktopLogoUrl,
 				logoSettings.MobileLogoUrl,
-				logoSettings.LoadingUrl);
+				logoSettings.LoadingUrl,
+				string.IsNullOrWhiteSpace(brand.PlayerRegisterFlowSettings)
+					? null
+					: JsonDocument.Parse(brand.PlayerRegisterFlowSettings));
 	}
 
 	public async ValueTask<BrandStatus?> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default)
