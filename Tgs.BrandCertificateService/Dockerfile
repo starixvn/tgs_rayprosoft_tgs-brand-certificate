@@ -20,7 +20,6 @@ RUN dotnet build "Tgs.BrandCertificateService.csproj" -c $BuildConfiguration -o 
 
 FROM build AS publish
 ARG BuildConfiguration
-RUN mkdir /app/publish
 RUN dotnet publish "Tgs.BrandCertificateService.csproj" -c $BuildConfiguration -o /app/publish
 
 FROM base AS final
