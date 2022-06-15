@@ -9,7 +9,7 @@
 		<DockerfileBuildArguments>--build-arg "BuildConfiguration=$(Configuration)" --secret id=nuget,src="$(GlobalNugetConfig)"</DockerfileBuildArguments>
 		<DockerfileTag Condition="$(DockerfileTag) == ''">brand-cert-api</DockerfileTag>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<IsPublishable>False</IsPublishable>
+		<IsPublishable>True</IsPublishable>
 		<UserSecretsId>95735d33-fe62-47a9-b166-fe98303fcc81</UserSecretsId>
 	</PropertyGroup>
 
