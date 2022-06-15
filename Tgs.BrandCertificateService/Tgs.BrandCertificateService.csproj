@@ -40,6 +40,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\BrancCertificate.Cache\BrancCertificate.Cache.csproj" />
 		<ProjectReference Include="..\BrandCertificate.Core\BrandCertificate.Core.csproj" />
 		<ProjectReference Include="..\BrandCertificate.Repositories\BrandCertificate.Repositories.csproj" />
 	</ItemGroup>
