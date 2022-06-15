@@ -15,7 +15,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ingress-{{ $fullName }}
-  namespace: {{ $namespace }}
   labels:
     {{- include "brand-cert-api.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
@@ -38,15 +37,16 @@ spec:
   {{- end }}
   rules:
     {{- range .Values.ingress.hosts }}
-    - host: {{ . | quote }}
+    - host: {{ .host | quote }}
       http:
         paths:
-          - path: /
-            {{- if eq $namespace "dev" }}
-            pathType: Prefix
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
             {{- end }}
             backend:
-              {{- if eq $namespace "dev" }}
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
                 name: {{ $fullName }}
                 port:
@@ -55,5 +55,6 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
+          {{- end }}
     {{- end }}
 {{- end }}
