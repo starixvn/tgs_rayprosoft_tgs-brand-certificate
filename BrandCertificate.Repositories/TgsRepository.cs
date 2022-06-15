@@ -66,4 +66,10 @@ internal class TgsRepository : ITgsRepository
 			? null
 			: (BrandStatus)brand.Status;
 	}
+
+	public IAsyncEnumerable<VipLevel> QueryVipLevelsAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> _dbContext.VipLevelRows
+			.Where(vip => vip.BrandId == brandId)
+			.Select(vip => new VipLevel(vip.Id, vip.Level))
+			.ToAsyncEnumerable();
 }

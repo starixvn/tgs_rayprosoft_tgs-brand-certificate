@@ -10,6 +10,7 @@ namespace Tgs.BrandCertificate.Repositories.Entities
         public Brand()
         {
             BrandCurrencies = new HashSet<BrandCurrency>();
+            VipLevelRows = new HashSet<VipLevelRow>();
         }
 
         public Guid Id { get; set; }
@@ -52,7 +53,9 @@ namespace Tgs.BrandCertificate.Repositories.Entities
         public decimal DepositHandlingFeeRateTenPercentile { get; set; }
         public decimal WithdrawHandlingFeeRateTenPercentile { get; set; }
         public string PlayerRegisterFlowSettings { get; set; }
+        public bool EnableEmailRegisterFlow { get; set; }
 
         public virtual ICollection<BrandCurrency> BrandCurrencies { get; set; }
+        public virtual ICollection<VipLevelRow> VipLevelRows { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Tgs.BrandCertificate.Clients;
@@ -62,5 +64,23 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ConfigureAwait(false);
 
 		return JsonSerializer.Deserialize<BrandStatus>(json, _SerializerOptions)!;
+	}
+
+	public async IAsyncEnumerable<VipLevelInfo> GetVipLevelInfosAsync(
+		Guid brandId,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/viplevel/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var vipLevels = await response.Content
+			.ReadFromJsonAsync<VipLevelInfo[]>(_SerializerOptions, cancellationToken)
+			.ConfigureAwait(false) ?? Array.Empty<VipLevelInfo>();
+
+		foreach (var vipLevel in vipLevels)
+			yield return vipLevel;
 	}
 }

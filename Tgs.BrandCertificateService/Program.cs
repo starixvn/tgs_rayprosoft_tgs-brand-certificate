@@ -78,6 +78,7 @@ builder.Services
 		conifg.GetSection("Opentelemetry:Tracing").Bind(options);
 	})
 	.Services
+	.AddProfileViewer()
 	.AddOpenTelemetryTracing(builder => builder
 		.SetResourceBuilder(ResourceBuilder.CreateDefault()
 			.AddEnvironmentVariableDetector())
@@ -107,5 +108,6 @@ app.UseSwaggerUI(options =>
 app.MapControllers();
 app.MapSwagger();
 app.MapHealthChecks("/healthz");
+app.MapProfileViewer();
 
 app.Run();

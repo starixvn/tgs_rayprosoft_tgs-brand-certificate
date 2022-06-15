@@ -78,6 +78,8 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
 
             entity.Property(e => e.EnableAgentSms).HasColumnName("enable_agent_sms");
 
+            entity.Property(e => e.EnableEmailRegisterFlow).HasColumnName("enable_email_register_flow");
+
             entity.Property(e => e.EnablePlayerIdentity).HasColumnName("enable_player_identity");
 
             entity.Property(e => e.EnableSms).HasColumnName("enable_sms");

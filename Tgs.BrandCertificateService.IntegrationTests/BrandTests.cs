@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using ExpectedObjects;
-using ExpectedObjects.Strategies;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Tgs.BrandCertificate;
@@ -16,7 +15,7 @@ public class BrandTests
 	{
 		var brandId = Guid.NewGuid();
 
-		using var web = new TestBrandCertificateApplication();
+		await using var web = new TestBrandCertificateApplication();
 
 		var http = web.CreateClient();
 
@@ -64,7 +63,7 @@ public class BrandTests
 			PlayerRegisterFlowSettings = JsonDocument.Parse(@"[{""type"":""Test1""}]")
 		};
 
-		using var web = new TestBrandCertificateApplication();
+		await using var web = new TestBrandCertificateApplication();
 
 		var http = web.CreateClient();
 
@@ -108,7 +107,7 @@ public class BrandTests
 	{
 		var brandId = Guid.NewGuid();
 
-		using var web = new TestBrandCertificateApplication();
+		await using var web = new TestBrandCertificateApplication();
 
 		var http = web.CreateClient();
 
@@ -134,5 +133,34 @@ public class BrandTests
 		var actual = await sut.GetBrandStatusAsync(brandId);
 
 		Assert.AreEqual(BrandStatus.Archived, actual);
+	}
+
+	[Test]
+	public async Task Get_VipLevels_By_Brand()
+	{
+		var brandId = Guid.NewGuid();
+
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.VipLevelRows.AddAsync(new VipLevelRow
+		{
+			Id = Guid.NewGuid(),
+			Level = 1,
+			BrandId = brandId,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetVipLevelInfosAsync(brandId).ToArrayAsync();
+
+		Assert.AreEqual(1, actual.Length);
 	}
 }
