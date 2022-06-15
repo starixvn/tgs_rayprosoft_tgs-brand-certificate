@@ -42,6 +42,7 @@ Selector labels
 */}}
 {{- define "brand-cert-api.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "brand-cert-api.name" . }}
+tgs.kind: brand
 {{- end }}
 
 {{/*
