@@ -111,9 +111,9 @@ pipeline {
 
                         sh '''
                             cat << EOF | yq e -P | helm template deployment/k8s/brand-cert-api \
-                                -n ${kube_ns}
+                                -n ${kube_ns} \
+                                --name-template tgs \
                                 --set image.tag=${TAG} \
-                                --name-template tgs
                                 -f -
                             {
                                 "nodeSelector": $node_selector,
@@ -133,11 +133,11 @@ pipeline {
                         '''
                         sh '''
                             cat << EOF | yq e -P | helm template deployment/k8s/brand-cert-api \
-                                -n ${kube_ns}
-                                --set image.tag=${TAG} \
+                                -n ${kube_ns} \
                                 --name-template tgs \
+                                --set image.tag=${TAG} \
                                 -f - \
-                            | kubectl -n ${kube_ns} apply -f -
+                                | kubectl -n ${kube_ns} apply -f -
                             {
                                 "nodeSelector": $node_selector,
                                 "tolerations": [$dedicated],
