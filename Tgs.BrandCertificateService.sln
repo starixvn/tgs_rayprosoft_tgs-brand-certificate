@@ -21,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.BrandCertificateClient"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.BrandCertificateService.IntegrationTests", "Tgs.BrandCertificateService.IntegrationTests\Tgs.BrandCertificateService.IntegrationTests.csproj", "{BC940520-A562-4C3F-9C16-384EE72CB700}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrandCertificate.Common", "BrandCertificate.Common\BrandCertificate.Common.csproj", "{E15CF148-54C0-4421-9D37-7AC5D223456A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrandCertificate.Common", "BrandCertificate.Common\BrandCertificate.Common.csproj", "{E15CF148-54C0-4421-9D37-7AC5D223456A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrancCertificate.Cache", "BrancCertificate.Cache\BrancCertificate.Cache.csproj", "{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{E15CF148-54C0-4421-9D37-7AC5D223456A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E15CF148-54C0-4421-9D37-7AC5D223456A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E15CF148-54C0-4421-9D37-7AC5D223456A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
