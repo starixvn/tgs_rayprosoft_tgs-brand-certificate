@@ -100,59 +100,61 @@ pipeline {
         stage('Deploy to k8s') {
             steps {
                 withKubeConfig([credentialsId: env.k8s_config]) {
-                    def resources = getResources(env.k8s_config, env.kube_ns, "payment-malakipay")
-                    def dedicated = getTgsSettings(env.k8s_config, env.kube_ns, "dedicated")
-                    def node_selector = getTgsSettings(env.k8s_config, env.kube_ns, "node-selector")
+                    script {
+                        def resources = getResources(env.k8s_config, env.kube_ns, "brand-cert-api")
+                        def dedicated = getTgsSettings(env.k8s_config, env.kube_ns, "dedicated")
+                        def node_selector = getTgsSettings(env.k8s_config, env.kube_ns, "node-selector")
 
-                    println resources
-                    println dedicated
-                    println node_selector
+                        println resources
+                        println dedicated
+                        println node_selector
 
-                    sh '''
-                        cat << EOF | yq e -P | helm template deployment/k8s/brand-cert-api \
-                            -n ${kube_ns}
-                            --set image.tag=${TAG} \
-                            --name-template tgs
-                            -f -
-                        {
-                            "nodeSelector": $node_selector,
-                            "tolerations": [$dedicated],
-                            "resources": $resources,
-                            "ingress": {
-                                "hosts": [{
-                                    "host": "$ingress_host",
-                                    "paths": [{"path":"/", "pathType": "Prefix"}]
-                                }],
-                                "tls": [{
-                                    "secretName": "$ingress_host",
-                                    "hosts": ["$ingress_host"]
-                                }]
+                        sh '''
+                            cat << EOF | yq e -P | helm template deployment/k8s/brand-cert-api \
+                                -n ${kube_ns}
+                                --set image.tag=${TAG} \
+                                --name-template tgs
+                                -f -
+                            {
+                                "nodeSelector": $node_selector,
+                                "tolerations": [$dedicated],
+                                "resources": $resources,
+                                "ingress": {
+                                    "hosts": [{
+                                        "host": "$ingress_host",
+                                        "paths": [{"path":"/", "pathType": "Prefix"}]
+                                    }],
+                                    "tls": [{
+                                        "secretName": "$ingress_host",
+                                        "hosts": ["$ingress_host"]
+                                    }]
+                                }
                             }
-                        }
-                    '''
-                    sh '''
-                        cat << EOF | yq e -P | helm template deployment/k8s/brand-cert-api \
-                            -n ${kube_ns}
-                            --set image.tag=${TAG} \
-                            --name-template tgs \
-                            -f - \
-                        | kubectl -n ${kube_ns} apply -f -
-                        {
-                            "nodeSelector": $node_selector,
-                            "tolerations": [$dedicated],
-                            "resources": $resources,
-                            "ingress": {
-                                "hosts": [{
-                                    "host": "$ingress_host",
-                                    "paths": [{"path":"/", "pathType": "Prefix"}]
-                                }],
-                                "tls": [{
-                                    "secretName": "$ingress_host",
-                                    "hosts": ["$ingress_host"]
-                                }]
+                        '''
+                        sh '''
+                            cat << EOF | yq e -P | helm template deployment/k8s/brand-cert-api \
+                                -n ${kube_ns}
+                                --set image.tag=${TAG} \
+                                --name-template tgs \
+                                -f - \
+                            | kubectl -n ${kube_ns} apply -f -
+                            {
+                                "nodeSelector": $node_selector,
+                                "tolerations": [$dedicated],
+                                "resources": $resources,
+                                "ingress": {
+                                    "hosts": [{
+                                        "host": "$ingress_host",
+                                        "paths": [{"path":"/", "pathType": "Prefix"}]
+                                    }],
+                                    "tls": [{
+                                        "secretName": "$ingress_host",
+                                        "hosts": ["$ingress_host"]
+                                    }]
+                                }
                             }
-                        }
-                    '''
+                        '''
+                    }
                 }
             }
         }
