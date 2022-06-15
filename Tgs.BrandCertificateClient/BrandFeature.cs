@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace Tgs.BrandCertificate.Clients;
 
-namespace Tgs.BrandCertificate.Clients
+internal class BrandFeature : IBrandFeature
 {
-	internal class BrandFeature : IBrandFeature
-	{
-		public Guid BrandId { get; init; }
-	}
+	public Guid BrandId { get; init; }
 }
