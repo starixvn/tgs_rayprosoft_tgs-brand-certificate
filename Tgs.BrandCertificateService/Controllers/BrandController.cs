@@ -30,7 +30,9 @@ public class BrandController : ControllerBase
 				Currency = brandInfo.Currency,
 				PlayerIdentityEnabled = brandInfo.PlayerIdentityEnabled,
 				SmsEnabled = brandInfo.SmsEnabled,
-				SmsRegisterFlowEnabled = brandInfo.SmsRegisterFlowEnabled
+				SmsRegisterFlowEnabled = brandInfo.SmsRegisterFlowEnabled,
+				BankInfoRegisterFlowEnabled = brandInfo.BankInfoRegisterFlowEnabled,
+				EmailRegisterFlowEnabled = brandInfo.EmailRegisterFlowEnabled
 			};
 	}
 

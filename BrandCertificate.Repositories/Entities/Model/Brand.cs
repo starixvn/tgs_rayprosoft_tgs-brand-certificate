@@ -54,6 +54,7 @@ namespace Tgs.BrandCertificate.Repositories.Entities
         public decimal WithdrawHandlingFeeRateTenPercentile { get; set; }
         public string PlayerRegisterFlowSettings { get; set; }
         public bool EnableEmailRegisterFlow { get; set; }
+        public bool EnableBankInfoRegisterFlow { get; set; }
 
         public virtual ICollection<BrandCurrency> BrandCurrencies { get; set; }
         public virtual ICollection<VipLevelRow> VipLevelRows { get; set; }
