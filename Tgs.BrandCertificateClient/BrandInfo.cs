@@ -12,4 +12,8 @@ public record BrandInfo
 	public bool SmsRegisterFlowEnabled { get; init; }
 
 	public bool PlayerIdentityEnabled { get; init; }
+
+	public bool EmailRegisterFlowEnabled { get; init; }
+
+	public bool BankInfoRegisterFlowEnabled { get; init; }
 }

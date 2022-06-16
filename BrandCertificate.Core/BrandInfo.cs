@@ -6,4 +6,6 @@ public record BrandInfo(
 	string Currency,
 	bool SmsEnabled,
 	bool SmsRegisterFlowEnabled,
-	bool PlayerIdentityEnabled);
+	bool PlayerIdentityEnabled,
+	bool EmailRegisterFlowEnabled,
+	bool BankInfoRegisterFlowEnabled);
