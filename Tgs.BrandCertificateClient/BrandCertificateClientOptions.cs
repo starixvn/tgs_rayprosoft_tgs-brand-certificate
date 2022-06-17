@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace Tgs.BrandCertificate.Clients;
 
-namespace Tgs.BrandCertificate.Clients
+public class BrandCertificateClientOptions
 {
-	public class BrandCertificateClientOptions
-	{
-		public Uri BrandCertificateBaseUrl { get; set; } = default!;
-	}
+	public Uri BrandCertificateBaseUrl { get; set; } = default!;
 }

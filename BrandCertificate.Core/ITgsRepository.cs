@@ -1,10 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿namespace Tgs.BrandCertificate;
 
-namespace Tgs.BrandCertificate
+public interface ITgsRepository
 {
-	public interface ITgsRepository
-	{
-		public ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId);
-	}
+	ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask<BrandFrontendInfo?> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask<BrandStatus?> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	IAsyncEnumerable<VipLevel> QueryVipLevelsAsync(Guid brandId, CancellationToken cancellationToken = default);
 }

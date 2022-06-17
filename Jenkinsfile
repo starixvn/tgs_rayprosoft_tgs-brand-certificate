@@ -1,3 +1,4 @@
+@Library('global-shared-library') _
 def message = "";
 
 pipeline {
@@ -63,7 +64,7 @@ pipeline {
 		
 		stage('Push packages') {
 			steps {
-				sh 'dotnet pack -c $BuildConfiguration "Tgs.BrandCertificateClient/Tgs.BrandCertificateClient.csproj" --no-build'
+				sh 'dotnet pack -c $BuildConfiguration "Tgs.BrandCertificateClient/Tgs.BrandCertificateClient.csproj" --no-restore'
 				sh 'dotnet nuget push "Tgs.BrandCertificateClient/bin/$BuildConfiguration/*.nupkg" -s "raypro-baget" -k admin --skip-duplicate'
 			}
 		}
@@ -99,41 +100,61 @@ pipeline {
         stage('Deploy to k8s') {
             steps {
                 withKubeConfig([credentialsId: env.k8s_config]) {
-                    withCredentials([string(credentialsId: "tgs-${kube_ns}-connectionstring", variable: "conn")]) {
+                    script {
+                        def resources = getResources(env.k8s_config, env.kube_ns, "brand-cert-api")
+                        def dedicated = getTgsSettings(env.k8s_config, env.kube_ns, "dedicated")
+                        def node_selector = getTgsSettings(env.k8s_config, env.kube_ns, "node-selector")
+
+                        println resources
+                        println dedicated
+                        println node_selector
+
                         sh '''
-                            helm template deployment/k8s/brand-cert-api \
+                            cat << EOF | yq e -P | helm template deployment/k8s/brand-cert-api \
+                                -n ${kube_ns} \
+                                --name-template tgs \
                                 --set image.tag=${TAG} \
-                                --set namespace=${kube_ns} \
-                                --set connectionStrings.tgs="${conn}" \
-                                --set ingress.hosts="{$ingress_host}" \
-                                --set ingress.tls[0].secretName=$ingress_host \
-                                --set ingress.tls[0].hosts="{$ingress_host}"
+                                -f -
+                            {
+                                "nodeSelector": $node_selector,
+                                "tolerations": [$dedicated],
+                                "resources": $resources,
+                                "ingress": {
+                                    "hosts": [{
+                                        "host": "$ingress_host",
+                                        "paths": [{"path":"/", "pathType": "Prefix"}]
+                                    }],
+                                    "tls": [{
+                                        "secretName": "$ingress_host",
+                                        "hosts": ["$ingress_host"]
+                                    }]
+                                }
+                            }
                         '''
                         sh '''
-                            helm template deployment/k8s/brand-cert-api \
+                            cat << EOF | yq e -P | helm template deployment/k8s/brand-cert-api \
+                                -n ${kube_ns} \
+                                --name-template tgs \
                                 --set image.tag=${TAG} \
-                                --set namespace=${kube_ns} \
-                                --set connectionStrings.tgs="${conn}"  \
-                                --set ingress.hosts="{$ingress_host}" \
-                                --set ingress.tls[0].secretName=$ingress_host \
-                                --set ingress.tls[0].hosts="{$ingress_host}" \
-                            | kubectl -n ${kube_ns} apply -f -
+                                -f - \
+                                | kubectl -n ${kube_ns} apply -f -
+                            {
+                                "nodeSelector": $node_selector,
+                                "tolerations": [$dedicated],
+                                "resources": $resources,
+                                "ingress": {
+                                    "hosts": [{
+                                        "host": "$ingress_host",
+                                        "paths": [{"path":"/", "pathType": "Prefix"}]
+                                    }],
+                                    "tls": [{
+                                        "secretName": "$ingress_host",
+                                        "hosts": ["$ingress_host"]
+                                    }]
+                                }
+                            }
                         '''
                     }
-                }
-            }
-        }
-		
-        stage('Add Tag on Prod') {
-            when {
-                expression {
-                    return env.kube_ns == 'prod';
-                }
-            }			
-            steps {	
-                sshagent(['ssh-jenkins']) {
-                    sh "git tag -a ${TAG} -m ${TAG}"
-                    sh "git push ${GIT_URL} ${TAG} HEAD:${GIT_BRANCH}"
                 }
             }
         }
@@ -149,19 +170,5 @@ pipeline {
         failure {
             sendTelegram("<b>Failed Pipeline:</b> ${currentBuild.fullDisplayName} Something is wrong with ${env.BUILD_URL}/console\n${currentBuild.getBuildCauses()[0].shortDescription}\n")
         }
-    }
-}
-
-def sendTelegram(message) {
-    def encodedMessage = URLEncoder.encode(message, "UTF-8")
-
-    withCredentials([string(credentialsId: "telegramToken", variable: "TOKEN"), string(credentialsId: "telegramChatId", variable: "CHAT_ID")]) {
-
-        response = httpRequest (consoleLogResponseBody: true,
-                contentType: 'APPLICATION_JSON',
-                httpMode: 'GET',
-                url: "https://api.telegram.org/bot${TOKEN}/sendMessage?text=${encodedMessage}&chat_id=${CHAT_ID}",
-                validResponseCodes: '200')
-        return response
     }
 }

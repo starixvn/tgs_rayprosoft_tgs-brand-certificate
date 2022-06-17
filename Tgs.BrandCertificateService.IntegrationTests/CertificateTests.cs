@@ -1,87 +1,164 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 using Tgs.BrandCertificate.Clients;
 using Tgs.BrandCertificate.Repositories.Entities;
 
-namespace Tgs.BrandCertificateService.IntegrationTests
+namespace Tgs.BrandCertificateService.IntegrationTests;
+
+[TestFixture]
+public class CertificateTests
 {
-	[TestFixture]
-	public class CertificateTests
+	[Test]
+	public async Task Get_System_Validate_SecurityKey()
 	{
-		[Test]
-		public async Task Get_System_Validate_SecurityKey()
+		using var testHost = new TestBrandCertificateApplication();
+
+		var testClient = new BrandCertificateClient(
+			testHost.CreateClient());
+
+		var actual = await testClient.GetSystemValidateSecurityKeyAsync();
+
+		Assert.IsNotNull(actual);
+	}
+
+	[Test]
+	public async Task Get_Brand_JsonWebToken()
+	{
+		using var testHost = new TestBrandCertificateApplication();
+
+		var dbContext = testHost.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
 		{
-			using var testHost = TestSiteHelper.GetBrandCertificateTestHost();
-			_ = testHost.StartAsync();
+			Id = brandId,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty
+		});
 
-			var testClient = new BrandCertificateClient(
-				testHost.GetTestClient());
-
-			var actual = await testClient.GetSystemValidateSecurityKeyAsync();
-
-			Assert.IsNotNull(actual);
-		}
-
-		[Test]
-		public async Task Get_Brand_JsonWebToken()
+		_ = await dbContext.BrandCurrencies.AddAsync(new BrandCurrency
 		{
-			using var testHost = TestSiteHelper.GetBrandCertificateTestHost();
-			_ = testHost.StartAsync();
+			BrandId = brandId,
+			CurrencyCode = "CNY",
+			BrandCurrencyCode = "CNY"
+		});
 
-			var dbContext = testHost.Services.GetRequiredService<TgsContext>();
+		_ = await dbContext.SaveChangesAsync();
 
-			var brandId = Guid.NewGuid();
+		var testClient = new BrandCertificateClient(
+			testHost.CreateClient());
 
-			await dbContext.Brands.AddAsync(new Brand
+		var actual = await testClient.MakeJsonWebTokenAsync(brandId);
+
+		Assert.IsNotNull(actual);
+	}
+
+	[Test]
+	public async Task Client_Validate_Token()
+	{
+		using var testHost = new TestBrandCertificateApplication();
+
+		var dbContext = testHost.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
+		{
+			Id = brandId,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty
+		});
+
+		_ = await dbContext.BrandCurrencies.AddAsync(new BrandCurrency
+		{
+			BrandId = brandId,
+			CurrencyCode = "CNY",
+			BrandCurrencyCode = "CNY"
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var testClient = new BrandCertificateClient(
+			testHost.CreateClient());
+
+		var handler = new JwtSecurityTokenHandler();
+
+		var securityKey = await testClient.GetSystemValidateSecurityKeyAsync();
+
+		var token = await testClient.MakeJsonWebTokenAsync(brandId);
+
+		var actual = handler.ValidateToken(
+			token,
+			new TokenValidationParameters
 			{
-				Id = brandId,
-				Code = "Test"
-			});
+				ValidateIssuer = true,
+				ValidateAudience = false,
+				ValidateLifetime = false,
+				ValidIssuers = new[] { "tgs" },
+				NameClaimType = ClaimTypes.NameIdentifier,
+				IssuerSigningKey = securityKey
+			},
+			out _);
 
-			await dbContext.SaveChangesAsync();
+		Assert.AreEqual(brandId, Guid.Parse(actual.Identity!.Name!));
+	}
 
-			var testClient = new BrandCertificateClient(
-				testHost.GetTestClient());
+	[Test]
+	public async Task Client_Invalid_Token()
+	{
+		using var testHost = new TestBrandCertificateApplication();
 
-			var actual = await testClient.MakeJsonWebTokenAsync(brandId);
+		var dbContext = testHost.Services.GetRequiredService<TgsContext>();
 
-			Assert.IsNotNull(actual);
-		}
+		var brandId = Guid.NewGuid();
 
-		[Test]
-		public async Task Client_Validate_Token()
+		// 'ApiKey', 'ClientId', 'CreatedByUsername', 'Name', 'SecretKey', 'UpdatedByUsername'
+		_ = await dbContext.Brands.AddAsync(new Brand
 		{
-			using var testHost = TestSiteHelper.GetBrandCertificateTestHost();
-			_ = testHost.StartAsync();
+			Id = brandId,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty
+		});
 
-			var dbContext = testHost.Services.GetRequiredService<TgsContext>();
+		_ = await dbContext.BrandCurrencies.AddAsync(new BrandCurrency
+		{
+			BrandId = brandId,
+			CurrencyCode = "CNY",
+			BrandCurrencyCode = "CNY"
+		});
 
-			var brandId = Guid.NewGuid();
+		_ = await dbContext.SaveChangesAsync();
 
-			await dbContext.Brands.AddAsync(new Brand
-			{
-				Id = brandId,
-				Code = "Test"
-			});
+		var testClient = new BrandCertificateClient(
+			testHost.CreateClient());
 
-			await dbContext.SaveChangesAsync();
+		var handler = new JwtSecurityTokenHandler();
 
-			var testClient = new BrandCertificateClient(
-				testHost.GetTestClient());
+		var securityKey = await testClient.GetSystemValidateSecurityKeyAsync();
 
-			var handler = new JwtSecurityTokenHandler();
+		var token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCIsInN1YiI6IjNiY2JkZmY4LTRlZTktNGYwOC1hNWE0LWJiZmEwMWFhN2I5MyIsIm5iZiI6MTYzNTE0MTI1MywiZXhwIjoxNjM1MTQ0ODUzLCJpYXQiOjE2MzUxNDEyNTMsImlzcyI6InRncyJ9.icMql0JpHvjomQSayBvsQ8TQAseGUimhHdjRaDqYZy9_OxTPGj9y_A0c5jdBW6FlgVBbrZZWeoHaiiZFAr7xzq";
 
-			var securityKey = await testClient.GetSystemValidateSecurityKeyAsync();
-
-			var token = await testClient.MakeJsonWebTokenAsync(brandId);
-
-			var actual = handler.ValidateToken(
+		Assert.That(
+			() => handler.ValidateToken(
 				token,
 				new TokenValidationParameters
 				{
@@ -92,52 +169,7 @@ namespace Tgs.BrandCertificateService.IntegrationTests
 					NameClaimType = ClaimTypes.NameIdentifier,
 					IssuerSigningKey = securityKey
 				},
-				out _);
-
-			Assert.AreEqual(brandId, Guid.Parse(actual.Identity.Name));
-		}
-
-		[Test]
-		public async Task Client_Invalid_Token()
-		{
-			using var testHost = TestSiteHelper.GetBrandCertificateTestHost();
-			_ = testHost.StartAsync();
-
-			var dbContext = testHost.Services.GetRequiredService<TgsContext>();
-
-			var brandId = Guid.NewGuid();
-
-			await dbContext.Brands.AddAsync(new Brand
-			{
-				Id = brandId,
-				Code = "Test"
-			});
-
-			await dbContext.SaveChangesAsync();
-
-			var testClient = new BrandCertificateClient(
-				testHost.GetTestClient());
-
-			var handler = new JwtSecurityTokenHandler();
-
-			var securityKey = await testClient.GetSystemValidateSecurityKeyAsync();
-
-			var token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCIsInN1YiI6IjNiY2JkZmY4LTRlZTktNGYwOC1hNWE0LWJiZmEwMWFhN2I5MyIsIm5iZiI6MTYzNTE0MTI1MywiZXhwIjoxNjM1MTQ0ODUzLCJpYXQiOjE2MzUxNDEyNTMsImlzcyI6InRncyJ9.icMql0JpHvjomQSayBvsQ8TQAseGUimhHdjRaDqYZy9_OxTPGj9y_A0c5jdBW6FlgVBbrZZWeoHaiiZFAr7xzq";
-
-			Assert.That(
-				() => handler.ValidateToken(
-					token,
-					new TokenValidationParameters
-					{
-						ValidateIssuer = true,
-						ValidateAudience = false,
-						ValidateLifetime = false,
-						ValidIssuers = new[] { "tgs" },
-						NameClaimType = ClaimTypes.NameIdentifier,
-						IssuerSigningKey = securityKey
-					},
-					out _),
-				Throws.Exception);
-		}
+				out _),
+			Throws.Exception);
 	}
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31729.503
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.BrandCertificateService", "Tgs.BrandCertificateService\Tgs.BrandCertificateService.csproj", "{41B6978B-5E29-4E87-B952-073D92744AB9}"
 EndProject
@@ -15,11 +15,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NuGet.Config = NuGet.Config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrandCertificate.Core.UnitTests", "BrandCertificate.Core.UnitTests\BrandCertificate.Core.UnitTests.csproj", "{CC0A33B7-590F-4652-835B-F6548FF4D546}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrandCertificate.Core.UnitTests", "BrandCertificate.Core.UnitTests\BrandCertificate.Core.UnitTests.csproj", "{CC0A33B7-590F-4652-835B-F6548FF4D546}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tgs.BrandCertificateClient", "Tgs.BrandCertificateClient\Tgs.BrandCertificateClient.csproj", "{02C2657F-DBEC-40CF-94AD-6C09C8111E31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.BrandCertificateClient", "Tgs.BrandCertificateClient\Tgs.BrandCertificateClient.csproj", "{02C2657F-DBEC-40CF-94AD-6C09C8111E31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tgs.BrandCertificateService.IntegrationTests", "Tgs.BrandCertificateService.IntegrationTests\Tgs.BrandCertificateService.IntegrationTests.csproj", "{BC940520-A562-4C3F-9C16-384EE72CB700}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.BrandCertificateService.IntegrationTests", "Tgs.BrandCertificateService.IntegrationTests\Tgs.BrandCertificateService.IntegrationTests.csproj", "{BC940520-A562-4C3F-9C16-384EE72CB700}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrandCertificate.Common", "BrandCertificate.Common\BrandCertificate.Common.csproj", "{E15CF148-54C0-4421-9D37-7AC5D223456A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrancCertificate.Cache", "BrancCertificate.Cache\BrancCertificate.Cache.csproj", "{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{BC940520-A562-4C3F-9C16-384EE72CB700}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC940520-A562-4C3F-9C16-384EE72CB700}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC940520-A562-4C3F-9C16-384EE72CB700}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E15CF148-54C0-4421-9D37-7AC5D223456A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E15CF148-54C0-4421-9D37-7AC5D223456A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E15CF148-54C0-4421-9D37-7AC5D223456A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E15CF148-54C0-4421-9D37-7AC5D223456A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA54C8DE-777B-40F2-B0FC-DFCD2B7E7D85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

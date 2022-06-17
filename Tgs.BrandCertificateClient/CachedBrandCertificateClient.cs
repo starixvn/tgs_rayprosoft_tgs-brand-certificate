@@ -1,50 +1,46 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Tgs.BrandCertificate.Clients
+namespace Tgs.BrandCertificate.Clients;
+
+internal class CachedBrandCertificateClient : IBrandCertificateClient
 {
-	internal class CachedBrandCertificateClient : IBrandCertificateClient
+	private static readonly SemaphoreSlim _LockObject = new(1, 1);
+	private readonly IBrandCertificateClient _baseClient;
+	private readonly IMemoryCache _memoryCache;
+
+	public CachedBrandCertificateClient(IBrandCertificateClient baseClient, IMemoryCache memoryCache)
 	{
-		private readonly static SemaphoreSlim _LockObject = new SemaphoreSlim(1, 1);
-		private readonly IBrandCertificateClient _baseClient;
-		private readonly IMemoryCache _memoryCache;
+		_baseClient = baseClient ?? throw new ArgumentNullException(nameof(baseClient));
+		_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+	}
 
-		public CachedBrandCertificateClient(IBrandCertificateClient baseClient, IMemoryCache memoryCache)
+	public Task<string?> MakeJsonWebTokenAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> _baseClient.MakeJsonWebTokenAsync(brandId, cancellationToken);
+
+	public async Task<SecurityKey> GetSystemValidateSecurityKeyAsync(CancellationToken cancellationToken = default)
+	{
+		if (_memoryCache.TryGetValue<SecurityKey>("Brand:Varify:Key", out var securityKey))
+			return securityKey;
+
+		await _LockObject.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+		try
 		{
-			_baseClient = baseClient ?? throw new ArgumentNullException(nameof(baseClient));
-			_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+			if (_memoryCache.TryGetValue("Brand:Varify:Key", out securityKey))
+				return securityKey!;
+
+			securityKey = await _baseClient
+				.GetSystemValidateSecurityKeyAsync(cancellationToken)
+				.ConfigureAwait(false);
+
+			_ = _memoryCache.Set("Brand:Varify:Key", securityKey, DateTimeOffset.Now.AddHours(1));
+
+			return securityKey;
 		}
-
-		public Task<string?> MakeJsonWebTokenAsync(Guid brandId)
-			=> _baseClient.MakeJsonWebTokenAsync(brandId);
-
-		public async Task<SecurityKey> GetSystemValidateSecurityKeyAsync()
+		finally
 		{
-			if (_memoryCache.TryGetValue<SecurityKey>("Brand:Varify:Key", out var securityKey))
-				return securityKey;
-
-			await _LockObject.WaitAsync().ConfigureAwait(false);
-
-			try
-			{
-				if (_memoryCache.TryGetValue("Brand:Varify:Key", out securityKey))
-					return securityKey!;
-
-				securityKey = await _baseClient
-					.GetSystemValidateSecurityKeyAsync()
-					.ConfigureAwait(false);
-
-				_memoryCache.Set("Brand:Varify:Key", securityKey, DateTimeOffset.Now.AddHours(1));
-
-				return securityKey;
-			}
-			finally
-			{
-				_LockObject.Release();
-			}
+			_ = _LockObject.Release();
 		}
 	}
 }
