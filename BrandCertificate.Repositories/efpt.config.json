@@ -1,5 +1,5 @@
 ﻿{
-   "CodeGenerationMode": 0,
+   "CodeGenerationMode": 2,
    "ContextClassName": "TgsContext",
    "ContextNamespace": "Entities",
    "DefaultDacpacSchema": null,
@@ -20,16 +20,26 @@
       {
          "Name": "dbo.brands",
          "ObjectType": 0
+      },
+      {
+         "Name": "dbo.brand_currencies",
+         "ObjectType": 0
+      },
+      {
+         "Name": "dbo.vip_levels",
+         "ObjectType": 0
       }
    ],
-   "UiHint": ".tgs",
+   "UiHint": "tgs-local",
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": true,
    "UseFluentApiOnly": true,
    "UseHandleBars": false,
+   "UseHierarchyId": false,
    "UseInflector": true,
    "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
    "UseNoConstructor": false,
    "UseNoDefaultConstructor": true,
    "UseNoNavigations": false,

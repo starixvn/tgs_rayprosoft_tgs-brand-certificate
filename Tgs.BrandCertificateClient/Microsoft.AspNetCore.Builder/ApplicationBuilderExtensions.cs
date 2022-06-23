@@ -1,14 +1,13 @@
 ﻿using Tgs.BrandCertificate.Clients;
 
-namespace Microsoft.AspNetCore.Builder
-{
-	public static class ApplicationBuilderExtensions
-	{
-		public static IApplicationBuilder UseBrandCertificate(this IApplicationBuilder app)
-		{
-			app.UseMiddleware<BrandCertificateMiddleware>();
+namespace Microsoft.AspNetCore.Builder;
 
-			return app;
-		}
+public static class ApplicationBuilderExtensions
+{
+	public static IApplicationBuilder UseBrandCertificate(this IApplicationBuilder app)
+	{
+		_ = app.UseMiddleware<BrandCertificateMiddleware>();
+
+		return app;
 	}
 }

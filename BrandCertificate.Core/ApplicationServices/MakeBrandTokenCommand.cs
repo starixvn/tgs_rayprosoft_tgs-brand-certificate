@@ -1,6 +1,3 @@
-﻿using System;
+﻿namespace Tgs.BrandCertificate.ApplicationServices;
 
-namespace Tgs.BrandCertificate.ApplicationServices
-{
-	public record MakeBrandTokenCommand(Guid BrandId, string Code);
-}
+public record MakeBrandTokenCommand(Guid BrandId, string Code);
