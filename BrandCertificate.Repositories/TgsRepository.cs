@@ -31,7 +31,7 @@ internal class TgsRepository : ITgsRepository
 				brandCurrency.CurrencyCode,
 				brand.EnableSms,
 				brand.EnableSmsRegisterFlow,
-				brand.EnableSmsRegisterFlow);
+				brand.EnablePlayerIdentity);
 	}
 
 	public async ValueTask<BrandFrontendInfo?> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
