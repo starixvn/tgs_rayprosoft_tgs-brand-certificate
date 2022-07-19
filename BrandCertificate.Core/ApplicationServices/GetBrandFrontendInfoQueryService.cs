@@ -2,7 +2,7 @@
 
 namespace Tgs.BrandCertificate.ApplicationServices;
 
-internal class GetBrandFrontendInfoQueryService : IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo?>
+internal class GetBrandFrontendInfoQueryService : IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo>
 {
 	private readonly ITgsRepository _tgsRepository;
 
@@ -11,6 +11,6 @@ internal class GetBrandFrontendInfoQueryService : IGetService<GetBrandFrontendIn
 		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
 	}
 
-	public ValueTask<BrandFrontendInfo?> GetAsync(GetBrandFrontendInfoQuery query, CancellationToken cancellationToken = default)
+	public ValueTask<BrandFrontendInfo> GetAsync(GetBrandFrontendInfoQuery query, CancellationToken cancellationToken = default)
 		=> _tgsRepository.GetBrandFrontendInfoAsync(query.BrandId, cancellationToken);
 }

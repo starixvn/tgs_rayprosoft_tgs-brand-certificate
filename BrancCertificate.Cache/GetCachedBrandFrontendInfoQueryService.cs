@@ -4,20 +4,20 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.BrandCertificate.Cache;
 
-internal class GetCachedBrandFrontendInfoQueryService : IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo?>
+internal class GetCachedBrandFrontendInfoQueryService : IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo>
 {
-	private readonly IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo?> _sourceService;
+	private readonly IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo> _sourceService;
 	private readonly IMemoryCache _memoryCache;
 
 	public GetCachedBrandFrontendInfoQueryService(
-		IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo?> sourceService,
+		IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo> sourceService,
 		IMemoryCache memoryCache)
 	{
 		_sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
 		_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
 	}
 
-	public async ValueTask<BrandFrontendInfo?> GetAsync(
+	public async ValueTask<BrandFrontendInfo> GetAsync(
 		GetBrandFrontendInfoQuery query,
 		CancellationToken cancellationToken = default)
 	{
