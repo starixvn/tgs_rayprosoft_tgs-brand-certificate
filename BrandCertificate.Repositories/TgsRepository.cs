@@ -36,7 +36,7 @@ internal class TgsRepository : ITgsRepository
 				brand.EnableBankInfoRegisterFlow);
 	}
 
-	public async ValueTask<BrandFrontendInfo?> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
+	public async ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
 			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
@@ -46,16 +46,17 @@ internal class TgsRepository : ITgsRepository
 			return new BrandFrontendInfo(null, null, null, null);
 
 		var logoSettings = JsonSerializer.Deserialize<BrandLogoSettings>(brand.LogoInfo);
+		var registerFlowSettings = string.IsNullOrWhiteSpace(brand.PlayerRegisterFlowSettings)
+			? null
+			: JsonDocument.Parse(brand.PlayerRegisterFlowSettings);
 
 		return logoSettings is null
-			? null
+			? new BrandFrontendInfo(null, null, null, registerFlowSettings)
 			: new BrandFrontendInfo(
 				logoSettings.DesktopLogoUrl,
 				logoSettings.MobileLogoUrl,
 				logoSettings.LoadingUrl,
-				string.IsNullOrWhiteSpace(brand.PlayerRegisterFlowSettings)
-					? null
-					: JsonDocument.Parse(brand.PlayerRegisterFlowSettings));
+				registerFlowSettings);
 	}
 
 	public async ValueTask<BrandStatus?> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default)

@@ -38,7 +38,7 @@ public class BrandController : ControllerBase
 
 	[HttpGet("front/{brandId}", Name = "GetBrandFrontendInfo")]
 	public async Task<BrandFrontendViewModel> GetBrandFrontendInfoAsync(
-		[FromServices] IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo?> getBrandFrontendService,
+		[FromServices] IGetService<GetBrandFrontendInfoQuery, BrandFrontendInfo> getBrandFrontendService,
 		Guid brandId)
 	{
 		var query = new GetBrandFrontendInfoQuery(brandId);
