@@ -42,10 +42,12 @@ internal class TgsRepository : ITgsRepository
 			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
-		if (brand is null || string.IsNullOrWhiteSpace(brand.LogoInfo))
+		if (brand is null)
 			return new BrandFrontendInfo(null, null, null, null);
 
-		var logoSettings = JsonSerializer.Deserialize<BrandLogoSettings>(brand.LogoInfo);
+		var logoSettings = string.IsNullOrWhiteSpace(brand.LogoInfo)
+			? null
+			: JsonSerializer.Deserialize<BrandLogoSettings>(brand.LogoInfo);
 		var registerFlowSettings = string.IsNullOrWhiteSpace(brand.PlayerRegisterFlowSettings)
 			? null
 			: JsonDocument.Parse(brand.PlayerRegisterFlowSettings);
