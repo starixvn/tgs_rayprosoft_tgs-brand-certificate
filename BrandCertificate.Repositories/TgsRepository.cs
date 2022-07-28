@@ -77,4 +77,11 @@ internal class TgsRepository : ITgsRepository
 			.Where(vip => vip.BrandId == brandId)
 			.Select(vip => new VipLevel(vip.Id, vip.Level))
 			.ToAsyncEnumerable();
+
+	public async ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> await _dbContext.Brands
+			.Where(brand => brand.Id == brandId)
+			.Select(brand => new BrandPaymentSettings(brand.DepositPaymentLockEnabled))
+			.FirstOrDefaultAsync(cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
 }

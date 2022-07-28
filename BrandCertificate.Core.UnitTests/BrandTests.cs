@@ -52,4 +52,19 @@ public class BrandTests
         _ = fakeTgsRepository.Received(1)
             .GetBrandStatusAsync(Arg.Is(query.BrandId));
     }
+
+    [Test]
+    public async Task Get_Brand_PaymentSettings()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandPaymentSettingsQueryService(fakeTgsRepository);
+
+        var query = new GetBrandPaymentSettingsQuery(Guid.NewGuid());
+
+        _ = await sut.GetAsync(query);
+
+        _ = fakeTgsRepository.Received(1)
+            .GetBrandPaymentSettingsAsync(Arg.Is(query.BrandId));
+    }
 }
