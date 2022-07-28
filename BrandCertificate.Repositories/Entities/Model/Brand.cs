@@ -55,6 +55,7 @@ namespace Tgs.BrandCertificate.Repositories.Entities
         public string PlayerRegisterFlowSettings { get; set; }
         public bool EnableEmailRegisterFlow { get; set; }
         public bool EnableBankInfoRegisterFlow { get; set; }
+        public bool DepositPaymentLockEnabled { get; set; }
 
         public virtual ICollection<BrandCurrency> BrandCurrencies { get; set; }
         public virtual ICollection<VipLevelRow> VipLevelRows { get; set; }

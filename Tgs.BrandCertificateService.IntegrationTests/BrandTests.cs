@@ -163,4 +163,38 @@ public class BrandTests
 
 		Assert.AreEqual(1, actual.Length);
 	}
+
+	[Test]
+	public async Task Get_Brand_PaymentSettings()
+	{
+		var brandId = Guid.NewGuid();
+
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
+		{
+			Id = brandId,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			DepositPaymentLockEnabled = true
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandPaymentSettingsAsync(brandId);
+
+		Assert.IsTrue(actual?.PaymentDepositLockEnabled);
+	}
 }

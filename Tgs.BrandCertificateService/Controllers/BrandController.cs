@@ -67,4 +67,23 @@ public class BrandController : ControllerBase
 
 		return getService.GetAsync(query, HttpContext.RequestAborted);
 	}
+
+	[HttpGet("payment/{brandId}", Name = "GetBrandPaymentSettings")]
+	public async Task<BrandPaymentSettingsViewModel?> GetBrandPaymentSettingsAsync(
+		[FromServices] IGetService<GetBrandPaymentSettingsQuery, BrandPaymentSettings?> getService,
+		Guid brandId)
+	{
+		var query = new GetBrandPaymentSettingsQuery(brandId);
+
+		var result = await getService
+			.GetAsync(query, HttpContext.RequestAborted).AsTask()
+			.ConfigureAwait(false);
+
+		return result is null
+			? null
+			: new BrandPaymentSettingsViewModel
+			{
+				PaymentDepositLockEnabled = result.PaymentDepositLockEnabled
+			};
+	}
 }

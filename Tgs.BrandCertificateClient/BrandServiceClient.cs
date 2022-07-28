@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -82,5 +83,23 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		foreach (var vipLevel in vipLevels)
 			yield return vipLevel;
+	}
+
+	public async ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/payment/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		if (response.StatusCode == HttpStatusCode.NoContent)
+			return null;
+
+		var settings = await response.Content
+			.ReadFromJsonAsync<BrandPaymentSettings>(_SerializerOptions, cancellationToken)
+			.ConfigureAwait(false);
+
+		return settings;
 	}
 }

@@ -9,4 +9,6 @@ public interface IBrandServiceClient
 	ValueTask<BrandStatus> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<VipLevelInfo> GetVipLevelInfosAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
 }
