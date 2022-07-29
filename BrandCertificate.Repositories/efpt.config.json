@@ -18,7 +18,7 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "dbo.brands",
+         "Name": "dbo.licensees",
          "ObjectType": 0
       },
       {
@@ -26,11 +26,19 @@
          "ObjectType": 0
       },
       {
+         "Name": "dbo.brands",
+         "ObjectType": 0
+      },
+      {
          "Name": "dbo.vip_levels",
+         "ObjectType": 0
+      },
+      {
+         "Name": "dbo.brand_maintenance",
          "ObjectType": 0
       }
    ],
-   "UiHint": "tgs-local",
+   "UiHint": "LocalDB",
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": true,

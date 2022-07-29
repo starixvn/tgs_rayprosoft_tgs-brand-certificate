@@ -77,4 +77,100 @@ internal class TgsRepository : ITgsRepository
 			.Where(vip => vip.BrandId == brandId)
 			.Select(vip => new VipLevel(vip.Id, vip.Level))
 			.ToAsyncEnumerable();
+
+	public IAsyncEnumerable<BrandMaintenanceInfo> QueryBrandMaintenanceInfosAsync(string? brandCode, CancellationToken cancellationToken = default)
+	{
+		var query = from b in _dbContext.Brands.AsQueryable()
+					join bm in _dbContext.BrandMaintenances on b.Id equals bm.BrandId into temp
+					from bm in temp.DefaultIfEmpty()
+					select new
+					{
+						b.Name,
+						b.Code,
+						LicenseeName = b.Licensee.Name,
+						BrandId = b.Id,
+						BrandStatus = b.Status,
+						bm.BeginTime,
+						bm.EndTime,
+						bm.Id
+					};
+		if (!string.IsNullOrWhiteSpace(brandCode))
+			query = query.Where(bmj => bmj.Code == brandCode);
+
+		return query.Select(bmj => new BrandMaintenanceInfo
+		{
+			BrandName = bmj.Name,
+			BrandCode = bmj.Code,
+			LicenseeName = bmj.LicenseeName,
+			BrandId = bmj.BrandId,
+			BrandStatus = (BrandStatus)bmj.BrandStatus,
+			BeginTime = bmj.BeginTime,
+			EndTime = bmj.EndTime,
+			BrandMaintenanceId = bmj.Id
+		}).ToAsyncEnumerable();
+	}
+
+	public async ValueTask BatchUpdateBrandMaintenanceTimeAsync(Guid[] brandIds, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
+	{
+		var brandMaintenances = (from brandId in brandIds
+								 join bm in _dbContext.BrandMaintenances.AsQueryable() on brandId equals bm.BrandId into temp
+								 from bm in temp.DefaultIfEmpty()
+								 where brandIds.Contains(brandId)
+								 select new
+								 {
+									 BrandMaintenance = bm,
+									 BrandId = brandId
+								 }).ToArray();
+
+		var updates = new List<BrandMaintenance>();
+		var adds = new List<BrandMaintenance>();
+		foreach (var item in brandMaintenances)
+		{
+			if (item.BrandMaintenance != null)
+			{
+				item.BrandMaintenance.BeginTime = beginTime;
+				item.BrandMaintenance.EndTime = endTime;
+				updates.Add(item.BrandMaintenance);
+			}
+			else
+			{
+				adds.Add(new BrandMaintenance
+				{
+					BeginTime = beginTime,
+					EndTime = endTime,
+					BrandId = item.BrandId
+				});
+			}
+		}
+
+		_dbContext.BrandMaintenances.UpdateRange(updates);
+
+		_dbContext.BrandMaintenances.AddRange(adds);
+
+		_ = await _dbContext
+		   .SaveChangesAsync(cancellationToken)
+		   .ConfigureAwait(false);
+	}
+
+	public async ValueTask<BrandMaintenanceModel> GetBrandMaintenanceInfoByIdAsync(Guid brandMaintenanceId, CancellationToken cancellationToken = default)
+	{
+		var brandMaintenance = await _dbContext.BrandMaintenances
+			.FirstAsync(bm => bm.Id == brandMaintenanceId, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		return new BrandMaintenanceModel(brandMaintenance.Content);
+	}
+
+	public async ValueTask UpdateBrandMaintenanceInfoAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default)
+	{
+		var brandMaintenance = await _dbContext.BrandMaintenances
+			.FirstAsync(bm => bm.Id == brandMaintenanceId, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		brandMaintenance.Content = Content;
+
+		_ = await _dbContext
+			.SaveChangesAsync(cancellationToken)
+			.ConfigureAwait(false);
+	}	
 }
