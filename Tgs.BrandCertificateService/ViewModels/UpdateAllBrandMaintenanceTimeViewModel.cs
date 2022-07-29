@@ -2,11 +2,8 @@
 
 namespace Tgs.BrandCertificateService.ViewModels
 {
-	public class BatchUpdateBrandMaintenanceViewModel
+	public class UpdateAllBrandMaintenanceTimeViewModel
 	{
-		[JsonPropertyName("brandids")]
-		public Guid[] BrandIds { get; set; } = default!;
-
 		[JsonPropertyName("begintime")]
 		public string BeginTime { get; set; } = default!;
 

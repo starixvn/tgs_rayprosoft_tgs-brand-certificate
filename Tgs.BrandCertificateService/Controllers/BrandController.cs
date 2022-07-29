@@ -129,11 +129,11 @@ public class BrandController : ControllerBase
 	///				"endtime": "10:30:00"
 	///			}
 	/// </remarks>
-	[HttpPut("maintenance/batchupdatetime")]
-	public ValueTask BatchUpdateBrandMaintenanceTimeAsync(
-		[FromServices] ICommandService<BatchUpdateBrandMaintenanceCommand> commandService,
-		[FromBody] BatchUpdateBrandMaintenanceViewModel request)
-		=> commandService.ExecuteAsync(new BatchUpdateBrandMaintenanceCommand(request.BrandIds, TimeOnly.Parse(request.BeginTime), TimeOnly.Parse(request.EndTime)));
+	[HttpPut("maintenance/updatealltime")]
+	public ValueTask UpdateAllBrandMaintenanceTimeAsync(
+		[FromServices] ICommandService<UpdateAllBrandMaintenanceTimeCommand> commandService,
+		[FromBody] UpdateAllBrandMaintenanceTimeViewModel request)
+		=> commandService.ExecuteAsync(new UpdateAllBrandMaintenanceTimeCommand(TimeOnly.Parse(request.BeginTime), TimeOnly.Parse(request.EndTime)));
 
 	[HttpGet("maintenance/{id}", Name = "GetBrandMaintenanceInfoById")]
 	public async ValueTask<BrandMaintenanceResult> GetBrandMaintenanceInfoByIdAsync(
@@ -147,14 +147,24 @@ public class BrandController : ControllerBase
 		return new BrandMaintenanceResult(info.Content);
 	}
 
-	[HttpPut("maintenance/{id}")]
-	public ValueTask UpdateBrandMaintenanceInfoAsync(
-		[FromServices] ICommandService<UpdateBrandMaintenanceCommand> commandService,
-		[FromBody] UpdateBrandMaintenanceViewModel request,
+	[HttpPut("maintenance/content/{id}")]
+	public ValueTask UpdateBrandMaintenanceContentAsync(
+		[FromServices] ICommandService<UpdateBrandMaintenanceContentCommand> commandService,
+		[FromBody] UpdateBrandMaintenanceContentViewModel request,
 		Guid id)
-		=> commandService.ExecuteAsync(new UpdateBrandMaintenanceCommand(
+		=> commandService.ExecuteAsync(new UpdateBrandMaintenanceContentCommand(
 			BrandMaintenanceId: id,
 			Content: request.Content));
+
+	[HttpPut("maintenance/time/{brandId}")]
+	public ValueTask UpdateBrandMaintenanceTimeAsync(
+		[FromServices] ICommandService<UpdateBrandMaintenanceTimeCommand> commandService,
+		[FromBody] UpdateBrandMaintenanceTimeViewModel request,
+		Guid brandId)
+		=> commandService.ExecuteAsync(new UpdateBrandMaintenanceTimeCommand(
+			brandId,
+			TimeOnly.Parse(request.BeginTime),
+			TimeOnly.Parse(request.EndTime)));
 
 	[HttpGet("payment/{brandId}", Name = "GetBrandPaymentSettings")]
 	public async Task<BrandPaymentSettingsViewModel?> GetBrandPaymentSettingsAsync(

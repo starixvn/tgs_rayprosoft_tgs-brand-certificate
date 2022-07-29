@@ -2,7 +2,7 @@
 
 namespace Tgs.BrandCertificateService.ViewModels
 {
-	public record UpdateBrandMaintenanceViewModel
+	public record UpdateBrandMaintenanceContentViewModel
 	{
 		[JsonPropertyName("content")]
 		public string Content { get; set; } = default!;

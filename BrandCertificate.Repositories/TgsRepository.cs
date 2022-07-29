@@ -110,16 +110,15 @@ internal class TgsRepository : ITgsRepository
 		}).ToAsyncEnumerable();
 	}
 
-	public async ValueTask BatchUpdateBrandMaintenanceTimeAsync(Guid[] brandIds, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
+	public async ValueTask UpdateAllBrandMaintenanceTimeAsync(TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
 	{
-		var brandMaintenances = (from brandId in brandIds
-								 join bm in _dbContext.BrandMaintenances.AsQueryable() on brandId equals bm.BrandId into temp
+		var brandMaintenances = (from brand in _dbContext.Brands.AsQueryable()
+								 join bm in _dbContext.BrandMaintenances.AsQueryable() on brand.Id equals bm.BrandId into temp
 								 from bm in temp.DefaultIfEmpty()
-								 where brandIds.Contains(brandId)
 								 select new
 								 {
 									 BrandMaintenance = bm,
-									 BrandId = brandId
+									 BrandId = brand.Id
 								 }).ToArray();
 
 		var updates = new List<BrandMaintenance>();
@@ -161,13 +160,15 @@ internal class TgsRepository : ITgsRepository
 		return new BrandMaintenanceModel(brandMaintenance.Content);
 	}
 
-	public async ValueTask UpdateBrandMaintenanceInfoAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default)
+	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default)
 	{
 		var brandMaintenance = await _dbContext.BrandMaintenances
 			.FirstAsync(bm => bm.Id == brandMaintenanceId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
 		brandMaintenance.Content = Content;
+
+		_ = _dbContext.BrandMaintenances.Update(brandMaintenance);
 
 		_ = await _dbContext
 			.SaveChangesAsync(cancellationToken)
@@ -180,4 +181,32 @@ internal class TgsRepository : ITgsRepository
 			.Select(brand => new BrandPaymentSettings(brand.DepositPaymentLockEnabled))
 			.FirstOrDefaultAsync(cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
+
+	public async ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
+	{
+		var brandMaintenance = await _dbContext.BrandMaintenances
+			.FirstOrDefaultAsync(bm => bm.BrandId == brandId, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		if (brandMaintenance != null)
+		{
+			brandMaintenance.BeginTime = beginTime;
+			brandMaintenance.EndTime = endTime;
+			_ = _dbContext.BrandMaintenances.Update(brandMaintenance);
+		}
+		else
+		{
+			var addBrandMaintenance = new BrandMaintenance
+			{
+				BrandId = brandId,
+				BeginTime = beginTime,
+				EndTime = endTime
+			};
+			_ = _dbContext.BrandMaintenances.Add(addBrandMaintenance);
+		}
+
+		_ = await _dbContext
+			.SaveChangesAsync(cancellationToken)
+			.ConfigureAwait(false);
+	}
 }

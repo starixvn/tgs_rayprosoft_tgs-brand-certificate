@@ -127,15 +127,13 @@ internal class BrandServiceClient : IBrandServiceClient
 		return JsonSerializer.Deserialize<BrandMaintenanceInfos>(json, _SerializerOptions)!;
 	}
 
-	public async ValueTask BatchUpdateBrandMaintenanceTimeAsync(
-		Guid[] brandIds,
+	public async ValueTask UpdateAllBrandMaintenanceTimeAsync(
 		TimeOnly beginTime,
 		TimeOnly endTime,
 		CancellationToken cancellationToken = default)
 	{
 		var dict = new Dictionary<string, object>
 		{
-			{ "brandids", brandIds },
 			{ "begintime",beginTime.ToString("HH:mm:ss")},
 			{ "endtime", endTime.ToString("HH:mm:ss") }
 		};
@@ -147,7 +145,7 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		var response = await _httpClient
 			.PutAsync(
-			   "/brand/maintenance/batchupdatetime",
+			   "/brand/maintenance/updatealltime",
 				requestContent,
 				cancellationToken)
 			.ConfigureAwait(false);
@@ -172,7 +170,7 @@ internal class BrandServiceClient : IBrandServiceClient
 		return JsonSerializer.Deserialize<BrandMaintenanceResult>(json, _SerializerOptions)!;
 	}
 
-	public async ValueTask UpdateBrandMaintenanceInfoAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default)
+	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default)
 	{
 		var dict = new Dictionary<string, object>
 		{
@@ -186,7 +184,7 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		var response = await _httpClient
 			.PutAsync(
-			   $"/brand/maintenance/{brandMaintenanceId}",
+			   $"/brand/maintenance/content/{brandMaintenanceId}",
 				requestContent,
 				cancellationToken)
 			.ConfigureAwait(false);
@@ -210,5 +208,28 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ConfigureAwait(false);
 
 		return settings;
+	}
+
+	public async ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
+	{
+		var dict = new Dictionary<string, object>
+		{
+			{ "begintime", beginTime.ToString("HH:mm:ss") },
+			{ "endTime", endTime.ToString("HH:mm:ss") }
+		};
+
+		var requestContent = new StringContent(
+			JsonSerializer.Serialize(dict, _SerializerOptions));
+
+		requestContent.Headers.ContentType = MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json);
+
+		var response = await _httpClient
+			.PutAsync(
+			   $"/brand/maintenance/time/{brandId}",
+				requestContent,
+				cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
 	}
 }
