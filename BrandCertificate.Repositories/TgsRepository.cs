@@ -172,5 +172,12 @@ internal class TgsRepository : ITgsRepository
 		_ = await _dbContext
 			.SaveChangesAsync(cancellationToken)
 			.ConfigureAwait(false);
-	}	
+	}
+
+	public async ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> await _dbContext.Brands
+			.Where(brand => brand.Id == brandId)
+			.Select(brand => new BrandPaymentSettings(brand.DepositPaymentLockEnabled))
+			.FirstOrDefaultAsync(cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
 }

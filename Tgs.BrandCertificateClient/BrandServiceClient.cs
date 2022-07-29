@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Runtime.CompilerServices;
@@ -191,5 +192,23 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ConfigureAwait(false);
 
 		_ = response.EnsureSuccessStatusCode();
+	}
+
+	public async ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/payment/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		if (response.StatusCode == HttpStatusCode.NoContent)
+			return null;
+
+		var settings = await response.Content
+			.ReadFromJsonAsync<BrandPaymentSettings>(_SerializerOptions, cancellationToken)
+			.ConfigureAwait(false);
+
+		return settings;
 	}
 }
