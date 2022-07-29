@@ -12,6 +12,6 @@ namespace Tgs.BrandCertificate.ApplicationServices
 		}
 
 		public ValueTask<BrandMaintenanceModel> GetAsync(GetBrandMaintenanceInfoQuery query, CancellationToken cancellationToken = default)
-			=> _tgsRepository.GetBrandMaintenanceInfoByIdAsync(query.Id, cancellationToken);
+			=> _tgsRepository.GetBrandMaintenanceInfoByIdAsync(query.BrandMaintenanceId, cancellationToken);
 	}
 }
