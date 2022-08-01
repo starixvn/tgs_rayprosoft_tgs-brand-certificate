@@ -285,17 +285,22 @@ public class BrandTests
 				Name = "GameProvider Integration"
 			},
 			BeginTime = TimeOnly.Parse("09:00:00"),
-			EndTime = TimeOnly.Parse("10:30:00")
+			EndTime = TimeOnly.Parse("10:00:00")
 		});
 
 		_ = await dbContext.SaveChangesAsync();
 
-		var beginTime = new TimeOnly(9, 0, 0);
+		var beginTime = new TimeOnly(9, 30, 0);
 		var endTime = new TimeOnly(10, 30, 0);
 
 		await sut.UpdateAllBrandMaintenanceTimeAsync(
 			beginTime,
 			endTime);
+
+		var bm = dbContext.BrandMaintenances.Where(bm => bm.BrandId == brandId).First();
+
+		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
+		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
 	}
 
 	[Test]
@@ -382,7 +387,8 @@ public class BrandTests
 				Name = "GameProvider Integration"
 			},
 			BeginTime = TimeOnly.Parse("09:00:00"),
-			EndTime = TimeOnly.Parse("10:30:00")
+			EndTime = TimeOnly.Parse("10:30:00"),
+			Content = "old content"
 		});
 
 		_ = await dbContext.SaveChangesAsync();
@@ -390,6 +396,10 @@ public class BrandTests
 		await sut.UpdateBrandMaintenanceContentAsync(
 			brandMaintenanceId,
 			"This is new content");
+
+		var bm = dbContext.BrandMaintenances.Where(bm => bm.Id == brandMaintenanceId).First();
+
+		Assert.AreEqual("This is new content", bm.Content);
 	}
 
 	[Test]
@@ -427,7 +437,7 @@ public class BrandTests
 				Name = "GameProvider Integration"
 			},
 			BeginTime = TimeOnly.Parse("09:00:00"),
-			EndTime = TimeOnly.Parse("10:30:00")
+			EndTime = TimeOnly.Parse("10:00:00")
 		});
 
 		_ = await dbContext.SaveChangesAsync();
@@ -436,5 +446,10 @@ public class BrandTests
 			brandId,
 			new TimeOnly(9, 30, 0),
 			new TimeOnly(10, 30, 0));
+
+		var bm = dbContext.BrandMaintenances.Where(bm => bm.BrandId == brandId).First();
+
+		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
+		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
 	}
 }
