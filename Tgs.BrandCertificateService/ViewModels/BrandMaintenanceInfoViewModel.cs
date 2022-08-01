@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Tgs.BrandCertificate;
+﻿using Tgs.BrandCertificate;
 
 namespace Tgs.BrandCertificateService.ViewModels
 {
@@ -13,8 +12,6 @@ namespace Tgs.BrandCertificateService.ViewModels
 		public TimeOnly? BeginTime { get; set; }
 
 		public TimeOnly? EndTime { get; set; }
-
-		[JsonPropertyName("Id")]
 		public Guid? BrandMaintenanceId { get; set; }
 
 		public BrandStatus BrandStatus { get; set; }
