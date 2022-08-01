@@ -67,4 +67,86 @@ public class BrandTests
         _ = fakeTgsRepository.Received(1)
             .GetBrandPaymentSettingsAsync(Arg.Is(query.BrandId));
     }
+
+    [Test]
+    public async Task Get_Brand_Maintenance_Infos()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandMaintenanceInfosQueryService(fakeTgsRepository);
+
+        var query = new GetBrandMaintenanceInfosQuery("");
+
+        _ = await sut.QueryAsync(query).ToArrayAsync();
+
+        _ = fakeTgsRepository.Received(1)
+            .QueryBrandMaintenanceInfosAsync(Arg.Is(query.BrandCode));
+    }
+
+    [Test]
+    public async Task Update_All_Brand_Maintenance_Time()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new UpdateAllBrandMaintenanceTimeCommandService(fakeTgsRepository);
+
+        var beginTime = TimeOnly.Parse("09:00:00");
+        var endTime = TimeOnly.Parse("10:30:00");
+
+        var command = new UpdateAllBrandMaintenanceTimeCommand(beginTime, endTime);
+        await sut.ExecuteAsync(command);
+
+        _ = fakeTgsRepository.Received(1)
+            .UpdateAllBrandMaintenanceTimeAsync(Arg.Is(beginTime), Arg.Is(endTime));
+    }
+
+    [Test]
+    public async Task Get_Brand_Maintenance_Info()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandMaintenanceInfoQueryService(fakeTgsRepository);
+
+        var brandMaintenanceId = Guid.NewGuid();
+        var query = new GetBrandMaintenanceInfoQuery(brandMaintenanceId);
+        _ = await sut.GetAsync(query);
+
+        _ = fakeTgsRepository.Received(1)
+            .GetBrandMaintenanceInfoByIdAsync(Arg.Is(brandMaintenanceId));
+    }
+
+    [Test]
+    public async Task Update_Brand_Maintenance_Content()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var sut = new UpdateBrandMaintenanceContentCommandService(fakeTgsRepository);
+
+        var brandMaintenanceId = Guid.NewGuid();
+        var content = "This is new Content";
+
+        var command = new UpdateBrandMaintenanceContentCommand(brandMaintenanceId, content);
+
+        await sut.ExecuteAsync(command);
+
+        _ = fakeTgsRepository.Received(1)
+            .UpdateBrandMaintenanceContentAsync(Arg.Is(brandMaintenanceId), Arg.Is(content));
+    }
+
+    [Test]
+    public async Task Update_Brand_Maintenance_Time()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+        var sut = new UpdateBrandMaintenanceTimeCommandService(fakeTgsRepository);
+
+        var brandId = Guid.NewGuid();
+        var beginTime = new TimeOnly(9, 0, 0);
+        var endTime = new TimeOnly(10, 0, 0);
+
+        var command = new UpdateBrandMaintenanceTimeCommand(brandId, beginTime, endTime);
+
+        await sut.ExecuteAsync(command);
+
+        _ = fakeTgsRepository.Received(1)
+            .UpdateBrandMaintenanceTimeAsync(Arg.Is(brandId), Arg.Is(beginTime), Arg.Is(endTime));
+    }
 }

@@ -197,4 +197,254 @@ public class BrandTests
 
 		Assert.IsTrue(actual?.PaymentDepositLockEnabled);
 	}
+
+	[Test]
+	public async Task Get_Brand_Maintenance_Infos_By_Brand_Code()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.Parse(input: "4e86719f-243f-46f6-b010-5c758b7285af");
+
+		_ = await dbContext.BrandMaintenances.AddAsync(new BrandMaintenance
+		{
+			Id = Guid.NewGuid(),
+			BrandId = brandId,
+			Brand = new Brand
+			{
+				Id = brandId,
+				Code = "GPI",
+				Status = 0,
+				ApiKey = "apiKey",
+				ClientId = "GPI",
+				Licensee = new Licensee
+				{
+					Code = "TGS",
+					Name = "Turnkey Game System",
+					CreatedByUsername = "",
+					UpdatedByUsername = ""
+				},
+				CreatedByUsername = "",
+				UpdatedByUsername = "",
+				SecretKey = "secretKey",
+				Name = "GameProvider Integration"
+			},
+			BeginTime = TimeOnly.Parse("09:00:00"),
+			EndTime = TimeOnly.Parse("10:30:00")
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandMaintenanceInfosAsync(brandCode: "").ToArrayAsync();
+
+		Assert.AreEqual(1, actual.Length);		
+	}
+
+	[Test]
+	public async Task Update_All_Brand_Maintenance_Time()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.Parse(input: "4e86719f-243f-46f6-b010-5c758b7285af");
+		_ = await dbContext.BrandMaintenances.AddAsync(new BrandMaintenance
+		{
+			Id = Guid.NewGuid(),
+			BrandId = brandId,
+			Brand = new Brand
+			{
+				Id = brandId,
+				Code = "GPI",
+				ApiKey = "apiKey",
+				ClientId = "GPI",
+				Licensee = new Licensee
+				{
+					Code = "TGS",
+					Name = "Turnkey Game System",
+					CreatedByUsername = "",
+					UpdatedByUsername = ""
+				},
+				CreatedByUsername = "",
+				UpdatedByUsername = "",
+				SecretKey = "secretKey",
+				Name = "GameProvider Integration"
+			},
+			BeginTime = TimeOnly.Parse("09:00:00"),
+			EndTime = TimeOnly.Parse("10:00:00")
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var beginTime = new TimeOnly(9, 30, 0);
+		var endTime = new TimeOnly(10, 30, 0);
+
+		await sut.UpdateAllBrandMaintenanceTimeAsync(
+			beginTime,
+			endTime);
+
+		var bm = dbContext.BrandMaintenances.Where(bm => bm.BrandId == brandId).First();
+
+		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
+		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
+	}
+
+	[Test]
+	public async Task Get_Brand_Maintenance_Info_By_Brand_Maintenance_Id()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandMaintenanceId = Guid.NewGuid();
+		var brandId = Guid.Parse(input: "4e86719f-243f-46f6-b010-5c758b7285af");
+
+		_ = await dbContext.BrandMaintenances.AddAsync(new BrandMaintenance
+		{
+			Id = brandMaintenanceId,
+			BrandId = brandId,
+			Brand = new Brand
+			{
+				Id = brandId,
+				Code = "GPI",
+				ApiKey = "apiKey",
+				ClientId = "GPI",
+				Licensee = new Licensee
+				{
+					Code = "TGS",
+					Name = "Turnkey Game System",
+					CreatedByUsername = "",
+					UpdatedByUsername = ""
+				},
+				CreatedByUsername = "",
+				UpdatedByUsername = "",
+				SecretKey = "secretKey",
+				Name = "GameProvider Integration"
+			},
+			BeginTime = TimeOnly.Parse("09:00:00"),
+			EndTime = TimeOnly.Parse("10:30:00"),
+			Content = "Content"
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandMaintenanceInfoByIdAsync(brandMaintenanceId);
+
+		Assert.AreEqual("Content", actual.Content);
+	}
+
+	[Test]
+	public async Task Update_Brand_Maintenance_Content()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandMaintenanceId = Guid.NewGuid();
+		var brandId = Guid.Parse(input: "4e86719f-243f-46f6-b010-5c758b7285af");
+		_ = await dbContext.BrandMaintenances.AddAsync(new BrandMaintenance
+		{
+			Id = brandMaintenanceId,
+			BrandId = brandId,
+			Brand = new Brand
+			{
+				Id = brandId,
+				Code = "GPI",
+				ApiKey = "apiKey",
+				ClientId = "GPI",
+				Licensee = new Licensee
+				{
+					Code = "TGS",
+					Name = "Turnkey Game System",
+					CreatedByUsername = "",
+					UpdatedByUsername = ""
+				},
+				CreatedByUsername = "",
+				UpdatedByUsername = "",
+				SecretKey = "secretKey",
+				Name = "GameProvider Integration"
+			},
+			BeginTime = TimeOnly.Parse("09:00:00"),
+			EndTime = TimeOnly.Parse("10:30:00"),
+			Content = "old content"
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		await sut.UpdateBrandMaintenanceContentAsync(
+			brandMaintenanceId,
+			"This is new content");
+
+		var bm = dbContext.BrandMaintenances.Where(bm => bm.Id == brandMaintenanceId).First();
+
+		Assert.AreEqual("This is new content", bm.Content);
+	}
+
+	[Test]
+	public async Task Update_Brand_Maintenance_Time()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.Parse(input: "4e86719f-243f-46f6-b010-5c758b7285af");
+		_ = await dbContext.BrandMaintenances.AddAsync(new BrandMaintenance
+		{
+			Id = Guid.NewGuid(),
+			BrandId = brandId,
+			Brand = new Brand
+			{
+				Id = brandId,
+				Code = "GPI",
+				ApiKey = "apiKey",
+				ClientId = "GPI",
+				Licensee = new Licensee
+				{
+					Code = "TGS",
+					Name = "Turnkey Game System",
+					CreatedByUsername = "",
+					UpdatedByUsername = ""
+				},
+				CreatedByUsername = "",
+				UpdatedByUsername = "",
+				SecretKey = "secretKey",
+				Name = "GameProvider Integration"
+			},
+			BeginTime = TimeOnly.Parse("09:00:00"),
+			EndTime = TimeOnly.Parse("10:00:00")
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		await sut.UpdateBrandMaintenanceTimeAsync(
+			brandId,
+			new TimeOnly(9, 30, 0),
+			new TimeOnly(10, 30, 0));
+
+		var bm = dbContext.BrandMaintenances.Where(bm => bm.BrandId == brandId).First();
+
+		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
+		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
+	}
 }

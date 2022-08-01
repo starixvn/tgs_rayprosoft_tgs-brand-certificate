@@ -17,6 +17,8 @@ namespace Tgs.BrandCertificate.Repositories.Entities
 
         public virtual DbSet<Brand> Brands { get; set; }
         public virtual DbSet<BrandCurrency> BrandCurrencies { get; set; }
+        public virtual DbSet<BrandMaintenance> BrandMaintenances { get; set; }
+        public virtual DbSet<Licensee> Licensees { get; set; }
         public virtual DbSet<VipLevelRow> VipLevelRows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,6 +28,8 @@ namespace Tgs.BrandCertificate.Repositories.Entities
 
             modelBuilder.ApplyConfiguration(new Configurations.BrandConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.BrandCurrencyConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.BrandMaintenanceConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.LicenseeConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.VipLevelRowConfiguration());
             OnModelCreatingPartial(modelBuilder);
         }

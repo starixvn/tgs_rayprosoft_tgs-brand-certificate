@@ -159,6 +159,11 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
 
             entity.Property(e => e.WithdrawHandlingFeeRateTenPercentile).HasColumnName("withdraw_handling_fee_rate_ten_percentile");
 
+            entity.HasOne(d => d.Licensee)
+                .WithMany(p => p.Brands)
+                .HasForeignKey(d => d.LicenseeId)
+                .HasConstraintName("fk_brands_licensees_licensee_id");
+
             OnConfigurePartial(entity);
         }
 
