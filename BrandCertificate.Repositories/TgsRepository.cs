@@ -135,6 +135,7 @@ internal class TgsRepository : ITgsRepository
 			{
 				adds.Add(new BrandMaintenance
 				{
+					Id = Guid.NewGuid(),
 					BeginTime = beginTime,
 					EndTime = endTime,
 					BrandId = item.BrandId
