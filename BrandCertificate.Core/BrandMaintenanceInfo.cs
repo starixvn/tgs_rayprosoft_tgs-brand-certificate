@@ -9,13 +9,9 @@ namespace Tgs.BrandCertificate
 		public string LicenseeName { get; set; } = default!;
 		public Guid BrandId { get; set; }
 
-		[JsonConverter(typeof(TimeOnlyConverter))]
 		public TimeOnly? BeginTime { get; set; }
 
-		[JsonConverter(typeof(TimeOnlyConverter))]
-		public TimeOnly? EndTime { get; set; }
-
-		[JsonPropertyName("Id")]
+		public TimeOnly? EndTime { get; set; }		
 		public Guid? BrandMaintenanceId { get; set; }
 
 		public BrandStatus BrandStatus { get; set; }

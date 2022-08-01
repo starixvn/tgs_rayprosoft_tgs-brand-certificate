@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
+using DateOnlyTimeOnly.AspNet.Converters;
 
 namespace Tgs.BrandCertificate.Clients;
 
@@ -15,7 +16,10 @@ internal class BrandServiceClient : IBrandServiceClient
 	{
 		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 		WriteIndented = true,
-		Converters = { new JsonStringEnumConverter() }
+		Converters = { 
+			new JsonStringEnumConverter(),
+			new TimeOnlyJsonConverter()
+		}
 	};
 
 	private readonly HttpClient _httpClient;
@@ -88,31 +92,14 @@ internal class BrandServiceClient : IBrandServiceClient
 			yield return vipLevel;
 	}
 
-	public async ValueTask<BrandMaintenanceInfos> GetBrandMaintenanceInfosAsync(
+	public async IAsyncEnumerable<BrandMaintenanceInfo> GetBrandMaintenanceInfosAsync(
 		string brandCode,
-		Paging paging,
-		CancellationToken cancellationToken = default)
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
 		var queryStrings = HttpUtility.ParseQueryString(string.Empty);
 
 		if (!string.IsNullOrWhiteSpace(brandCode))
 			queryStrings.Add("brandcode", brandCode);
-
-		if (paging.ShowAll == true)
-			queryStrings.Add("all", "true");
-		else
-		{
-			queryStrings.Add("page", paging.Page.ToString());
-			queryStrings.Add("rows", paging.Rows.ToString());
-		}
-
-		if (!string.IsNullOrWhiteSpace(paging.SortBy))
-		{
-			queryStrings.Add("sort", paging.SortBy);
-
-			if (paging.IsDesc == true)
-				queryStrings.Add("desc", "true");
-		}
 
 		var response = await _httpClient
 			.GetAsync($"/brand/maintenance?{queryStrings}", cancellationToken)
@@ -124,7 +111,10 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ReadAsStringAsync(cancellationToken)
 			.ConfigureAwait(false);
 
-		return JsonSerializer.Deserialize<BrandMaintenanceInfos>(json, _SerializerOptions)!;
+		var brandInfos = JsonSerializer.Deserialize<BrandMaintenanceInfo[]>(json, _SerializerOptions)!;
+
+		foreach (var bankInfo in brandInfos!)
+			yield return bankInfo;
 	}
 
 	public async ValueTask UpdateAllBrandMaintenanceTimeAsync(
@@ -134,8 +124,8 @@ internal class BrandServiceClient : IBrandServiceClient
 	{
 		var dict = new Dictionary<string, object>
 		{
-			{ "begintime",beginTime.ToString("HH:mm:ss")},
-			{ "endtime", endTime.ToString("HH:mm:ss") }
+			{ "begintime",beginTime},
+			{ "endtime", endTime }
 		};
 
 		var requestContent = new StringContent(
@@ -214,8 +204,8 @@ internal class BrandServiceClient : IBrandServiceClient
 	{
 		var dict = new Dictionary<string, object>
 		{
-			{ "begintime", beginTime.ToString("HH:mm:ss") },
-			{ "endTime", endTime.ToString("HH:mm:ss") }
+			{ "begintime", beginTime },
+			{ "endTime", endTime }
 		};
 
 		var requestContent = new StringContent(

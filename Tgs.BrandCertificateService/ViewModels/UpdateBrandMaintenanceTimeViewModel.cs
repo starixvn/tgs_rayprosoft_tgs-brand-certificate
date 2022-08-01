@@ -5,9 +5,9 @@ namespace Tgs.BrandCertificateService.ViewModels
 	public record UpdateBrandMaintenanceTimeViewModel
 	{
 		[JsonPropertyName("begintime")]
-		public string BeginTime { get; set; } = default!;
+		public TimeOnly BeginTime { get; set; }
 
 		[JsonPropertyName("endtime")]
-		public string EndTime { get; set; } = default!;
+		public TimeOnly EndTime { get; set; }
 	}
 }

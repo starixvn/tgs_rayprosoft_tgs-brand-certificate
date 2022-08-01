@@ -240,14 +240,9 @@ public class BrandTests
 
 		var sut = new BrandServiceClient(http);
 
-		var actual = await sut.GetBrandMaintenanceInfosAsync(
-			brandCode: "",
-			paging: new Paging { Page = 1, Rows = 30, ShowAll = false });
+		var actual = await sut.GetBrandMaintenanceInfosAsync(brandCode: "").ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Items.Length);
-		Assert.AreEqual(1, actual.TotalCount);
-		Assert.AreEqual(brandId, actual.Items[0].BrandId);
-		Assert.AreEqual(BrandStatus.Active, actual.Items[0].BrandStatus);
+		Assert.AreEqual(1, actual.Length);		
 	}
 
 	[Test]

@@ -9,7 +9,6 @@
 		public string? BeginTime { get; set; }
 		public string? EndTime { get; set; }
 		public Guid? Id { get; set; }
-
 		public BrandStatus BrandStatus { get; set; }
 	}
 }

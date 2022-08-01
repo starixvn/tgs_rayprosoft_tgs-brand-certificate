@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
-using TGS.Paging;
 
 namespace BrandCertificate.Core.UnitTests;
 
@@ -76,28 +75,9 @@ public class BrandTests
 
         var sut = new GetBrandMaintenanceInfosQueryService(fakeTgsRepository);
 
-        var query = new GetBrandMaintenanceInfosQuery(
-            "",
-            new Paging<BrandMaintenanceInfo> { Page = 1, RowCount = 30 });
+        var query = new GetBrandMaintenanceInfosQuery("");
 
         _ = await sut.QueryAsync(query).ToArrayAsync();
-
-        _ = fakeTgsRepository.Received(1)
-            .QueryBrandMaintenanceInfosAsync(Arg.Is(query.BrandCode));
-    }
-
-    [Test]
-    public async Task Count_Brand_Maintenance_Infos()
-    {
-        var fakeTgsRepository = Substitute.For<ITgsRepository>();
-
-        var sut = new GetBrandMaintenanceInfosQueryService(fakeTgsRepository);
-
-        var query = new GetBrandMaintenanceInfosQuery(
-            "",
-            new Paging<BrandMaintenanceInfo> { Page = 1, RowCount = 30 });
-
-        _ = await sut.GetAsync(query);
 
         _ = fakeTgsRepository.Received(1)
             .QueryBrandMaintenanceInfosAsync(Arg.Is(query.BrandCode));

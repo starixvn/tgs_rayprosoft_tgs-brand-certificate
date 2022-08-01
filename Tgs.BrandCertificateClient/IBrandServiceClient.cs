@@ -10,7 +10,7 @@ public interface IBrandServiceClient
 
 	IAsyncEnumerable<VipLevelInfo> GetVipLevelInfosAsync(Guid brandId, CancellationToken cancellationToken = default);
 
-	ValueTask<BrandMaintenanceInfos> GetBrandMaintenanceInfosAsync(string brandCode, Paging Paging, CancellationToken cancellationToken = default);
+	IAsyncEnumerable<BrandMaintenanceInfo> GetBrandMaintenanceInfosAsync(string brandCode, CancellationToken cancellationToken = default);
 
 	ValueTask UpdateAllBrandMaintenanceTimeAsync(TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default);
 

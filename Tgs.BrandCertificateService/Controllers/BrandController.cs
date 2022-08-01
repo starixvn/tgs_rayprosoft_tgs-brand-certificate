@@ -3,7 +3,6 @@ using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
 using Tgs.BrandCertificateService.ViewModels;
 using Tgs.ServiceUtility;
-using TGS.Paging;
 
 namespace Tgs.BrandCertificateService.Controllers;
 
@@ -78,38 +77,24 @@ public class BrandController : ControllerBase
 	/// <param name="paging">The paging.</param>
 	/// <returns></returns>
 	[HttpGet("maintenance")]
-	public async ValueTask<BrandMaintenanceViewModel> GetBrandMaintenanceInfosAsync(
+	public IAsyncEnumerable<BrandMaintenanceInfoViewModel> GetBrandMaintenanceInfosAsync(
 		[FromServices] IQueryService<GetBrandMaintenanceInfosQuery, BrandMaintenanceInfo> queryService,
-		[FromServices] IGetService<GetBrandMaintenanceInfosQuery, int> getService,
-		[FromQuery] GetBrandMaintenanceInfosViewModel request,
-		[FromQuery] PagingViewModel paging)
+		[FromQuery] GetBrandMaintenanceInfosViewModel request)
 	{
-		var sourcePaging = new Paging<BrandMaintenanceInfo>
-		{
-			Page = paging.Page,
-			RowCount = paging.Rows
-		};
+		var query = new GetBrandMaintenanceInfosQuery(request.BrandCode);
 
-		if (paging.ShowAll == true)
-		{
-			sourcePaging.Page = -1;
-			sourcePaging.RowCount = -1;
-		}
-
-		if (!string.IsNullOrWhiteSpace(paging.SortBy))
-			sourcePaging.SortByPropertyName(paging.SortBy, paging.IsDesc);
-
-		var query = new GetBrandMaintenanceInfosQuery(request.BrandCode, sourcePaging);
-
-		var items = await queryService.QueryAsync(query, HttpContext.RequestAborted).ToArrayAsync().ConfigureAwait(false);
-
-		var totalCount = await getService.GetAsync(query, HttpContext.RequestAborted).ConfigureAwait(false);
-
-		return new BrandMaintenanceViewModel
-		{
-			Items = items,
-			TotalCount = totalCount
-		};
+		return queryService.QueryAsync(query, HttpContext.RequestAborted)
+			.Select(info => new BrandMaintenanceInfoViewModel
+			{
+				BrandMaintenanceId = info.BrandMaintenanceId,
+				BrandId = info.BrandId,
+				BrandCode = info.BrandCode,
+				BeginTime = info.BeginTime,
+				EndTime = info.EndTime,
+				BrandStatus = info.BrandStatus,
+				BrandName = info.BrandName,
+				LicenseeName = info.LicenseeName
+			});
 	}
 
 	/// <summary>
@@ -133,7 +118,7 @@ public class BrandController : ControllerBase
 	public ValueTask UpdateAllBrandMaintenanceTimeAsync(
 		[FromServices] ICommandService<UpdateAllBrandMaintenanceTimeCommand> commandService,
 		[FromBody] UpdateAllBrandMaintenanceTimeViewModel request)
-		=> commandService.ExecuteAsync(new UpdateAllBrandMaintenanceTimeCommand(TimeOnly.Parse(request.BeginTime), TimeOnly.Parse(request.EndTime)));
+		=> commandService.ExecuteAsync(new UpdateAllBrandMaintenanceTimeCommand(request.BeginTime, request.EndTime));
 
 	[HttpGet("maintenance/{id}", Name = "GetBrandMaintenanceInfoById")]
 	public async ValueTask<BrandMaintenanceResult> GetBrandMaintenanceInfoByIdAsync(
@@ -163,8 +148,8 @@ public class BrandController : ControllerBase
 		Guid brandId)
 		=> commandService.ExecuteAsync(new UpdateBrandMaintenanceTimeCommand(
 			brandId,
-			TimeOnly.Parse(request.BeginTime),
-			TimeOnly.Parse(request.EndTime)));
+			request.BeginTime,
+			request.EndTime));
 
 	[HttpGet("payment/{brandId}", Name = "GetBrandPaymentSettings")]
 	public async Task<BrandPaymentSettingsViewModel?> GetBrandPaymentSettingsAsync(

@@ -12,6 +12,6 @@ namespace Tgs.BrandCertificate.ApplicationServices
 		}
 
 		public ValueTask ExecuteAsync(UpdateBrandMaintenanceTimeCommand command, CancellationToken cancellationToken = default)
-			=> _tgsRepository.UpdateBrandMaintenanceTimeAsync(command.BrandId, command.BeginTime, command.EndTime);
+			=> _tgsRepository.UpdateBrandMaintenanceTimeAsync(command.BrandId, command.BeginTime, command.EndTime, cancellationToken);
 	}
 }
