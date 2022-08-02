@@ -1,4 +1,5 @@
-﻿using Tgs.BrandCertificate;
+﻿using System.Text.Json.Serialization;
+using Tgs.BrandCertificate;
 
 namespace Tgs.BrandCertificateService.ViewModels
 {
@@ -9,8 +10,9 @@ namespace Tgs.BrandCertificateService.ViewModels
 		public string LicenseeName { get; set; } = default!;
 		public Guid BrandId { get; set; }
 
+		[JsonConverter(typeof(TimeOnlyConverter))]
 		public TimeOnly? BeginTime { get; set; }
-
+		[JsonConverter(typeof(TimeOnlyConverter))]
 		public TimeOnly? EndTime { get; set; }
 		public Guid? BrandMaintenanceId { get; set; }
 
