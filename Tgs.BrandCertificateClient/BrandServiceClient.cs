@@ -1,7 +1,12 @@
-﻿using System.Net.Http.Json;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Web;
+using DateOnlyTimeOnly.AspNet.Converters;
 
 namespace Tgs.BrandCertificate.Clients;
 
@@ -11,7 +16,10 @@ internal class BrandServiceClient : IBrandServiceClient
 	{
 		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 		WriteIndented = true,
-		Converters = { new JsonStringEnumConverter() }
+		Converters = { 
+			new JsonStringEnumConverter(),
+			new TimeOnlyJsonConverter()
+		}
 	};
 
 	private readonly HttpClient _httpClient;
@@ -82,5 +90,136 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		foreach (var vipLevel in vipLevels)
 			yield return vipLevel;
+	}
+
+	public async IAsyncEnumerable<BrandMaintenanceInfo> GetBrandMaintenanceInfosAsync(
+		string brandCode,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		var queryStrings = HttpUtility.ParseQueryString(string.Empty);
+
+		if (!string.IsNullOrWhiteSpace(brandCode))
+			queryStrings.Add("brandcode", brandCode);
+
+		var response = await _httpClient
+			.GetAsync($"/brand/maintenance?{queryStrings}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var json = await response.Content
+			.ReadAsStringAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+		var brandInfos = JsonSerializer.Deserialize<BrandMaintenanceInfo[]>(json, _SerializerOptions)!;
+
+		foreach (var bankInfo in brandInfos!)
+			yield return bankInfo;
+	}
+
+	public async ValueTask UpdateAllBrandMaintenanceTimeAsync(
+		TimeOnly beginTime,
+		TimeOnly endTime,
+		CancellationToken cancellationToken = default)
+	{
+		var dict = new Dictionary<string, object>
+		{
+			{ "begintime",beginTime},
+			{ "endtime", endTime }
+		};
+
+		var requestContent = new StringContent(
+			JsonSerializer.Serialize(dict, _SerializerOptions));
+
+		requestContent.Headers.ContentType = MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json);
+
+		var response = await _httpClient
+			.PutAsync(
+			   "/brand/maintenance/updatealltime",
+				requestContent,
+				cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
+
+	public async ValueTask<BrandMaintenanceResult> GetBrandMaintenanceInfoByIdAsync(
+		Guid brandMaintenanceId,
+		CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/maintenance/{brandMaintenanceId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var json = await response.Content
+			.ReadAsStringAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+		return JsonSerializer.Deserialize<BrandMaintenanceResult>(json, _SerializerOptions)!;
+	}
+
+	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default)
+	{
+		var dict = new Dictionary<string, object>
+		{
+			{ "content", Content }
+		};
+
+		var requestContent = new StringContent(
+			JsonSerializer.Serialize(dict, _SerializerOptions));
+
+		requestContent.Headers.ContentType = MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json);
+
+		var response = await _httpClient
+			.PutAsync(
+			   $"/brand/maintenance/content/{brandMaintenanceId}",
+				requestContent,
+				cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
+
+	public async ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/payment/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		if (response.StatusCode == HttpStatusCode.NoContent)
+			return null;
+
+		var settings = await response.Content
+			.ReadFromJsonAsync<BrandPaymentSettings>(_SerializerOptions, cancellationToken)
+			.ConfigureAwait(false);
+
+		return settings;
+	}
+
+	public async ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
+	{
+		var dict = new Dictionary<string, object>
+		{
+			{ "begintime", beginTime },
+			{ "endTime", endTime }
+		};
+
+		var requestContent = new StringContent(
+			JsonSerializer.Serialize(dict, _SerializerOptions));
+
+		requestContent.Headers.ContentType = MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json);
+
+		var response = await _httpClient
+			.PutAsync(
+			   $"/brand/maintenance/time/{brandId}",
+				requestContent,
+				cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
 	}
 }

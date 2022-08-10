@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Tgs.BrandCertificate.Clients</RootNamespace>
     <Nullable>enable</Nullable>
-    <Version>0.0.16-beta</Version>
+    <Version>0.0.19</Version>
     <Authors>Raypro</Authors>
     <PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-brand-certificate</PackageProjectUrl>
     <RepositoryUrl>https://gitlab.com/rayprosoft/tgs-brand-certificate.git</RepositoryUrl>
@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="DateOnlyTimeOnly.AspNet" Version="1.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
