@@ -161,7 +161,7 @@ internal class TgsRepository : ITgsRepository
 		return new BrandMaintenanceModel(brandMaintenance.Content);
 	}
 
-	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default)
+	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? Content, CancellationToken cancellationToken = default)
 	{
 		var brandMaintenance = await _dbContext.BrandMaintenances
 			.FirstAsync(bm => bm.Id == brandMaintenanceId, cancellationToken: cancellationToken)

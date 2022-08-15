@@ -16,7 +16,7 @@ public interface IBrandServiceClient
 
 	ValueTask<BrandMaintenanceResult> GetBrandMaintenanceInfoByIdAsync(Guid brandMaintenanceId, CancellationToken cancellationToken = default);
 
-	ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default);
+	ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? Content, CancellationToken cancellationToken = default);
 
 	ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default);
 

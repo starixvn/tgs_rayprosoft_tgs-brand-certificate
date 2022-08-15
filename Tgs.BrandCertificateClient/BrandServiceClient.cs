@@ -160,7 +160,7 @@ internal class BrandServiceClient : IBrandServiceClient
 		return JsonSerializer.Deserialize<BrandMaintenanceResult>(json, _SerializerOptions)!;
 	}
 
-	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string Content, CancellationToken cancellationToken = default)
+	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? Content, CancellationToken cancellationToken = default)
 	{
 		var dict = new Dictionary<string, object>
 		{
