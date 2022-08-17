@@ -52,10 +52,13 @@ namespace Tgs.BrandCertificate.Repositories.Entities
         public decimal AutoClearWageringRequirementBalance { get; set; }
         public decimal DepositHandlingFeeRateTenPercentile { get; set; }
         public decimal WithdrawHandlingFeeRateTenPercentile { get; set; }
-        public string PlayerRegisterFlowSettings { get; set; }
         public bool EnableEmailRegisterFlow { get; set; }
+        public string PlayerRegisterFlowSettings { get; set; }
         public bool EnableBankInfoRegisterFlow { get; set; }
+        public bool DepositPaymentLockEnabled { get; set; }
 
+        public virtual Licensee Licensee { get; set; }
+        public virtual BrandMaintenance BrandMaintenance { get; set; }
         public virtual ICollection<BrandCurrency> BrandCurrencies { get; set; }
         public virtual ICollection<VipLevelRow> VipLevelRows { get; set; }
     }

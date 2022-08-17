@@ -43,7 +43,14 @@ builder.Services
 
 builder.Services
 	.AddRouting(options => options.LowercaseUrls = true)
-	.AddControllers();
+	.AddControllers(options=> 
+	{
+		options.UseDateOnlyTimeOnlyStringConverters();
+	})
+	.AddJsonOptions(options => 
+	{
+		options.UseDateOnlyTimeOnlyStringConverters();
+	});
 
 builder.Services
 	.AddHealthChecks();
@@ -66,6 +73,7 @@ builder.Services
 			c.IncludeXmlComments(path);
 
 		c.ApplyWebApiToolkitSupport();
+		c.UseDateOnlyTimeOnlyStringConverters();
 	});
 
 builder.Services
