@@ -1,4 +1,6 @@
-﻿namespace Tgs.BrandCertificate;
+﻿using System.Text.Json;
+
+namespace Tgs.BrandCertificate;
 
 public interface ITgsRepository
 {
@@ -21,4 +23,6 @@ public interface ITgsRepository
 	ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default);
+
+	ValueTask UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument PlayerRegisterFlowSettings, CancellationToken cancellationToken = default);
 }

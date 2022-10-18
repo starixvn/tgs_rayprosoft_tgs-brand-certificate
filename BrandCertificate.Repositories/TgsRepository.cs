@@ -211,4 +211,19 @@ internal class TgsRepository : ITgsRepository
 			.SaveChangesAsync(cancellationToken)
 			.ConfigureAwait(false);
 	}
+
+	public async ValueTask UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument PlayerRegisterFlowSettings, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands
+			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		brand!.PlayerRegisterFlowSettings = JsonSerializer.Serialize(PlayerRegisterFlowSettings);
+
+		_ = _dbContext.Brands.Update(brand);
+
+		_ = await _dbContext
+			.SaveChangesAsync(cancellationToken)
+			.ConfigureAwait(false);
+	}
 }

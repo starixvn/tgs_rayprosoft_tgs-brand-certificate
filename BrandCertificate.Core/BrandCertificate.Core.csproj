@@ -8,6 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\brandcert.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.21.7" />
+    <PackageReference Include="Grpc.Tools" Version="2.50.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.2.32">
@@ -15,12 +24,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PagingUtility.AsyncEnumerable" Version="0.0.3" />
+    <PackageReference Include="PhoenixToolkits.Protobuf.ExtendTypes" Version="0.0.6" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.21.0" />
+    <PackageReference Include="Tgs.MessageQueue" Version="2.1.0" />
     <PackageReference Include="TGS.ServiceUtility" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BrandCertificate.Common\BrandCertificate.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\brandcert.proto" GrpcServices="None" />
   </ItemGroup>
 
 </Project>
