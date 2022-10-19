@@ -24,16 +24,16 @@ internal class UpdateBrandPlayerRegisterFlowSettingCommandService : ICommandServ
 			.UpdateBrandPlayerRegisterFlowSettingAsync(command.BrandId, command.PlayerRegisterFlowSettings, cancellationToken)
 			.ConfigureAwait(false);
 
-		if (isUpdateSuccess)
-		{
-			var request = new BrandFrontendInfoChangedEvent
-			{
-				BrandId = command.BrandId
-			};
+		if (!isUpdateSuccess)
+			return;
 
-			await _sender
-				.PublishAsync("tgs.brand.frontendinfo.changed", request.ToByteArray(), cancellationToken)
-				.ConfigureAwait(false);
-		}
+		var request = new BrandFrontendInfoChangedEvent
+		{
+			BrandId = command.BrandId
+		};
+
+		await _sender
+			.PublishAsync("tgs.brand.frontendinfo.changed", request.ToByteArray(), cancellationToken)
+			.ConfigureAwait(false);
 	}
 }
