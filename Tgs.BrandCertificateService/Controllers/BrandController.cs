@@ -169,4 +169,13 @@ public class BrandController : ControllerBase
 				PaymentDepositLockEnabled = result.PaymentDepositLockEnabled
 			};
 	}
+
+	[HttpPut("register/{brandId}", Name = "UpdateBrandPlayerRegisterFlowSetting")]
+	public ValueTask UpdateBrandPlayerRegisterFlowSettingAsync(
+		[FromServices] ICommandService<UpdateBrandPlayerRegisterFlowSettingCommand> commandService,		
+		[FromBody] UpdateBrandPlayerRegisterFlowSettingViewModel request,
+		Guid brandId)
+		=> commandService.ExecuteAsync(new UpdateBrandPlayerRegisterFlowSettingCommand(
+			brandId,
+			request.PlayerRegisterFlowSettings));
 }

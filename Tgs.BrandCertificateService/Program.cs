@@ -42,12 +42,26 @@ builder.Services
 	.AddBrandCertificateCache();
 
 builder.Services
+	.AddMessageQueue()
+	.AddNatsMessageQueue(config => config
+		.ConfigQueueOptions((options, sp) =>
+		{
+			var config = sp.GetRequiredService<IConfiguration>();
+
+			options.Url = config.GetConnectionString("Nats");
+		})
+		.AddHandler(
+			Tgs.BrandCertificate.Cache.MessageQueue.ProcessorTypes.BrandFrontendInfoChangedEventHandlerType,
+			"tgs.brand.frontendinfo.changed"))
+	.AddNatsGlobPatternExchange("*");
+
+builder.Services
 	.AddRouting(options => options.LowercaseUrls = true)
-	.AddControllers(options=> 
+	.AddControllers(options =>
 	{
 		options.UseDateOnlyTimeOnlyStringConverters();
 	})
-	.AddJsonOptions(options => 
+	.AddJsonOptions(options =>
 	{
 		options.UseDateOnlyTimeOnlyStringConverters();
 	});
