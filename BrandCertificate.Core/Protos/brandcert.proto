@@ -5,6 +5,6 @@ package brandcert;
 
 import "phoenix/protobuf/guid.proto";
 
-message RemoveBrandCachedInfoRequest {
+message BrandFrontendInfoChangedEvent {
 	phoenix.protobuf.GuidValue brand_id = 1;
 }
