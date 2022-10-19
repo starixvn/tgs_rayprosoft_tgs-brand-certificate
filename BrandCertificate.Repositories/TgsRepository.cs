@@ -212,18 +212,23 @@ internal class TgsRepository : ITgsRepository
 			.ConfigureAwait(false);
 	}
 
-	public async ValueTask UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument PlayerRegisterFlowSettings, CancellationToken cancellationToken = default)
+	public async ValueTask<bool> UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument PlayerRegisterFlowSettings, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
 			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
-		brand!.PlayerRegisterFlowSettings = JsonSerializer.Serialize(PlayerRegisterFlowSettings);
+		if (brand == null)
+			return false;
+
+		brand.PlayerRegisterFlowSettings = JsonSerializer.Serialize(PlayerRegisterFlowSettings);
 
 		_ = _dbContext.Brands.Update(brand);
 
 		_ = await _dbContext
 			.SaveChangesAsync(cancellationToken)
 			.ConfigureAwait(false);
+
+		return true;
 	}
 }

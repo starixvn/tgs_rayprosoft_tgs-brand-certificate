@@ -20,17 +20,20 @@ internal class UpdateBrandPlayerRegisterFlowSettingCommandService : ICommandServ
 
 	public async ValueTask ExecuteAsync(UpdateBrandPlayerRegisterFlowSettingCommand command, CancellationToken cancellationToken = default)
 	{
-		await _tgsRepository
+		var isUpdateSuccess = await _tgsRepository
 			.UpdateBrandPlayerRegisterFlowSettingAsync(command.BrandId, command.PlayerRegisterFlowSettings, cancellationToken)
 			.ConfigureAwait(false);
 
-		var request = new BrandFrontendInfoChangedEvent
+		if (isUpdateSuccess)
 		{
-			BrandId = command.BrandId
-		};
+			var request = new BrandFrontendInfoChangedEvent
+			{
+				BrandId = command.BrandId
+			};
 
-		await _sender
-			.PublishAsync("tgs.brand.frontendinfo.changed", request.ToByteArray(), cancellationToken)
-			.ConfigureAwait(false);
+			await _sender
+				.PublishAsync("tgs.brand.frontendinfo.changed", request.ToByteArray(), cancellationToken)
+				.ConfigureAwait(false);
+		}
 	}
 }

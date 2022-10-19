@@ -162,6 +162,7 @@ public class BrandTests
 
         var brandId = Guid.NewGuid();
         var settingJson = JsonDocument.Parse("[{\"type\": \"InitPhone\"}]");
+        _ = fakeTgsRepository.UpdateBrandPlayerRegisterFlowSettingAsync(brandId, settingJson).Returns(true);
 
         var command = new UpdateBrandPlayerRegisterFlowSettingCommand(brandId, settingJson);
 
