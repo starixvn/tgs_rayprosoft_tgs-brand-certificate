@@ -1,18 +1,21 @@
-﻿using Tgs.ServiceUtility;
+﻿using Google.Protobuf;
+using Tgs.BrandCertificateService.Protos;
+using Tgs.MessageQueue;
+using Tgs.ServiceUtility;
 
 namespace Tgs.BrandCertificate.ApplicationServices;
 
 internal class UpdateBrandPlayerRegisterFlowSettingCommandService : ICommandService<UpdateBrandPlayerRegisterFlowSettingCommand>
 {
 	private readonly ITgsRepository _tgsRepository;
-	private readonly ICommandService<RemoveBrandFrontendInfoCachedCommand> _removeCachedService;
+	private readonly IMessageSender _sender;
 
 	public UpdateBrandPlayerRegisterFlowSettingCommandService(
 		ITgsRepository tgsRepository,
-		ICommandService<RemoveBrandFrontendInfoCachedCommand> removeCachedService)
+		IMessageSender sender)
 	{
 		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
-		_removeCachedService = removeCachedService ?? throw new ArgumentNullException(nameof(removeCachedService));
+		_sender = sender ?? throw new ArgumentNullException(nameof(sender));
 	}
 
 	public async ValueTask ExecuteAsync(UpdateBrandPlayerRegisterFlowSettingCommand command, CancellationToken cancellationToken = default)
@@ -21,8 +24,13 @@ internal class UpdateBrandPlayerRegisterFlowSettingCommandService : ICommandServ
 			.UpdateBrandPlayerRegisterFlowSettingAsync(command.BrandId, command.PlayerRegisterFlowSettings, cancellationToken)
 			.ConfigureAwait(false);
 
-		await _removeCachedService
-			.ExecuteAsync(new RemoveBrandFrontendInfoCachedCommand(command.BrandId), cancellationToken)
+		var request = new BrandFrontendInfoChangedEvent
+		{
+			BrandId = command.BrandId
+		};
+
+		await _sender
+			.PublishAsync("tgs.brand.frontendinfo.changed", request.ToByteArray(), cancellationToken)
 			.ConfigureAwait(false);
 	}
 }

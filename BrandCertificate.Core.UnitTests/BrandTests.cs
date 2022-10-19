@@ -4,7 +4,6 @@ using NUnit.Framework;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
 using Tgs.MessageQueue;
-using Tgs.ServiceUtility;
 
 namespace BrandCertificate.Core.UnitTests;
 
@@ -154,29 +153,12 @@ public class BrandTests
     }
 
     [Test]
-    public async Task Remove_Brand_Frontend_Info_Cached()
-    {
-        var fakeMessageSender = Substitute.For<IMessageSender>();
-
-        var sut = new RemoveBrandFrontendInfoCachedCommandService(fakeMessageSender);
-
-        var brandId = Guid.NewGuid();
-
-        var command = new RemoveBrandFrontendInfoCachedCommand(brandId);
-
-        await sut.ExecuteAsync(command);
-
-        _ = fakeMessageSender.Received(1)
-            .PublishAsync(Arg.Is("tgs.brand.frontendinfo.changed"), Arg.Any<ReadOnlyMemory<byte>>());
-    }
-
-    [Test]
     public async Task Update_Brand_Player_Register_Flow_Setting()
     {
         var fakeTgsRepository = Substitute.For<ITgsRepository>();
 
-        var fakeRemoveCachedService = Substitute.For<ICommandService<RemoveBrandFrontendInfoCachedCommand>>();
-        var sut = new UpdateBrandPlayerRegisterFlowSettingCommandService(fakeTgsRepository, fakeRemoveCachedService);
+        var fakeMessageSender = Substitute.For<IMessageSender>();
+        var sut = new UpdateBrandPlayerRegisterFlowSettingCommandService(fakeTgsRepository, fakeMessageSender);
 
         var brandId = Guid.NewGuid();
         var settingJson = JsonDocument.Parse("[{\"type\": \"InitPhone\"}]");
@@ -188,7 +170,7 @@ public class BrandTests
         _ = fakeTgsRepository.Received(1)
             .UpdateBrandPlayerRegisterFlowSettingAsync(Arg.Is(brandId), Arg.Is(settingJson));
 
-        _ = fakeRemoveCachedService.Received(1)
-            .ExecuteAsync(new RemoveBrandFrontendInfoCachedCommand(brandId));
+        _ = fakeMessageSender.Received(1)
+            .PublishAsync(Arg.Is("tgs.brand.frontendinfo.changed"), Arg.Any<ReadOnlyMemory<byte>>());
     }
 }
