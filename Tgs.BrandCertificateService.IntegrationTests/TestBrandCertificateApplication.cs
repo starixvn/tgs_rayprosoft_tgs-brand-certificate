@@ -52,6 +52,7 @@ internal class TestBrandCertificateApplication : WebApplicationFactory<Program>
 				options.SecurityKeyPath = "Assets/testkey.pem";
 			})
 			.Services
+			.AddFakeNatsMessageQueue()
 			.AddSingleton(sp =>
 			{
 				var dbContextOptionsBuilder = new DbContextOptionsBuilder<TgsContext>();
