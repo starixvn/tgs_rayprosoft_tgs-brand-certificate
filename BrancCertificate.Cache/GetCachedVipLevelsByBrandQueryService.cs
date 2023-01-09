@@ -36,7 +36,7 @@ internal class GetCachedVipLevelsByBrandQueryService : IQueryService<GetVipLevel
 			return result;
 		}).ConfigureAwait(false)!;
 
-		foreach (var item in items)
+		foreach (var item in items!)
 			yield return item;
 	}
 }

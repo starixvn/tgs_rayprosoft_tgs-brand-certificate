@@ -30,13 +30,13 @@ internal class GetCachedBrandFrontendInfoQueryService : IGetService<GetBrandFron
 	{
 		var key = $"BrandFrontend:{query.BrandId}";
 
-		return await _memoryCache.GetOrCreateAsync(key, async entry =>
+		return (await _memoryCache.GetOrCreateAsync(key, async entry =>
 		{
 			entry.AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(10D);
 
 			return await _sourceService
 				.GetAsync(query, cancellationToken)
 				.ConfigureAwait(false);
-		}).ConfigureAwait(false);
+		}).ConfigureAwait(false))!;
 	}
 }
