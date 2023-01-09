@@ -242,7 +242,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandMaintenanceInfosAsync(brandCode: "").ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);		
+		Assert.AreEqual(1, actual.Length);
 	}
 
 	[Test]

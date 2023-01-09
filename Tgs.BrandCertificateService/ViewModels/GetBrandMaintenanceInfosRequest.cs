@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Tgs.BrandCertificateService.ViewModels
+namespace Tgs.BrandCertificateService.ViewModels;
+
+public record GetBrandMaintenanceInfosViewModel
 {
-	public record GetBrandMaintenanceInfosViewModel
-	{
-		[FromQuery(Name = "brandcode")]
-		public string? BrandCode { get; set; }
-	}
+	[FromQuery(Name = "brandcode")]
+	public string? BrandCode { get; set; }
 }

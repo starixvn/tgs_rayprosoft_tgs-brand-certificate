@@ -1,59 +1,59 @@
 ﻿{
-   "CodeGenerationMode": 2,
-   "ContextClassName": "TgsContext",
-   "ContextNamespace": "Entities",
-   "DefaultDacpacSchema": null,
-   "FilterSchemas": true,
-   "IncludeConnectionString": false,
-   "ModelNamespace": "Entities",
-   "OutputContextPath": "Entities",
-   "OutputPath": "Entities\/Model",
-   "ProjectRootNamespace": "Tgs.BrandCertificate.Repositories",
-   "Schemas": [
-      {
-         "Name": "dbo"
-      }
-   ],
-   "SelectedHandlebarsLanguage": 0,
-   "SelectedToBeGenerated": 0,
-   "Tables": [
-      {
-         "Name": "dbo.licensees",
-         "ObjectType": 0
-      },
-      {
-         "Name": "dbo.brand_currencies",
-         "ObjectType": 0
-      },
-      {
-         "Name": "dbo.brands",
-         "ObjectType": 0
-      },
-      {
-         "Name": "dbo.vip_levels",
-         "ObjectType": 0
-      },
-      {
-         "Name": "dbo.brand_maintenance",
-         "ObjectType": 0
-      }
-   ],
-   "UiHint": "LocalDB",
-   "UseBoolPropertiesWithoutDefaultSql": false,
-   "UseDatabaseNames": false,
-   "UseDbContextSplitting": true,
-   "UseFluentApiOnly": true,
-   "UseHandleBars": false,
-   "UseHierarchyId": false,
-   "UseInflector": true,
-   "UseLegacyPluralizer": false,
-   "UseManyToManyEntity": false,
-   "UseNoConstructor": false,
-   "UseNoDefaultConstructor": true,
-   "UseNoNavigations": false,
-   "UseNoObjectFilter": false,
-   "UseNodaTime": false,
-   "UseNullableReferences": false,
-   "UseSchemaFolders": false,
-   "UseSpatial": false
+	"CodeGenerationMode": 2,
+	"ContextClassName": "TgsContext",
+	"ContextNamespace": "Entities",
+	"DefaultDacpacSchema": null,
+	"FilterSchemas": true,
+	"IncludeConnectionString": false,
+	"ModelNamespace": "Entities",
+	"OutputContextPath": "Entities",
+	"OutputPath": "Entities\/Model",
+	"ProjectRootNamespace": "Tgs.BrandCertificate.Repositories",
+	"Schemas": [
+		{
+			"Name": "dbo"
+		}
+	],
+	"SelectedHandlebarsLanguage": 0,
+	"SelectedToBeGenerated": 0,
+	"Tables": [
+		{
+			"Name": "dbo.licensees",
+			"ObjectType": 0
+		},
+		{
+			"Name": "dbo.brand_currencies",
+			"ObjectType": 0
+		},
+		{
+			"Name": "dbo.brands",
+			"ObjectType": 0
+		},
+		{
+			"Name": "dbo.vip_levels",
+			"ObjectType": 0
+		},
+		{
+			"Name": "dbo.brand_maintenance",
+			"ObjectType": 0
+		}
+	],
+	"UiHint": "LocalDB",
+	"UseBoolPropertiesWithoutDefaultSql": false,
+	"UseDatabaseNames": false,
+	"UseDbContextSplitting": true,
+	"UseFluentApiOnly": true,
+	"UseHandleBars": false,
+	"UseHierarchyId": false,
+	"UseInflector": true,
+	"UseLegacyPluralizer": false,
+	"UseManyToManyEntity": false,
+	"UseNoConstructor": false,
+	"UseNoDefaultConstructor": true,
+	"UseNoNavigations": false,
+	"UseNoObjectFilter": false,
+	"UseNodaTime": false,
+	"UseNullableReferences": false,
+	"UseSchemaFolders": false,
+	"UseSpatial": false
 }

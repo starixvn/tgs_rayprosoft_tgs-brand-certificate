@@ -1,14 +1,12 @@
 ﻿using System.Text.Json.Serialization;
-using DateOnlyTimeOnly.AspNet.Converters;
 
-namespace Tgs.BrandCertificateService.ViewModels
+namespace Tgs.BrandCertificateService.ViewModels;
+
+public class UpdateAllBrandMaintenanceTimeViewModel
 {
-	public class UpdateAllBrandMaintenanceTimeViewModel
-	{
-		[JsonPropertyName("begintime")]
-		public TimeOnly BeginTime { get; set; }
+	[JsonPropertyName("begintime")]
+	public TimeOnly BeginTime { get; set; }
 
-		[JsonPropertyName("endtime")]
-		public TimeOnly EndTime { get; set; }
-	}
+	[JsonPropertyName("endtime")]
+	public TimeOnly EndTime { get; set; }
 }

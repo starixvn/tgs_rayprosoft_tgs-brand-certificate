@@ -1,4 +1,3 @@
-﻿namespace Tgs.BrandCertificateService.ViewModels
-{
-	public record BrandMaintenanceResult(string Content);
-}
+﻿namespace Tgs.BrandCertificateService.ViewModels;
+
+public record BrandMaintenanceResult(string Content);

@@ -1,4 +1,3 @@
-﻿namespace Tgs.BrandCertificate.Clients
-{
-	public record BrandMaintenanceResult(string Content);
-}
+﻿namespace Tgs.BrandCertificate.Clients;
+
+public record BrandMaintenanceResult(string Content);
