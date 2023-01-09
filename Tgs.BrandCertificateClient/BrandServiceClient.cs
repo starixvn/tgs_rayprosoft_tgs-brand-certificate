@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
@@ -16,7 +16,7 @@ internal class BrandServiceClient : IBrandServiceClient
 	{
 		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 		WriteIndented = true,
-		Converters = { 
+		Converters = {
 			new JsonStringEnumConverter(),
 			new TimeOnlyJsonConverter()
 		}
@@ -162,7 +162,7 @@ internal class BrandServiceClient : IBrandServiceClient
 
 	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? Content, CancellationToken cancellationToken = default)
 	{
-		var dict = new Dictionary<string, object>
+		var dict = new Dictionary<string, object?>
 		{
 			{ "content", Content }
 		};
