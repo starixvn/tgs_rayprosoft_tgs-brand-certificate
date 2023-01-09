@@ -58,7 +58,8 @@ builder.Services
 
 builder.Services
 	.AddDateOnlyTimeOnlyStringConverters()
-	.AddRouting(options => options.LowercaseUrls = true);
+	.AddRouting(options => options.LowercaseUrls = true)
+	.AddControllers();
 
 builder.Services
 	.AddHealthChecks();
