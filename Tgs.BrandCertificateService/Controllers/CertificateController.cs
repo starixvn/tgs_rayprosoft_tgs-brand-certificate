@@ -34,7 +34,7 @@ public class CertificateController : ControllerBase
 		return brandInfo == null
 			? null
 			: await generateTokenService
-			.GetAsync(new MakeBrandTokenCommand(brandInfo.Id, brandInfo.Code), HttpContext.RequestAborted)
-			.ConfigureAwait(false);
+				.GetAsync(new MakeBrandTokenCommand(brandInfo.Id, brandInfo.Code), HttpContext.RequestAborted)
+				.ConfigureAwait(false);
 	}
 }
