@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using OpenTelemetry.Exporter;
@@ -9,7 +9,8 @@ using OpenTelemetry.Trace;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
-	.AddJsonFile("/config/appsettings.json", true);
+	.AddJsonFile("/config/appsettings.json", true)
+	.AddEnvironmentVariables();
 
 builder.Logging
 	.AddOpenTelemetry(options =>
@@ -18,9 +19,9 @@ builder.Logging
 		options.ParseStateValues = true;
 		_ = options.AddFluentdForwardExporter(fluentOptions =>
 		{
-			var nodeIp = builder.Configuration.GetValue<string>("NODE_IP");
+			var nodeIp = builder.Configuration.GetValue<string>("NODE_IP")!;
 			fluentOptions.Host = nodeIp;
-			fluentOptions.Tag = builder.Configuration.GetValue<string>("OTEL_SERVICE_NAME");
+			fluentOptions.Tag = builder.Configuration.GetValue<string>("OTEL_SERVICE_NAME")!;
 			fluentOptions.UseMessagePack();
 		});
 	});
@@ -42,15 +43,23 @@ builder.Services
 	.AddBrandCertificateCache();
 
 builder.Services
+	.AddMessageQueue()
+	.AddNatsMessageQueue(config => config
+		.ConfigQueueOptions((options, sp) =>
+		{
+			var config = sp.GetRequiredService<IConfiguration>();
+
+			options.Url = config.GetConnectionString("Nats")!;
+		})
+		.AddHandler(
+			Tgs.BrandCertificate.Cache.MessageQueue.ProcessorTypes.BrandFrontendInfoChangedEventHandlerType,
+			"tgs.brand.frontendinfo.changed"))
+	.AddNatsGlobPatternExchange("*");
+
+builder.Services
+	.AddDateOnlyTimeOnlyStringConverters()
 	.AddRouting(options => options.LowercaseUrls = true)
-	.AddControllers(options=> 
-	{
-		options.UseDateOnlyTimeOnlyStringConverters();
-	})
-	.AddJsonOptions(options => 
-	{
-		options.UseDateOnlyTimeOnlyStringConverters();
-	});
+	.AddControllers();
 
 builder.Services
 	.AddHealthChecks();

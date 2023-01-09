@@ -46,6 +46,11 @@ spec:
                 secretKeyRef:
                   name: tgs-connections
                   key: tgs
+            - name: ConnectionStrings__Nats
+              valueFrom:
+                secretKeyRef:
+                  name: tgs-connections
+                  key: nats
             - name: Brand__SecurityKeyPath
               value: /config/certs/key.pem
             - name: DOTNET_DiagnosticPorts

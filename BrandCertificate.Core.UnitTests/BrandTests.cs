@@ -1,7 +1,9 @@
-﻿using NSubstitute;
+﻿using System.Text.Json;
+using NSubstitute;
 using NUnit.Framework;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
+using Tgs.MessageQueue;
 
 namespace BrandCertificate.Core.UnitTests;
 
@@ -148,5 +150,28 @@ public class BrandTests
 
         _ = fakeTgsRepository.Received(1)
             .UpdateBrandMaintenanceTimeAsync(Arg.Is(brandId), Arg.Is(beginTime), Arg.Is(endTime));
+    }
+
+    [Test]
+    public async Task Update_Brand_Player_Register_Flow_Setting()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var fakeMessageSender = Substitute.For<IMessageSender>();
+        var sut = new UpdateBrandPlayerRegisterFlowSettingCommandService(fakeTgsRepository, fakeMessageSender);
+
+        var brandId = Guid.NewGuid();
+        var settingJson = JsonDocument.Parse("[{\"type\": \"InitPhone\"}]");
+        _ = fakeTgsRepository.UpdateBrandPlayerRegisterFlowSettingAsync(brandId, settingJson).Returns(true);
+
+        var command = new UpdateBrandPlayerRegisterFlowSettingCommand(brandId, settingJson);
+
+        await sut.ExecuteAsync(command);
+
+        _ = fakeTgsRepository.Received(1)
+            .UpdateBrandPlayerRegisterFlowSettingAsync(Arg.Is(brandId), Arg.Is(settingJson));
+
+        _ = fakeMessageSender.Received(1)
+            .PublishAsync(Arg.Is("tgs.brand.frontendinfo.changed"), Arg.Any<ReadOnlyMemory<byte>>());
     }
 }

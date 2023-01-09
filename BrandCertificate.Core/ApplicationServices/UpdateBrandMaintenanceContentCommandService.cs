@@ -1,17 +1,16 @@
 ﻿using Tgs.ServiceUtility;
 
-namespace Tgs.BrandCertificate.ApplicationServices
+namespace Tgs.BrandCertificate.ApplicationServices;
+
+internal class UpdateBrandMaintenanceContentCommandService : ICommandService<UpdateBrandMaintenanceContentCommand>
 {
-	internal class UpdateBrandMaintenanceContentCommandService : ICommandService<UpdateBrandMaintenanceContentCommand>
+	private readonly ITgsRepository _tgsRepository;
+
+	public UpdateBrandMaintenanceContentCommandService(ITgsRepository tgsRepository)
 	{
-		private readonly ITgsRepository _tgsRepository;
-
-		public UpdateBrandMaintenanceContentCommandService(ITgsRepository tgsRepository)
-		{
-			_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
-		}
-
-		public ValueTask ExecuteAsync(UpdateBrandMaintenanceContentCommand command, CancellationToken cancellationToken = default)
-			=> _tgsRepository.UpdateBrandMaintenanceContentAsync(command.BrandMaintenanceId, command.Content, cancellationToken);
+		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
 	}
+
+	public ValueTask ExecuteAsync(UpdateBrandMaintenanceContentCommand command, CancellationToken cancellationToken = default)
+		=> _tgsRepository.UpdateBrandMaintenanceContentAsync(command.BrandMaintenanceId, command.Content, cancellationToken);
 }

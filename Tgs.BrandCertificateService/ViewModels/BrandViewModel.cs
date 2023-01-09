@@ -7,7 +7,7 @@ public class BrandViewModel
 	public string Code { get; set; } = default!;
 
 	public string Currency { get; set; } = default!;
- 
+
 	public bool SmsEnabled { get; set; }
 
 	public bool SmsRegisterFlowEnabled { get; set; }

@@ -1,4 +1,3 @@
-﻿namespace Tgs.BrandCertificate.ApplicationServices
-{
-	public record GetBrandMaintenanceInfoQuery(Guid BrandMaintenanceId);
-}
+﻿namespace Tgs.BrandCertificate.ApplicationServices;
+
+public record GetBrandMaintenanceInfoQuery(Guid BrandMaintenanceId);

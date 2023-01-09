@@ -21,7 +21,7 @@ internal class CachedBrandCertificateClient : IBrandCertificateClient
 	public async Task<SecurityKey> GetSystemValidateSecurityKeyAsync(CancellationToken cancellationToken = default)
 	{
 		if (_memoryCache.TryGetValue<SecurityKey>("Brand:Varify:Key", out var securityKey))
-			return securityKey;
+			return securityKey!;
 
 		await _LockObject.WaitAsync(cancellationToken).ConfigureAwait(false);
 

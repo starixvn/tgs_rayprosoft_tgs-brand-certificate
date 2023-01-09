@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Tgs.BrandCertificateService.ViewModels
+namespace Tgs.BrandCertificateService.ViewModels;
+
+public record UpdateBrandMaintenanceContentViewModel
 {
-	public record UpdateBrandMaintenanceContentViewModel
-	{
-		[JsonPropertyName("content")]
-		public string? Content { get; set; }
-	}
+	[JsonPropertyName("content")]
+	public string? Content { get; set; }
 }
