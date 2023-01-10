@@ -10,6 +10,10 @@ namespace Tgs.BrandCertificate.Repositories.Entities
 {
     public partial class TgsContext : DbContext
     {
+        public TgsContext()
+        {
+        }
+
         public TgsContext(DbContextOptions<TgsContext> options)
             : base(options)
         {
@@ -24,7 +28,8 @@ namespace Tgs.BrandCertificate.Repositories.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasPostgresExtension("ltree")
-                .HasPostgresExtension("pg_trgm");
+                .HasPostgresExtension("pg_trgm")
+                .HasPostgresExtension("uuid-ossp");
 
             modelBuilder.ApplyConfiguration(new Configurations.BrandConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.BrandCurrencyConfiguration());

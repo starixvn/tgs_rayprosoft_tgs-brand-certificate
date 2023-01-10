@@ -231,4 +231,8 @@ internal class TgsRepository : ITgsRepository
 
 		return true;
 	}
+
+	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanAsync(int timeSpan,
+		CancellationToken cancellationToken = default)
+	=> _dbContext.Brands.Where(x => x.TimeSpan == timeSpan).Select(x => x.Id).ToAsyncEnumerable();
 }

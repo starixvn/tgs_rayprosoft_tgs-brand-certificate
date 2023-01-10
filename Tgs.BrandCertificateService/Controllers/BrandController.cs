@@ -178,4 +178,15 @@ public class BrandController : ControllerBase
 		=> commandService.ExecuteAsync(new UpdateBrandPlayerRegisterFlowSettingCommand(
 			brandId,
 			request.PlayerRegisterFlowSettings));
+
+	[HttpGet("id/{timeSpan}")]
+	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanAsync(
+		[FromServices] IQueryService<GetBrandIdsByTimeSpanQuery, Guid> queryService,
+		int timeSpan)
+	{
+		var query = new GetBrandIdsByTimeSpanQuery(timeSpan);
+
+		return queryService.QueryAsync(query, HttpContext.RequestAborted);
+	}
+
 }

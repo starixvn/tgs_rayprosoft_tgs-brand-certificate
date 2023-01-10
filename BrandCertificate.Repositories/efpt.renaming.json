@@ -1,13 +1,13 @@
 ﻿[
-	{
-		"SchemaName": "dbo",
-		"Tables": [
-			{
-				"Columns": [],
-				"Name": "vip_levels",
-				"NewName": "VipLevelRow"
-			}
-		],
-		"UseSchemaName": false
-	}
+   {
+      "SchemaName": "dbo",
+      "Tables": [
+         {
+            "Columns": [ ],
+            "Name": "vip_levels",
+            "NewName": "VipLevelRow"
+         }
+      ],
+      "UseSchemaName": false
+   }
 ]

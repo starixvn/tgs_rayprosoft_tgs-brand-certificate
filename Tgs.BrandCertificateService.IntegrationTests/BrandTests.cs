@@ -447,4 +447,41 @@ public class BrandTests
 		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
 		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
 	}
+
+	[Test]
+	public async Task Get_Brand_Ids_By_TimeSpan()
+	{
+		var brandId = Guid.NewGuid();
+		var timeSpan = 480;
+
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
+		{
+			Id = brandId,
+			TimeSpan = 480,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			DepositPaymentLockEnabled = true
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandIdsByTimeSpanAsync(timeSpan).ToArrayAsync();
+
+		Assert.AreEqual(1, actual.Length);
+	}
+
 }

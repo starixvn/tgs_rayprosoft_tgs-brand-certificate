@@ -25,4 +25,6 @@ public interface ITgsRepository
 	ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default);
 
 	ValueTask<bool> UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument PlayerRegisterFlowSettings, CancellationToken cancellationToken = default);
+
+	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanAsync(int timeSpan, CancellationToken cancellationToken = default);
 }
