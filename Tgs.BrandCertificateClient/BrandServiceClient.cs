@@ -200,11 +200,11 @@ internal class BrandServiceClient : IBrandServiceClient
 		return settings;
 	}
 
-	public async IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanAsync(int timeSpan,
+	public async IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
 		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
 		var response = await _httpClient.GetAsync(
-				$"/brand/id/{timeSpan}",
+				$"/brand/id/{timeSpanMinutes}",
 				cancellationToken)
 			.ConfigureAwait(false);
 

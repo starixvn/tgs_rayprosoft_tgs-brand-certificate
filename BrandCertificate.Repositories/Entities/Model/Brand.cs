@@ -56,7 +56,7 @@ namespace Tgs.BrandCertificate.Repositories.Entities
         public string PlayerRegisterFlowSettings { get; set; }
         public bool EnableBankInfoRegisterFlow { get; set; }
         public bool DepositPaymentLockEnabled { get; set; }
-        public int? TimeSpan { get; set; }
+        public int? TimeSpanMinutes { get; set; }
 
         public virtual Licensee Licensee { get; set; }
         public virtual BrandMaintenance BrandMaintenance { get; set; }

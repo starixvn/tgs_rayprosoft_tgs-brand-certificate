@@ -463,7 +463,7 @@ public class BrandTests
 		_ = await dbContext.Brands.AddAsync(new Brand
 		{
 			Id = brandId,
-			TimeSpan = 480,
+			TimeSpanMinutes = 480,
 			Code = "Test",
 			ApiKey = string.Empty,
 			ClientId = string.Empty,
@@ -479,7 +479,7 @@ public class BrandTests
 
 		var sut = new BrandServiceClient(http);
 
-		var actual = await sut.GetBrandIdsByTimeSpanAsync(timeSpan).ToArrayAsync();
+		var actual = await sut.GetBrandIdsByTimeSpanMinutesAsync(timeSpan).ToArrayAsync();
 
 		Assert.AreEqual(1, actual.Length);
 	}

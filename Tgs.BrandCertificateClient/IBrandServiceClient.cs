@@ -22,5 +22,5 @@ public interface IBrandServiceClient
 
 	ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
 
-	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanAsync(int timeSpan, CancellationToken cancellationToken = default);
+	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes, CancellationToken cancellationToken = default);
 }

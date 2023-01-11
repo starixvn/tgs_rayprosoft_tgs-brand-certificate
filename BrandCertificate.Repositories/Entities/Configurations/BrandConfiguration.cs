@@ -146,8 +146,8 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
 
             entity.Property(e => e.Status).HasColumnName("status");
 
-            entity.Property(e => e.TimeSpan)
-                .HasColumnName("time_span")
+            entity.Property(e => e.TimeSpanMinutes)
+                .HasColumnName("time_span_minutes")
                 .HasDefaultValueSql("480");
 
             entity.Property(e => e.TimeZoneId)

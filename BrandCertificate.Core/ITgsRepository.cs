@@ -26,5 +26,5 @@ public interface ITgsRepository
 
 	ValueTask<bool> UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument PlayerRegisterFlowSettings, CancellationToken cancellationToken = default);
 
-	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanAsync(int timeSpan, CancellationToken cancellationToken = default);
+	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes, CancellationToken cancellationToken = default);
 }

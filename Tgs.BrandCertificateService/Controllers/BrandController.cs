@@ -179,12 +179,12 @@ public class BrandController : ControllerBase
 			brandId,
 			request.PlayerRegisterFlowSettings));
 
-	[HttpGet("id/{timeSpan}")]
-	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanAsync(
-		[FromServices] IQueryService<GetBrandIdsByTimeSpanQuery, Guid> queryService,
-		int timeSpan)
+	[HttpGet("id/{timeSpanMinutes}")]
+	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(
+		[FromServices] IQueryService<GetBrandIdsByTimeSpanMinutesQuery, Guid> queryService,
+		int timeSpanMinutes)
 	{
-		var query = new GetBrandIdsByTimeSpanQuery(timeSpan);
+		var query = new GetBrandIdsByTimeSpanMinutesQuery(timeSpanMinutes);
 
 		return queryService.QueryAsync(query, HttpContext.RequestAborted);
 	}

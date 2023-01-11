@@ -232,7 +232,7 @@ internal class TgsRepository : ITgsRepository
 		return true;
 	}
 
-	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanAsync(int timeSpan,
+	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
 		CancellationToken cancellationToken = default)
-	=> _dbContext.Brands.Where(x => x.TimeSpan == timeSpan).Select(x => x.Id).ToAsyncEnumerable();
+	=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
 }
