@@ -235,4 +235,12 @@ internal class TgsRepository : ITgsRepository
 	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
 		CancellationToken cancellationToken = default)
 	=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
+
+	public async ValueTask<int?> GetTimeSpanMinutesByBrandIdAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FirstOrDefaultAsync(x => x.Id == brandId, cancellationToken: cancellationToken);
+
+		return brand?.TimeSpanMinutes;
+	}
+
 }

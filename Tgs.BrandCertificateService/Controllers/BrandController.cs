@@ -189,4 +189,14 @@ public class BrandController : ControllerBase
 		return queryService.QueryAsync(query, HttpContext.RequestAborted);
 	}
 
+	[HttpGet("{brandId}/timeSpanMinutes")]
+	public ValueTask<int?> GetTimeSpanMinutesByBrandIdAsync(
+		[FromServices] IGetService<GetTimeSpanMinutesByBrandIdQuery, int?> queryService,
+		Guid brandId)
+	{
+		var query = new GetTimeSpanMinutesByBrandIdQuery(brandId);
+
+		return queryService.GetAsync(query, HttpContext.RequestAborted);
+	}
+
 }

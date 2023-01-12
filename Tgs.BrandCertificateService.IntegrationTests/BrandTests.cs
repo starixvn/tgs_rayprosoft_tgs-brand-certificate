@@ -449,10 +449,10 @@ public class BrandTests
 	}
 
 	[Test]
-	public async Task Get_Brand_Ids_By_TimeSpan()
+	public async Task Get_Brand_Ids_By_Time_Span_Minutes()
 	{
 		var brandId = Guid.NewGuid();
-		var timeSpan = 480;
+		var timeSpanMinutes = 480;
 
 		await using var web = new TestBrandCertificateApplication();
 
@@ -463,7 +463,7 @@ public class BrandTests
 		_ = await dbContext.Brands.AddAsync(new Brand
 		{
 			Id = brandId,
-			TimeSpanMinutes = 480,
+			TimeSpanMinutes = timeSpanMinutes,
 			Code = "Test",
 			ApiKey = string.Empty,
 			ClientId = string.Empty,
@@ -479,9 +479,45 @@ public class BrandTests
 
 		var sut = new BrandServiceClient(http);
 
-		var actual = await sut.GetBrandIdsByTimeSpanMinutesAsync(timeSpan).ToArrayAsync();
+		var actual = await sut.GetBrandIdsByTimeSpanMinutesAsync(timeSpanMinutes).ToArrayAsync();
 
 		Assert.AreEqual(1, actual.Length);
+	}
+
+	[Test]
+	public async Task Get_Time_Span_Minutes_By_Brand_Ids()
+	{
+		var brandId = Guid.NewGuid();
+		var timeSpanMinutes = 480;
+
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
+		{
+			Id = brandId,
+			TimeSpanMinutes = timeSpanMinutes,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			DepositPaymentLockEnabled = true
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetTimeSpanMinutesByBrandIdAsync(brandId);
+
+		Assert.AreEqual(timeSpanMinutes, actual);
 	}
 
 }
