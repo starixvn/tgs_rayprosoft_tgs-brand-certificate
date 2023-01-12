@@ -200,6 +200,24 @@ internal class BrandServiceClient : IBrandServiceClient
 		return settings;
 	}
 
+	public async IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient.GetAsync(
+				$"/brand/id/{timeSpanMinutes}",
+				cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var brandIds = await response.Content
+			.ReadFromJsonAsync<Guid[]>(_SerializerOptions, cancellationToken)
+			.ConfigureAwait(false) ?? Array.Empty<Guid>();
+
+		foreach (var brandId in brandIds!)
+			yield return brandId;
+	}
+
 	public async ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
 	{
 		var dict = new Dictionary<string, object>

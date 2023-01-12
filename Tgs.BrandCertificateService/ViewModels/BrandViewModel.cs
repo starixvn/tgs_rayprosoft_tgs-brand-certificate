@@ -17,4 +17,6 @@ public class BrandViewModel
 	public bool EmailRegisterFlowEnabled { get; set; }
 
 	public bool BankInfoRegisterFlowEnabled { get; set; }
+
+	public int? TimeSpanMinutes { get; set; }
 }

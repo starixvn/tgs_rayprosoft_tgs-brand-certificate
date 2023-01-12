@@ -33,7 +33,8 @@ internal class TgsRepository : ITgsRepository
 				brand.EnableSmsRegisterFlow,
 				brand.EnablePlayerIdentity,
 				brand.EnableEmailRegisterFlow,
-				brand.EnableBankInfoRegisterFlow);
+				brand.EnableBankInfoRegisterFlow,
+				brand.TimeSpanMinutes);
 	}
 
 	public async ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
@@ -231,4 +232,16 @@ internal class TgsRepository : ITgsRepository
 
 		return true;
 	}
+
+	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
+		CancellationToken cancellationToken = default)
+	=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
+
+	public async ValueTask<int?> GetTimeSpanMinutesByBrandIdAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FirstOrDefaultAsync(x => x.Id == brandId, cancellationToken: cancellationToken);
+
+		return brand?.TimeSpanMinutes;
+	}
+
 }

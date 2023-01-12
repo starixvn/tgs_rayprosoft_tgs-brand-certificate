@@ -8,4 +8,5 @@ public record BrandInfo(
 	bool SmsRegisterFlowEnabled,
 	bool PlayerIdentityEnabled,
 	bool EmailRegisterFlowEnabled,
-	bool BankInfoRegisterFlowEnabled);
+	bool BankInfoRegisterFlowEnabled,
+	int? TimeSpanMinutes);

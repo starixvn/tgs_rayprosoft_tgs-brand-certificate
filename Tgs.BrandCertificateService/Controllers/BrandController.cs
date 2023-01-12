@@ -32,7 +32,8 @@ public class BrandController : ControllerBase
 				SmsEnabled = brandInfo.SmsEnabled,
 				SmsRegisterFlowEnabled = brandInfo.SmsRegisterFlowEnabled,
 				BankInfoRegisterFlowEnabled = brandInfo.BankInfoRegisterFlowEnabled,
-				EmailRegisterFlowEnabled = brandInfo.EmailRegisterFlowEnabled
+				EmailRegisterFlowEnabled = brandInfo.EmailRegisterFlowEnabled,
+				TimeSpanMinutes = brandInfo.TimeSpanMinutes
 			};
 	}
 
@@ -178,4 +179,14 @@ public class BrandController : ControllerBase
 		=> commandService.ExecuteAsync(new UpdateBrandPlayerRegisterFlowSettingCommand(
 			brandId,
 			request.PlayerRegisterFlowSettings));
+
+	[HttpGet("id/{timeSpanMinutes}")]
+	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(
+		[FromServices] IQueryService<GetBrandIdsByTimeSpanMinutesQuery, Guid> queryService,
+		int timeSpanMinutes)
+	{
+		var query = new GetBrandIdsByTimeSpanMinutesQuery(timeSpanMinutes);
+
+		return queryService.QueryAsync(query, HttpContext.RequestAborted);
+	}
 }

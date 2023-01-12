@@ -447,4 +447,84 @@ public class BrandTests
 		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
 		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
 	}
+
+	[Test]
+	public async Task Get_Brand_Ids_By_Time_Span_Minutes()
+	{
+		var brandId = Guid.NewGuid();
+		var timeSpanMinutes = 480;
+
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
+		{
+			Id = brandId,
+			TimeSpanMinutes = timeSpanMinutes,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			DepositPaymentLockEnabled = true
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandIdsByTimeSpanMinutesAsync(timeSpanMinutes).ToArrayAsync();
+
+		Assert.AreEqual(1, actual.Length);
+	}
+
+	[Test]
+	public async Task Get_Time_Span_Minutes_By_Brand_Ids()
+	{
+		var brandId = Guid.NewGuid();
+		var timeSpanMinutes = 480;
+
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
+		{
+			Id = brandId,
+			TimeSpanMinutes = timeSpanMinutes,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			DepositPaymentLockEnabled = true
+		});
+
+		_ = await dbContext.BrandCurrencies.AddAsync(new BrandCurrency
+		{
+			BrandId = brandId,
+			CurrencyCode = "CNY",
+			BrandCurrencyCode = "CNY"
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandInfo = await sut.GetBrandInfoAsync(brandId);
+
+		Assert.AreEqual(timeSpanMinutes, brandInfo?.TimeSpanMinutes);
+	}
+
 }
