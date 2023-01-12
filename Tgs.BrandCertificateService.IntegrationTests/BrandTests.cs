@@ -511,13 +511,20 @@ public class BrandTests
 			DepositPaymentLockEnabled = true
 		});
 
+		_ = await dbContext.BrandCurrencies.AddAsync(new BrandCurrency
+		{
+			BrandId = brandId,
+			CurrencyCode = "CNY",
+			BrandCurrencyCode = "CNY"
+		});
+
 		_ = await dbContext.SaveChangesAsync();
 
 		var sut = new BrandServiceClient(http);
 
-		var actual = await sut.GetTimeSpanMinutesByBrandIdAsync(brandId);
+		var brandInfo = await sut.GetBrandInfoAsync(brandId);
 
-		Assert.AreEqual(timeSpanMinutes, actual);
+		Assert.AreEqual(timeSpanMinutes, brandInfo?.TimeSpanMinutes);
 	}
 
 }

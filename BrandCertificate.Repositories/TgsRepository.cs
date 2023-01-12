@@ -33,7 +33,8 @@ internal class TgsRepository : ITgsRepository
 				brand.EnableSmsRegisterFlow,
 				brand.EnablePlayerIdentity,
 				brand.EnableEmailRegisterFlow,
-				brand.EnableBankInfoRegisterFlow);
+				brand.EnableBankInfoRegisterFlow,
+				brand.TimeSpanMinutes);
 	}
 
 	public async ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)

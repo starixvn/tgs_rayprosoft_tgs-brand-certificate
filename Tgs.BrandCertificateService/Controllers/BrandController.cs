@@ -32,7 +32,8 @@ public class BrandController : ControllerBase
 				SmsEnabled = brandInfo.SmsEnabled,
 				SmsRegisterFlowEnabled = brandInfo.SmsRegisterFlowEnabled,
 				BankInfoRegisterFlowEnabled = brandInfo.BankInfoRegisterFlowEnabled,
-				EmailRegisterFlowEnabled = brandInfo.EmailRegisterFlowEnabled
+				EmailRegisterFlowEnabled = brandInfo.EmailRegisterFlowEnabled,
+				TimeSpanMinutes = brandInfo.TimeSpanMinutes
 			};
 	}
 
@@ -188,15 +189,4 @@ public class BrandController : ControllerBase
 
 		return queryService.QueryAsync(query, HttpContext.RequestAborted);
 	}
-
-	[HttpGet("{brandId}/timeSpanMinutes")]
-	public ValueTask<int?> GetTimeSpanMinutesByBrandIdAsync(
-		[FromServices] IGetService<GetTimeSpanMinutesByBrandIdQuery, int?> queryService,
-		Guid brandId)
-	{
-		var query = new GetTimeSpanMinutesByBrandIdQuery(brandId);
-
-		return queryService.GetAsync(query, HttpContext.RequestAborted);
-	}
-
 }

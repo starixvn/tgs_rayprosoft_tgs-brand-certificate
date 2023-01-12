@@ -218,22 +218,6 @@ internal class BrandServiceClient : IBrandServiceClient
 			yield return brandId;
 	}
 
-	public async ValueTask<int?> GetTimeSpanMinutesByBrandIdAsync(Guid brandId, CancellationToken cancellationToken = default)
-	{
-		var response = await _httpClient
-			.GetAsync($"/brand/{brandId}/timeSpanMinutes", cancellationToken)
-			.ConfigureAwait(false);
-
-		_ = response.EnsureSuccessStatusCode();
-
-		var timeSpanMinutes = await response.Content
-			.ReadFromJsonAsync<int?>(_SerializerOptions, cancellationToken)
-			.ConfigureAwait(false);
-
-		return timeSpanMinutes;
-	}
-
-
 	public async ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
 	{
 		var dict = new Dictionary<string, object>

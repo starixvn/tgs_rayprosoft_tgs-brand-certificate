@@ -16,4 +16,6 @@ public record BrandInfo
 	public bool EmailRegisterFlowEnabled { get; init; }
 
 	public bool BankInfoRegisterFlowEnabled { get; init; }
+
+	public int? TimeSpanMinutes { get; init; }
 }
