@@ -167,7 +167,9 @@ public class BrandController : ControllerBase
 			? null
 			: new BrandPaymentSettingsViewModel
 			{
-				PaymentDepositLockEnabled = result.PaymentDepositLockEnabled
+				PaymentDepositLockEnabled = result.PaymentDepositLockEnabled,
+				AutoClearWageringRequirement = result.AutoClearWageringRequirement,
+				ClearWageringRequirementBalance = result.ClearWageringRequirementBalance
 			};
 	}
 
