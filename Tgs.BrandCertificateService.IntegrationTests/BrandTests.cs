@@ -186,16 +186,23 @@ public class BrandTests
 			SecretKey = string.Empty,
 			UpdatedByUsername = string.Empty,
 			Status = (short)BrandStatus.Active,
-			DepositPaymentLockEnabled = true
+			DepositPaymentLockEnabled = true,
+			AutoClearWageringRequirement = true,
+			AutoClearWageringRequirementBalance = 5M
 		});
 
 		_ = await dbContext.SaveChangesAsync();
 
 		var sut = new BrandServiceClient(http);
 
+		var expected = new BrandCertificate.Clients.BrandPaymentSettings(
+			true,
+			true,
+			5M);
+
 		var actual = await sut.GetBrandPaymentSettingsAsync(brandId);
 
-		Assert.IsTrue(actual?.PaymentDepositLockEnabled);
+		Assert.AreEqual(expected, actual);
 	}
 
 	[Test]

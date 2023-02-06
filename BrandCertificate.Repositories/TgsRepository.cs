@@ -180,7 +180,10 @@ internal class TgsRepository : ITgsRepository
 	public async ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
 		=> await _dbContext.Brands
 			.Where(brand => brand.Id == brandId)
-			.Select(brand => new BrandPaymentSettings(brand.DepositPaymentLockEnabled))
+			.Select(brand => new BrandPaymentSettings(
+				brand.DepositPaymentLockEnabled,
+				brand.AutoClearWageringRequirement,
+				brand.AutoClearWageringRequirementBalance))
 			.FirstOrDefaultAsync(cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
