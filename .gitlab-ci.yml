@@ -148,6 +148,7 @@ deploy-prod:
     namespace: prod
     kube_config: KubeConfig_Raypro_prod
     ingress_host: brand-cert.rpgp.cc
+    replica: 2
   environment:
     name: prod
   stage: deploy-prod
