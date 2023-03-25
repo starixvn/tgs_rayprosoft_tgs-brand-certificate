@@ -174,4 +174,24 @@ public class BrandTests
         _ = fakeMessageSender.Received(1)
             .PublishAsync(Arg.Is("tgs.brand.frontendinfo.changed"), Arg.Any<ReadOnlyMemory<byte>>());
     }
+
+    [Test]
+    public async Task 查詢BrandList()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new BrandListQueryService(fakeTgsRepository);
+
+        var query = new BrandListQuery(
+            null,
+            BrandStatus.Archived);
+
+        _ = await sut.QueryAsync(query).ToArrayAsync();
+
+        _ = fakeTgsRepository.Received(1)
+            .QueryBrandListAsync(
+                Arg.Is(query.BrandCode),
+                Arg.Is(query.Status),
+                Arg.Any<CancellationToken>());
+    }
 }

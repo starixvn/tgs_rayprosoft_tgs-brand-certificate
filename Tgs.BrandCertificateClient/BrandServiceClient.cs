@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
 using DateOnlyTimeOnly.AspNet.Converters;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Tgs.BrandCertificate.Clients;
 
@@ -160,11 +161,11 @@ internal class BrandServiceClient : IBrandServiceClient
 		return JsonSerializer.Deserialize<BrandMaintenanceResult>(json, _SerializerOptions)!;
 	}
 
-	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? Content, CancellationToken cancellationToken = default)
+	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? content, CancellationToken cancellationToken = default)
 	{
 		var dict = new Dictionary<string, object?>
 		{
-			{ "content", Content }
+			{ "content", content }
 		};
 
 		var requestContent = new StringContent(
@@ -216,6 +217,33 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		foreach (var brandId in brandIds!)
 			yield return brandId;
+	}
+
+	public IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
+		BrandListQuery query, 
+		CancellationToken cancellationToken = default)
+	{
+		var queryStrings = new QueryBuilder();
+
+		if (!string.IsNullOrEmpty(query.BrandCode))
+			queryStrings.Add("brandCode", query.BrandCode);
+
+		if (query.Status is not null)
+			queryStrings.Add("status", query.Status.Value.ToString());
+
+		return _httpClient
+			.GetAsync($"/brand{queryStrings.ToQueryString().Value}", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<IEnumerable<BrandListItem>>(_SerializerOptions, cancellationToken)
+				.ToAsyncEnumerable())
+			.Where(arr => arr is not null)
+			.SelectMany(arr => arr!.ToAsyncEnumerable())
+			.ToArrayAsync(cancellationToken)
+			.AsTask()
+			.ToAsyncEnumerable()
+			.SelectMany(arr => arr.ToAsyncEnumerable());
 	}
 
 	public async ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)

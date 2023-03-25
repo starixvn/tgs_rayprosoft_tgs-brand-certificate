@@ -191,4 +191,28 @@ public class BrandController : ControllerBase
 
 		return queryService.QueryAsync(query, HttpContext.RequestAborted);
 	}
+
+	[HttpGet(Name = "GetBrandList")]
+	public IAsyncEnumerable<BrandListItemViewModel> QueryBrandListAsync(
+		[FromServices] IQueryService<BrandListQuery, BrandListItem> queryService,
+		[FromQuery] BrandListQueryViewModel viewModel)
+	{
+		var query = new BrandListQuery(
+			viewModel.BrandCode,
+			viewModel.BrandStatus);
+
+		return queryService.QueryAsync(query, HttpContext.RequestAborted)
+			.Select(item => new BrandListItemViewModel
+			{ 
+				BrandId = item.BrandId,
+				BrandName = item.BrandName,
+				LicenseeId = item.LicenseeId,
+				LicenseeName = item.LicenseeName,
+				Status = item.Status,
+				Description = item.Description,
+				OperationalEmail = item.OperationalEmail,
+				CreatedOn = item.CreatedOn,
+				UpdatedOn = item.UpdatedOn
+			});
+	}
 }

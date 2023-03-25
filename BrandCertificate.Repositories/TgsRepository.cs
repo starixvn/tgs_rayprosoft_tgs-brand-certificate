@@ -162,13 +162,13 @@ internal class TgsRepository : ITgsRepository
 		return new BrandMaintenanceModel(brandMaintenance.Content);
 	}
 
-	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? Content, CancellationToken cancellationToken = default)
+	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? content, CancellationToken cancellationToken = default)
 	{
 		var brandMaintenance = await _dbContext.BrandMaintenances
 			.FirstAsync(bm => bm.Id == brandMaintenanceId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
-		brandMaintenance.Content = Content;
+		brandMaintenance.Content = content;
 
 		_ = _dbContext.BrandMaintenances.Update(brandMaintenance);
 
@@ -216,7 +216,7 @@ internal class TgsRepository : ITgsRepository
 			.ConfigureAwait(false);
 	}
 
-	public async ValueTask<bool> UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument PlayerRegisterFlowSettings, CancellationToken cancellationToken = default)
+	public async ValueTask<bool> UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument playerRegisterFlowSettings, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
 			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
@@ -225,7 +225,7 @@ internal class TgsRepository : ITgsRepository
 		if (brand == null)
 			return false;
 
-		brand.PlayerRegisterFlowSettings = JsonSerializer.Serialize(PlayerRegisterFlowSettings);
+		brand.PlayerRegisterFlowSettings = JsonSerializer.Serialize(playerRegisterFlowSettings);
 
 		_ = _dbContext.Brands.Update(brand);
 
@@ -238,7 +238,7 @@ internal class TgsRepository : ITgsRepository
 
 	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
 		CancellationToken cancellationToken = default)
-	=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
+		=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
 
 	public async ValueTask<int?> GetTimeSpanMinutesByBrandIdAsync(Guid brandId, CancellationToken cancellationToken = default)
 	{
@@ -247,4 +247,46 @@ internal class TgsRepository : ITgsRepository
 		return brand?.TimeSpanMinutes;
 	}
 
+	public IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
+		string? brandCode,
+		BrandStatus? status,
+		CancellationToken cancellationToken = default)
+	{
+		var brands = _dbContext.Brands
+			.AsQueryable();
+
+		if (status is not null)
+			brands = brands.Where(p => p.Status == (short)status);
+
+		if (!string.IsNullOrEmpty(brandCode))
+			brands = brands.Where(b => b.Code.ToLower().StartsWith(brandCode.ToLower()));
+
+		return brands
+			.Include(b => b.Licensee)
+			.Select(b => new
+			{
+				BrandId = b.Id,
+				BrandName = b.Name,
+				LicenseeId = b.Licensee.Id,
+				LicenseeName = b.Licensee.Name,
+				b.Status,
+				b.Description,
+				b.OperationalEmail,
+				b.CreatedOn,
+				b.UpdatedOn
+			})
+			.ToArrayAsync(cancellationToken: cancellationToken)
+			.ToAsyncEnumerable()
+			.SelectMany(arr => arr.ToAsyncEnumerable())
+			.Select(b => new BrandListItem(
+				b.BrandId,
+				b.BrandName,
+				b.LicenseeId,
+				b.LicenseeName,
+				(BrandStatus)b.Status,
+				b.Description,
+				b.OperationalEmail,
+				b.CreatedOn,
+				b.UpdatedOn));
+	}
 }

@@ -534,4 +534,125 @@ public class BrandTests
 		Assert.AreEqual(timeSpanMinutes, brandInfo?.TimeSpanMinutes);
 	}
 
+	[Test]
+	public async Task 以BrandCode查詢Brand列表()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var licensee = await dbContext.Licensees.AddAsync(
+			new Licensee
+			{
+				Id = Guid.NewGuid(),
+				Code = "TGS",
+				Name = "Turnkey Game System",
+				CreatedByUsername = "",
+				UpdatedByUsername = ""
+			});
+
+		await dbContext.Brands.AddRangeAsync(
+			new Brand
+			{
+				Id = Guid.NewGuid(),
+				Code = "Test1",
+				Name = "Test1",
+				ApiKey = string.Empty,
+				ClientId = string.Empty,
+				SecretKey = string.Empty,
+				CreatedByUsername = string.Empty,
+				UpdatedByUsername = string.Empty,
+				Status = (short)BrandStatus.Active,
+				Licensee = licensee.Entity
+			}, 
+			new Brand
+			{
+				Id = Guid.NewGuid(),
+				Code = "Test2",
+				Name = "Test2",
+				ApiKey = string.Empty,
+				ClientId = string.Empty,
+				SecretKey = string.Empty,
+				CreatedByUsername = string.Empty,
+				UpdatedByUsername = string.Empty,
+				Status = (short)BrandStatus.Active,
+				Licensee = licensee.Entity
+			});
+
+		_ = await dbContext.SaveChangesAsync();
+		
+		var sut = new BrandServiceClient(http);
+
+		var query = new BrandListQuery
+		{
+			BrandCode = "Test"
+		};
+
+		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
+
+		Assert.AreEqual(2, actual.Length);
+	}
+
+	[Test]
+	public async Task 以Status查詢Brand列表()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var licensee = await dbContext.Licensees.AddAsync(
+			new Licensee
+			{
+				Id = Guid.NewGuid(),
+				Code = "TGS",
+				Name = "Turnkey Game System",
+				CreatedByUsername = "",
+				UpdatedByUsername = ""
+			});
+
+		await dbContext.Brands.AddRangeAsync(
+			new Brand
+			{
+				Id = Guid.NewGuid(),
+				Code = "Test1",
+				Name = "Test1",
+				ApiKey = string.Empty,
+				ClientId = string.Empty,
+				SecretKey = string.Empty,
+				CreatedByUsername = string.Empty,
+				UpdatedByUsername = string.Empty,
+				Status = (short)BrandStatus.Active,
+				Licensee = licensee.Entity
+			},
+			new Brand
+			{
+				Id = Guid.NewGuid(),
+				Code = "Test2",
+				Name = "Test2",
+				ApiKey = string.Empty,
+				ClientId = string.Empty,
+				SecretKey = string.Empty,
+				CreatedByUsername = string.Empty,
+				UpdatedByUsername = string.Empty,
+				Status = (short)BrandStatus.Archived,
+				Licensee = licensee.Entity
+			});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var query = new BrandListQuery
+		{
+			Status = BrandStatus.Archived
+		};
+
+		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
+
+		Assert.AreEqual(1, actual.Length);
+	}
 }
