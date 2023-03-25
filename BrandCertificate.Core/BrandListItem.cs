@@ -5,6 +5,8 @@ public record BrandListItem(
 	string BrandName,
 	Guid LicenseeId,
 	string LicenseeName,
+	Guid ResellerId,
+	string ResellerName,
 	BrandStatus Status,
 	string? Description,
 	string? OperationalEmail,

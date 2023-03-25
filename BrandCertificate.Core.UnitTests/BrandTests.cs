@@ -184,12 +184,18 @@ public class BrandTests
 
         var query = new BrandListQuery(
             null,
+            null,
+            null,
+            null,
             BrandStatus.Archived);
 
         _ = await sut.QueryAsync(query).ToArrayAsync();
 
         _ = fakeTgsRepository.Received(1)
             .QueryBrandListAsync(
+                Arg.Is(query.ResellerId),
+                Arg.Is(query.LicenseeId),
+                Arg.Is(query.BrandId),
                 Arg.Is(query.BrandCode),
                 Arg.Is(query.Status),
                 Arg.Any<CancellationToken>());

@@ -15,5 +15,11 @@ internal class BrandListQueryService : IQueryService<BrandListQuery, BrandListIt
 	public IAsyncEnumerable<BrandListItem> QueryAsync(
 		BrandListQuery query,
 		CancellationToken cancellationToken = default)
-		=> _tgsRepository.QueryBrandListAsync(query.BrandCode, query.Status, cancellationToken);
+		=> _tgsRepository.QueryBrandListAsync(
+			query.ResellerId,
+			query.LicenseeId,
+			query.BrandId,
+			query.BrandCode, 
+			query.Status, 
+			cancellationToken);
 }

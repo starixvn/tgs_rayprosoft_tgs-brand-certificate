@@ -73,9 +73,7 @@ public class BrandController : ControllerBase
 	/// Gets the brand maintenance infos asynchronous.
 	/// </summary>
 	/// <param name="queryService">The query service.</param>
-	/// <param name="getService">The get service.</param>
 	/// <param name="request">The request.</param>
-	/// <param name="paging">The paging.</param>
 	/// <returns></returns>
 	[HttpGet("maintenance")]
 	public IAsyncEnumerable<BrandMaintenanceInfoViewModel> GetBrandMaintenanceInfosAsync(
@@ -104,6 +102,7 @@ public class BrandController : ControllerBase
 	/// <param name="commandService">The command service.</param>
 	/// <param name="request">The request.</param>
 	/// <returns></returns>
+	/// <remarks>
 	/// <b>Example</b><br />
 	///
 	///     Post
@@ -198,6 +197,9 @@ public class BrandController : ControllerBase
 		[FromQuery] BrandListQueryViewModel viewModel)
 	{
 		var query = new BrandListQuery(
+			viewModel.ResellerId,
+			viewModel.LicenseeId,
+			viewModel.BrandId,
 			viewModel.BrandCode,
 			viewModel.BrandStatus);
 
@@ -208,6 +210,8 @@ public class BrandController : ControllerBase
 				BrandName = item.BrandName,
 				LicenseeId = item.LicenseeId,
 				LicenseeName = item.LicenseeName,
+				ResellerId = item.ResellerId,
+				ResellerName = item.ResellerName,
 				Status = item.Status,
 				Description = item.Description,
 				OperationalEmail = item.OperationalEmail,

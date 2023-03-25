@@ -159,7 +159,7 @@ internal class TgsRepository : ITgsRepository
 			.FirstAsync(bm => bm.Id == brandMaintenanceId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
-		return new BrandMaintenanceModel(brandMaintenance.Content);
+		return new BrandMaintenanceModel(brandMaintenance.Content ?? string.Empty);
 	}
 
 	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? content, CancellationToken cancellationToken = default)
@@ -241,27 +241,42 @@ internal class TgsRepository : ITgsRepository
 		=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
 
 	public IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
+		Guid? resellerId,
+		Guid? licenseeId,
+		Guid? brandId,
 		string? brandCode,
 		BrandStatus? status,
 		CancellationToken cancellationToken = default)
 	{
 		var brands = _dbContext.Brands
+			.Include(b => b.Licensee)
+			.ThenInclude(l => l.Reseller)
 			.AsQueryable();
 
 		if (status is not null)
-			brands = brands.Where(p => p.Status == (short)status);
+			brands = brands.Where(b => b.Status == (short)status);
+
+		if (resellerId is not null)
+			brands = brands.Where(b => b.Licensee.ResellerId == resellerId);
+
+		if (licenseeId is not null)
+			brands = brands.Where(b => b.LicenseeId == licenseeId);
+
+		if (brandId is not null)
+			brands = brands.Where(b => b.Id == brandId);
 
 		if (!string.IsNullOrEmpty(brandCode))
 			brands = brands.Where(b => b.Code.ToLower().StartsWith(brandCode.ToLower()));
 
 		return brands
-			.Include(b => b.Licensee)
 			.Select(b => new
 			{
 				BrandId = b.Id,
 				BrandName = b.Name,
 				LicenseeId = b.Licensee.Id,
 				LicenseeName = b.Licensee.Name,
+				ResellerId = b.Licensee.Reseller.Id,
+				ResellerName = b.Licensee.Reseller.Name,
 				b.Status,
 				b.Description,
 				b.OperationalEmail,
@@ -276,6 +291,8 @@ internal class TgsRepository : ITgsRepository
 				b.BrandName,
 				b.LicenseeId,
 				b.LicenseeName,
+				b.ResellerId,
+				b.ResellerName,
 				(BrandStatus)b.Status,
 				b.Description,
 				b.OperationalEmail,

@@ -12,6 +12,10 @@ public class BrandListItemViewModel
 
 	public string LicenseeName { get; init; } = default!;
 
+	public Guid ResellerId { get; init; }
+
+	public string ResellerName { get; init; } = default!;
+
 	public BrandStatus Status { get; init; }
 
 	public string? Description { get; init; }
