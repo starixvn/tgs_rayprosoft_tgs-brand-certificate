@@ -28,8 +28,6 @@ public interface ITgsRepository
 
 	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes, CancellationToken cancellationToken = default);
 
-	ValueTask<int?> GetTimeSpanMinutesByBrandIdAsync(Guid brandId, CancellationToken cancellationToken = default);
-
 	IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
 		string? brandCode,
 		BrandStatus? status,
