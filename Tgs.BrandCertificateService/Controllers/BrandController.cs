@@ -97,7 +97,7 @@ public class BrandController : ControllerBase
 	}
 
 	/// <summary>
-	/// Batche update brand maintenance time asynchronous.
+	/// Batch update brand maintenance time asynchronous.
 	/// </summary>
 	/// <param name="commandService">The command service.</param>
 	/// <param name="request">The request.</param>
@@ -197,9 +197,7 @@ public class BrandController : ControllerBase
 		[FromQuery] BrandListQueryViewModel viewModel)
 	{
 		var query = new BrandListQuery(
-			viewModel.ResellerId,
-			viewModel.LicenseeId,
-			viewModel.BrandId,
+			viewModel.BrandIds,
 			viewModel.BrandCode,
 			viewModel.BrandStatus);
 
@@ -207,12 +205,6 @@ public class BrandController : ControllerBase
 			.Select(item => new BrandListItemViewModel
 			{ 
 				BrandId = item.BrandId,
-				BrandCode = item.BrandCode,
-				BrandName = item.BrandName,
-				LicenseeId = item.LicenseeId,
-				LicenseeName = item.LicenseeName,
-				ResellerId = item.ResellerId,
-				ResellerName = item.ResellerName,
 				Status = item.Status,
 				Description = item.Description,
 				OperationalEmail = item.OperationalEmail,

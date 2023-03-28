@@ -225,20 +225,14 @@ internal class BrandServiceClient : IBrandServiceClient
 	{
 		var queryStrings = new QueryBuilder();
 
-		if (query.ResellerId is not null)
-			queryStrings.Add("resellerId", query.ResellerId.Value.ToString());
-
-		if (query.LicenseeId is not null)
-			queryStrings.Add("licenseeId", query.LicenseeId.Value.ToString());
-
-		if (query.BrandId is not null)
-			queryStrings.Add("brandId", query.BrandId.Value.ToString());
-
 		if (!string.IsNullOrEmpty(query.BrandCode))
 			queryStrings.Add("brandCode", query.BrandCode);
 
 		if (query.Status is not null)
 			queryStrings.Add("status", query.Status.Value.ToString());
+
+		foreach(var brandId in query.BrandIds)
+			queryStrings.Add("brandId", brandId.ToString());
 
 		return _httpClient
 			.GetAsync($"/brand{queryStrings.ToQueryString().Value}", cancellationToken)

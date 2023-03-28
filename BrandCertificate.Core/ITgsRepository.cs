@@ -28,10 +28,13 @@ public interface ITgsRepository
 
 	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes, CancellationToken cancellationToken = default);
 
+	IAsyncEnumerable<BrandListItem> QueryBrandListByBrandsAsync(
+		IEnumerable<Guid> brandIds,
+		string? brandCode,
+		BrandStatus? status,
+		CancellationToken cancellationToken = default);
+
 	IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
-		Guid? resellerId,
-		Guid? licenseeId,
-		Guid? brandId,
 		string? brandCode,
 		BrandStatus? status,
 		CancellationToken cancellationToken = default);

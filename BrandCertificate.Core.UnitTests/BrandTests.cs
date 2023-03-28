@@ -183,9 +183,7 @@ public class BrandTests
         var sut = new BrandListQueryService(fakeTgsRepository);
 
         var query = new BrandListQuery(
-            null,
-            null,
-            null,
+            Array.Empty<Guid>(),
             null,
             BrandStatus.Archived);
 
@@ -193,9 +191,30 @@ public class BrandTests
 
         _ = fakeTgsRepository.Received(1)
             .QueryBrandListAsync(
-                Arg.Is(query.ResellerId),
-                Arg.Is(query.LicenseeId),
-                Arg.Is(query.BrandId),
+                Arg.Is(query.BrandCode),
+                Arg.Is(query.Status),
+                Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task 用BrandIds查詢BrandList()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new BrandListQueryService(fakeTgsRepository);
+
+        var brandIds = new[] { Guid.NewGuid() };
+
+        var query = new BrandListQuery(
+            brandIds,
+            null,
+            BrandStatus.Archived);
+
+        _ = await sut.QueryAsync(query).ToArrayAsync();
+
+        _ = fakeTgsRepository.Received(1)
+            .QueryBrandListByBrandsAsync(
+                Arg.Is(query.BrandIds),
                 Arg.Is(query.BrandCode),
                 Arg.Is(query.Status),
                 Arg.Any<CancellationToken>());

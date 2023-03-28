@@ -1,9 +1,7 @@
 ﻿namespace Tgs.BrandCertificate.ApplicationServices;
 
 public record BrandListQuery(
-	Guid? ResellerId,
-	Guid? LicenseeId,
-	Guid? BrandId,
+	IEnumerable<Guid> BrandIds,
 	string? BrandCode,
 	BrandStatus? Status);
 

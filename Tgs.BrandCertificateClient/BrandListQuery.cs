@@ -2,11 +2,7 @@
 
 public class BrandListQuery
 {
-	public Guid? ResellerId { get; init; }
-
-	public Guid? LicenseeId { get; init; }
-
-	public Guid? BrandId { get; init; }
+	public IEnumerable<Guid> BrandIds { get; init; }  = Enumerable.Empty<Guid>();
 
 	public string? BrandCode { get; init; }
 

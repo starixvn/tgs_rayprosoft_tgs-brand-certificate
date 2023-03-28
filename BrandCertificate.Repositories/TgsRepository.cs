@@ -240,44 +240,19 @@ internal class TgsRepository : ITgsRepository
 		CancellationToken cancellationToken = default)
 		=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
 
-	public IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
-		Guid? resellerId,
-		Guid? licenseeId,
-		Guid? brandId,
+	public IAsyncEnumerable<BrandListItem> QueryBrandListByBrandsAsync(
+		IEnumerable<Guid> brandIds,
 		string? brandCode,
 		BrandStatus? status,
 		CancellationToken cancellationToken = default)
 	{
-		var brands = _dbContext.Brands
-			.Include(b => b.Licensee)
-			.ThenInclude(l => l.Reseller)
-			.AsQueryable();
-
-		if (status is not null)
-			brands = brands.Where(b => b.Status == (short)status);
-
-		if (resellerId is not null)
-			brands = brands.Where(b => b.Licensee.ResellerId == resellerId);
-
-		if (licenseeId is not null)
-			brands = brands.Where(b => b.LicenseeId == licenseeId);
-
-		if (brandId is not null)
-			brands = brands.Where(b => b.Id == brandId);
-
-		if (!string.IsNullOrEmpty(brandCode))
-			brands = brands.Where(b => b.Code.ToLower().StartsWith(brandCode.ToLower()));
+		var brands = InternalBrandListQuery(brandCode, status)
+			.Where(b => brandIds.Contains(b.Id));
 
 		return brands
 			.Select(b => new
 			{
 				BrandId = b.Id,
-				BrandCode = b.Code,
-				BrandName = b.Name,
-				LicenseeId = b.Licensee.Id,
-				LicenseeName = b.Licensee.Name,
-				ResellerId = b.Licensee.Reseller.Id,
-				ResellerName = b.Licensee.Reseller.Name,
 				b.Status,
 				b.Description,
 				b.OperationalEmail,
@@ -289,16 +264,52 @@ internal class TgsRepository : ITgsRepository
 			.SelectMany(arr => arr.ToAsyncEnumerable())
 			.Select(b => new BrandListItem(
 				b.BrandId,
-				b.BrandCode,
-				b.BrandName,
-				b.LicenseeId,
-				b.LicenseeName,
-				b.ResellerId,
-				b.ResellerName,
 				(BrandStatus)b.Status,
 				b.Description,
 				b.OperationalEmail,
 				b.CreatedOn,
 				b.UpdatedOn));
+	}
+
+	public IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
+		string? brandCode,
+		BrandStatus? status,
+		CancellationToken cancellationToken = default)
+	{
+		var brands = InternalBrandListQuery(brandCode, status);
+
+		return brands
+			.Select(b => new
+			{
+				BrandId = b.Id,
+				b.Status,
+				b.Description,
+				b.OperationalEmail,
+				b.CreatedOn,
+				b.UpdatedOn
+			})
+			.ToArrayAsync(cancellationToken: cancellationToken)
+			.ToAsyncEnumerable()
+			.SelectMany(arr => arr.ToAsyncEnumerable())
+			.Select(b => new BrandListItem(
+				b.BrandId,
+				(BrandStatus)b.Status,
+				b.Description,
+				b.OperationalEmail,
+				b.CreatedOn,
+				b.UpdatedOn));
+	}
+
+	private IQueryable<Brand> InternalBrandListQuery(string? brandCode, BrandStatus? status)
+	{
+		var brands = _dbContext.Brands.AsQueryable();
+
+
+		if (status is not null)
+			brands = brands.Where(b => b.Status == (short)status);
+
+		if (!string.IsNullOrEmpty(brandCode))
+			brands = brands.Where(b => b.Code.ToLower().StartsWith(brandCode.ToLower()));
+		return brands;
 	}
 }

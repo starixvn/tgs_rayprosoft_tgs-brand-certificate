@@ -5,14 +5,8 @@ namespace Tgs.BrandCertificateService.ViewModels;
 
 public class BrandListQueryViewModel
 {
-	[FromQuery]
-	public Guid? ResellerId { get; set; }
-
-	[FromQuery]
-	public Guid? LicenseeId { get; set; }
-
-	[FromQuery]
-	public Guid? BrandId { get; set; }
+	[FromQuery(Name = "brandId")]
+	public Guid[] BrandIds { get; set; } = Array.Empty<Guid>();
 
 	[FromQuery]
 	public string? BrandCode { get; set; }

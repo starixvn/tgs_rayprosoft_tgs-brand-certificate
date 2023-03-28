@@ -542,25 +542,7 @@ public class BrandTests
 		var http = web.CreateClient();
 
 		var dbContext = web.Services.GetRequiredService<TgsContext>();
-
-		var licensee = await dbContext.Licensees.AddAsync(
-			new Licensee
-			{
-				Id = Guid.NewGuid(),
-				Code = "TGS",
-				Name = "Turnkey Game System",
-				CreatedByUsername = "",
-				UpdatedByUsername = "",
-				Reseller = new Reseller
-				{
-					Id = Guid.NewGuid(),
-					Code = "TGS",
-					Name = "Turnkey Game System",
-					CreatedByUsername = "",
-					UpdatedByUsername = "",
-				}
-			});
-
+		
 		await dbContext.Brands.AddRangeAsync(
 			new Brand
 			{
@@ -572,10 +554,9 @@ public class BrandTests
 				SecretKey = string.Empty,
 				CreatedByUsername = string.Empty,
 				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Active,
-				Licensee = licensee.Entity
+				Status = (short)BrandStatus.Active
 			},
-			new Brand
+			new Brand()
 			{
 				Id = Guid.NewGuid(),
 				Code = "Test2",
@@ -585,8 +566,7 @@ public class BrandTests
 				SecretKey = string.Empty,
 				CreatedByUsername = string.Empty,
 				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Active,
-				Licensee = licensee.Entity
+				Status = (short)BrandStatus.Active
 			});
 
 		_ = await dbContext.SaveChangesAsync();
@@ -611,25 +591,7 @@ public class BrandTests
 		var http = web.CreateClient();
 
 		var dbContext = web.Services.GetRequiredService<TgsContext>();
-
-		var licensee = await dbContext.Licensees.AddAsync(
-			new Licensee
-			{
-				Id = Guid.NewGuid(),
-				Code = "TGS",
-				Name = "Turnkey Game System",
-				CreatedByUsername = "",
-				UpdatedByUsername = "",
-				Reseller = new Reseller
-				{
-					Id = Guid.NewGuid(),
-					Code = "TGS",
-					Name = "Turnkey Game System",
-					CreatedByUsername = "",
-					UpdatedByUsername = "",
-				}
-			});
-
+		
 		await dbContext.Brands.AddRangeAsync(
 			new Brand
 			{
@@ -641,8 +603,7 @@ public class BrandTests
 				SecretKey = string.Empty,
 				CreatedByUsername = string.Empty,
 				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Active,
-				Licensee = licensee.Entity
+				Status = (short)BrandStatus.Active
 			},
 			new Brand
 			{
@@ -654,8 +615,7 @@ public class BrandTests
 				SecretKey = string.Empty,
 				CreatedByUsername = string.Empty,
 				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Archived,
-				Licensee = licensee.Entity
+				Status = (short)BrandStatus.Archived
 			});
 
 		_ = await dbContext.SaveChangesAsync();
@@ -673,179 +633,6 @@ public class BrandTests
 	}
 
 	[Test]
-	public async Task 以ResellerId查詢Brand列表()
-	{
-		await using var web = new TestBrandCertificateApplication();
-
-		var http = web.CreateClient();
-
-		var dbContext = web.Services.GetRequiredService<TgsContext>();
-
-		var reseller1 = await dbContext.Resellers.AddAsync(new Reseller
-		{
-			Id = Guid.NewGuid(),
-			Code = "TGS1",
-			Name = "Turnkey Game System 1",
-			CreatedByUsername = "",
-			UpdatedByUsername = "",
-		});
-
-		var reseller2 = await dbContext.Resellers.AddAsync(new Reseller
-		{
-			Id = Guid.NewGuid(),
-			Code = "TGS2",
-			Name = "Turnkey Game System 2",
-			CreatedByUsername = "",
-			UpdatedByUsername = "",
-		});
-
-		var licensee1 = await dbContext.Licensees.AddAsync(
-			new Licensee
-			{
-				Id = Guid.NewGuid(),
-				Code = "TGS1",
-				Name = "Turnkey Game System 1",
-				CreatedByUsername = "",
-				UpdatedByUsername = "",
-				Reseller = reseller1.Entity
-			});
-
-		var licensee2 = await dbContext.Licensees.AddAsync(
-			new Licensee
-			{
-				Id = Guid.NewGuid(),
-				Code = "TGS2",
-				Name = "Turnkey Game System 2",
-				CreatedByUsername = "",
-				UpdatedByUsername = "",
-				Reseller = reseller2.Entity
-			});
-
-		await dbContext.Brands.AddRangeAsync(
-			new Brand
-			{
-				Id = Guid.NewGuid(),
-				Code = "Test1",
-				Name = "Test1",
-				ApiKey = string.Empty,
-				ClientId = string.Empty,
-				SecretKey = string.Empty,
-				CreatedByUsername = string.Empty,
-				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Active,
-				Licensee = licensee1.Entity
-			},
-			new Brand
-			{
-				Id = Guid.NewGuid(),
-				Code = "Test2",
-				Name = "Test2",
-				ApiKey = string.Empty,
-				ClientId = string.Empty,
-				SecretKey = string.Empty,
-				CreatedByUsername = string.Empty,
-				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Archived,
-				Licensee = licensee2.Entity
-			});
-
-		_ = await dbContext.SaveChangesAsync();
-
-		var sut = new BrandServiceClient(http);
-
-		var query = new BrandListQuery
-		{
-			ResellerId = reseller1.Entity.Id
-		};
-
-		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
-
-		Assert.AreEqual(1, actual.Length);
-	}
-
-	[Test]
-	public async Task 以LicenseeId查詢Brand列表()
-	{
-		await using var web = new TestBrandCertificateApplication();
-
-		var http = web.CreateClient();
-
-		var dbContext = web.Services.GetRequiredService<TgsContext>();
-
-		var reseller = await dbContext.Resellers.AddAsync(new Reseller
-		{
-			Id = Guid.NewGuid(),
-			Code = "TGS",
-			Name = "Turnkey Game System",
-			CreatedByUsername = "",
-			UpdatedByUsername = "",
-		});
-
-		var licensee1 = await dbContext.Licensees.AddAsync(
-			new Licensee
-			{
-				Id = Guid.NewGuid(),
-				Code = "TGS1",
-				Name = "Turnkey Game System 1",
-				CreatedByUsername = "",
-				UpdatedByUsername = "",
-				Reseller = reseller.Entity
-			});
-
-		var licensee2 = await dbContext.Licensees.AddAsync(
-			new Licensee
-			{
-				Id = Guid.NewGuid(),
-				Code = "TGS2",
-				Name = "Turnkey Game System 2",
-				CreatedByUsername = "",
-				UpdatedByUsername = "",
-				Reseller = reseller.Entity
-			});
-
-		await dbContext.Brands.AddRangeAsync(
-			new Brand
-			{
-				Id = Guid.NewGuid(),
-				Code = "Test1",
-				Name = "Test1",
-				ApiKey = string.Empty,
-				ClientId = string.Empty,
-				SecretKey = string.Empty,
-				CreatedByUsername = string.Empty,
-				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Active,
-				Licensee = licensee1.Entity
-			},
-			new Brand
-			{
-				Id = Guid.NewGuid(),
-				Code = "Test2",
-				Name = "Test2",
-				ApiKey = string.Empty,
-				ClientId = string.Empty,
-				SecretKey = string.Empty,
-				CreatedByUsername = string.Empty,
-				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Archived,
-				Licensee = licensee2.Entity
-			});
-
-		_ = await dbContext.SaveChangesAsync();
-
-		var sut = new BrandServiceClient(http);
-
-		var query = new BrandListQuery
-		{
-			LicenseeId = licensee1.Entity.Id
-		};
-
-		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
-
-		Assert.AreEqual(1, actual.Length);
-	}
-
-	[Test]
 	public async Task 以BrandId查詢Brand列表()
 	{
 		await using var web = new TestBrandCertificateApplication();
@@ -853,24 +640,6 @@ public class BrandTests
 		var http = web.CreateClient();
 
 		var dbContext = web.Services.GetRequiredService<TgsContext>();
-
-		var licensee = await dbContext.Licensees.AddAsync(
-			new Licensee
-			{
-				Id = Guid.NewGuid(),
-				Code = "TGS",
-				Name = "Turnkey Game System",
-				CreatedByUsername = "",
-				UpdatedByUsername = "",
-				Reseller = new Reseller
-				{
-					Id = Guid.NewGuid(),
-					Code = "TGS",
-					Name = "Turnkey Game System",
-					CreatedByUsername = "",
-					UpdatedByUsername = "",
-				}
-			});
 
 		var brandId = Guid.NewGuid();
 		await dbContext.Brands.AddRangeAsync(
@@ -884,8 +653,7 @@ public class BrandTests
 				SecretKey = string.Empty,
 				CreatedByUsername = string.Empty,
 				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Active,
-				Licensee = licensee.Entity
+				Status = (short)BrandStatus.Active
 			},
 			new Brand
 			{
@@ -897,8 +665,7 @@ public class BrandTests
 				SecretKey = string.Empty,
 				CreatedByUsername = string.Empty,
 				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Archived,
-				Licensee = licensee.Entity
+				Status = (short)BrandStatus.Archived
 			});
 
 		_ = await dbContext.SaveChangesAsync();
@@ -907,7 +674,7 @@ public class BrandTests
 
 		var query = new BrandListQuery
 		{
-			BrandId = brandId
+			BrandIds = new [] {brandId}
 		};
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
