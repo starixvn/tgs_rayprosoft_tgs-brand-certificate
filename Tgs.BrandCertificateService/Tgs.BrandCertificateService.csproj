@@ -21,9 +21,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="DateOnlyTimeOnly.AspNet" Version="2.1.1" />
-		<PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" Version="2.0.0" />
+		<PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" Version="2.1.1" />
 		<PackageReference Include="FluentdForward.OpenTelemetry.MessagePack" Version="0.2.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.5.22">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -34,9 +34,9 @@
 		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.4" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.4" />
 		<PackageReference Include="ProfileViewer.OpenTelemetry.Exporter" Version="0.2.1" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
-		<PackageReference Include="Tgs.MessageQueue.Nats" Version="2.1.7" />
+		<PackageReference Include="Tgs.MessageQueue.Nats" Version="2.3.0" />
 		<PackageReference Include="Tgs.WebApi.Toolkits" Version="0.1.1" />
 	</ItemGroup>
 
