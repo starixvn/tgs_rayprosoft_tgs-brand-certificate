@@ -6,6 +6,8 @@ public class BrandListItemViewModel
 {
 	public Guid BrandId { get; init; }
 
+	public string BrandCode { get; init; } = default!;
+
 	public string BrandName { get; init; } = default!;
 
 	public Guid LicenseeId { get; init; }

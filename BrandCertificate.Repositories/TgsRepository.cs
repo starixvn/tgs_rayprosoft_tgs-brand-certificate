@@ -272,6 +272,7 @@ internal class TgsRepository : ITgsRepository
 			.Select(b => new
 			{
 				BrandId = b.Id,
+				BrandCode = b.Code,
 				BrandName = b.Name,
 				LicenseeId = b.Licensee.Id,
 				LicenseeName = b.Licensee.Name,
@@ -288,6 +289,7 @@ internal class TgsRepository : ITgsRepository
 			.SelectMany(arr => arr.ToAsyncEnumerable())
 			.Select(b => new BrandListItem(
 				b.BrandId,
+				b.BrandCode,
 				b.BrandName,
 				b.LicenseeId,
 				b.LicenseeName,

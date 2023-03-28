@@ -207,6 +207,7 @@ public class BrandController : ControllerBase
 			.Select(item => new BrandListItemViewModel
 			{ 
 				BrandId = item.BrandId,
+				BrandCode = item.BrandCode,
 				BrandName = item.BrandName,
 				LicenseeId = item.LicenseeId,
 				LicenseeName = item.LicenseeName,

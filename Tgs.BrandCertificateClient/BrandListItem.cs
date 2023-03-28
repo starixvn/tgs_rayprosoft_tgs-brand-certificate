@@ -2,6 +2,7 @@
 
 public record BrandListItem(
 	Guid BrandId,
+	string BrandCode,
 	string BrandName,
 	Guid LicenseeId,
 	string LicenseeName,
