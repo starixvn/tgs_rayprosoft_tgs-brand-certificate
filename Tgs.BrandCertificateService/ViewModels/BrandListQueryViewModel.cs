@@ -11,6 +11,9 @@ public class BrandListQueryViewModel
 	[FromQuery]
 	public string? BrandCode { get; set; }
 
+	[FromQuery]
+	public string? BrandName { get; set; }
+
 	[FromQuery(Name = "status")]
 	public BrandStatus? BrandStatus { get; set; }
 }

@@ -199,6 +199,7 @@ public class BrandController : ControllerBase
 		var query = new BrandListQuery(
 			viewModel.BrandIds,
 			viewModel.BrandCode,
+			viewModel.BrandName,
 			viewModel.BrandStatus);
 
 		return queryService.QueryAsync(query, HttpContext.RequestAborted)

@@ -31,11 +31,13 @@ public interface ITgsRepository
 	IAsyncEnumerable<BrandListItem> QueryBrandListByBrandsAsync(
 		IEnumerable<Guid> brandIds,
 		string? brandCode,
+		string? brandName,
 		BrandStatus? status,
 		CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
 		string? brandCode,
+		string? brandName, 
 		BrandStatus? status,
 		CancellationToken cancellationToken = default);
 

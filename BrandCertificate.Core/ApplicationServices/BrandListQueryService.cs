@@ -19,10 +19,12 @@ internal class BrandListQueryService : IQueryService<BrandListQuery, BrandListIt
 			? _tgsRepository.QueryBrandListByBrandsAsync(
 				query.BrandIds,
 				query.BrandCode,
+				query.BrandName,
 				query.Status,
 				cancellationToken)
 			: _tgsRepository.QueryBrandListAsync(
 				query.BrandCode,
+				query.BrandName,
 				query.Status,
 				cancellationToken);
 }

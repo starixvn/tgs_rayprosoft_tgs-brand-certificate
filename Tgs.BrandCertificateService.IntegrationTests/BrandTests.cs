@@ -683,6 +683,56 @@ public class BrandTests
 	}
 
 	[Test]
+	public async Task 以BrandName查詢Brand列表()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+		await dbContext.Brands.AddRangeAsync(
+			new Brand
+			{
+				Id = brandId,
+				Code = "Test1",
+				Name = "Test1",
+				ApiKey = string.Empty,
+				ClientId = string.Empty,
+				SecretKey = string.Empty,
+				CreatedByUsername = string.Empty,
+				UpdatedByUsername = string.Empty,
+				Status = (short)BrandStatus.Active
+			},
+			new Brand
+			{
+				Id = Guid.NewGuid(),
+				Code = "Test2",
+				Name = "Test2",
+				ApiKey = string.Empty,
+				ClientId = string.Empty,
+				SecretKey = string.Empty,
+				CreatedByUsername = string.Empty,
+				UpdatedByUsername = string.Empty,
+				Status = (short)BrandStatus.Archived
+			});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var query = new BrandListQuery
+		{
+			BrandName = "Test1"
+		};
+
+		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
+
+		Assert.AreEqual(1, actual.Length);
+	}
+
+	[Test]
 	public async Task 取得Brand關聯表()
 	{
 		await using var web = new TestBrandCertificateApplication();

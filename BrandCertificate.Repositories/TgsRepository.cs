@@ -243,10 +243,11 @@ internal class TgsRepository : ITgsRepository
 	public IAsyncEnumerable<BrandListItem> QueryBrandListByBrandsAsync(
 		IEnumerable<Guid> brandIds,
 		string? brandCode,
+		string? brandName,
 		BrandStatus? status,
 		CancellationToken cancellationToken = default)
 	{
-		var brands = InternalBrandListQuery(brandCode, status)
+		var brands = InternalBrandListQuery(brandCode, brandName, status)
 			.Where(b => brandIds.Contains(b.Id));
 
 		return brands
@@ -273,10 +274,11 @@ internal class TgsRepository : ITgsRepository
 
 	public IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
 		string? brandCode,
+		string? brandName,
 		BrandStatus? status,
 		CancellationToken cancellationToken = default)
 	{
-		var brands = InternalBrandListQuery(brandCode, status);
+		var brands = InternalBrandListQuery(brandCode, brandName, status);
 
 		return brands
 			.Select(b => new
@@ -330,7 +332,10 @@ internal class TgsRepository : ITgsRepository
 				info.ResellerCode,
 				info.ResellerName));
 
-	private IQueryable<Brand> InternalBrandListQuery(string? brandCode, BrandStatus? status)
+	private IQueryable<Brand> InternalBrandListQuery(
+		string? brandCode, 
+		string? brandName,
+		BrandStatus? status)
 	{
 		var brands = _dbContext.Brands.AsQueryable();
 
@@ -339,6 +344,9 @@ internal class TgsRepository : ITgsRepository
 
 		if (!string.IsNullOrEmpty(brandCode))
 			brands = brands.Where(b => b.Code.ToLower().StartsWith(brandCode.ToLower()));
+
+		if (!string.IsNullOrEmpty(brandName))
+			brands = brands.Where(b => b.Name.ToLower().StartsWith(brandName.ToLower()));
 
 		return brands;
 	}
