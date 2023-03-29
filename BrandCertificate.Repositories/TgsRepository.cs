@@ -300,16 +300,46 @@ internal class TgsRepository : ITgsRepository
 				b.UpdatedOn));
 	}
 
+	public IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default)
+		=> _dbContext.Brands
+			.Include(b => b.Licensee)
+			.ThenInclude(l => l.Reseller)
+			.Select(b => new
+			{
+				BrandId = b.Id,
+				BrandName = b.Name,
+				BrandCode = b.Code,
+				LicenseeId = b.Licensee.Id,
+				LicenseeName = b.Licensee.Name,
+				LicenseeCode = b.Licensee.Code,
+				ResellerId = b.Licensee.Reseller.Id,
+				ResellerName = b.Licensee.Reseller.Name,
+				ResellerCode = b.Licensee.Reseller.Code
+			})
+			.ToArrayAsync(cancellationToken: cancellationToken)
+			.ToAsyncEnumerable()
+			.SelectMany(arr => arr.ToAsyncEnumerable())
+			.Select(info => new BrandRelationInfo(
+				info.BrandId,
+				info.BrandCode,
+				info.BrandName,
+				info.LicenseeId,
+				info.LicenseeCode,
+				info.LicenseeName,
+				info.ResellerId,
+				info.ResellerCode,
+				info.ResellerName));
+
 	private IQueryable<Brand> InternalBrandListQuery(string? brandCode, BrandStatus? status)
 	{
 		var brands = _dbContext.Brands.AsQueryable();
-
 
 		if (status is not null)
 			brands = brands.Where(b => b.Status == (short)status);
 
 		if (!string.IsNullOrEmpty(brandCode))
 			brands = brands.Where(b => b.Code.ToLower().StartsWith(brandCode.ToLower()));
+
 		return brands;
 	}
 }

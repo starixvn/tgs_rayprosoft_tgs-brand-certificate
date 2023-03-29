@@ -38,4 +38,6 @@ public interface ITgsRepository
 		string? brandCode,
 		BrandStatus? status,
 		CancellationToken cancellationToken = default);
+
+	IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default);
 }

@@ -681,4 +681,93 @@ public class BrandTests
 
 		Assert.AreEqual(1, actual.Length);
 	}
+
+	[Test]
+	public async Task 取得Brand關聯表()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var reseller = await dbContext.Resellers.AddAsync(new Reseller
+		{
+			Id = Guid.Parse("b5a2c708-ab70-4316-9f4d-5d2ad0e77460"),
+			Code = "TGS",
+			Name = "TGS",
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)ResellerStatus.Active
+		});
+		
+		var licensee = await dbContext.Licensees.AddAsync(new Licensee
+		{
+			Id = Guid.Parse("66c5fef5-217b-4929-9a08-72c2479a8f4e"), 
+			Code = "TGS",
+			Name = "TGS",
+			Status = (short)LicenseeStatus.Active,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Reseller = reseller.Entity
+		});
+
+		await dbContext.Brands.AddRangeAsync(
+			new Brand
+			{
+				Id = Guid.Parse("4e86719f-243f-46f6-b010-5c758b7285af"),
+				Code = "Test1",
+				Name = "Test1",
+				ApiKey = string.Empty,
+				ClientId = string.Empty,
+				SecretKey = string.Empty,
+				CreatedByUsername = string.Empty,
+				UpdatedByUsername = string.Empty,
+				Status = (short)BrandStatus.Active,
+				Licensee = licensee.Entity
+			},
+			new Brand
+			{
+				Id = Guid.Parse("9f1ecf19-38cd-474f-b0d2-93638dc07d21"),
+				Code = "Test2",
+				Name = "Test2",
+				ApiKey = string.Empty,
+				ClientId = string.Empty,
+				SecretKey = string.Empty,
+				CreatedByUsername = string.Empty,
+				UpdatedByUsername = string.Empty,
+				Status = (short)BrandStatus.Active,
+				Licensee = licensee.Entity
+			});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var expected = new BrandCertificate.Clients.BrandRelationInfo[]
+		{
+			new(Guid.Parse("4e86719f-243f-46f6-b010-5c758b7285af"),
+				"Test1",
+				"Test1",
+				Guid.Parse("66c5fef5-217b-4929-9a08-72c2479a8f4e"),
+				"TGS",
+				"TGS",
+				Guid.Parse("b5a2c708-ab70-4316-9f4d-5d2ad0e77460"),
+				"TGS",
+				"TGS"),
+			new(Guid.Parse("9f1ecf19-38cd-474f-b0d2-93638dc07d21"),
+				"Test2",
+				"Test2",
+				Guid.Parse("66c5fef5-217b-4929-9a08-72c2479a8f4e"),
+				"TGS",
+				"TGS",
+				Guid.Parse("b5a2c708-ab70-4316-9f4d-5d2ad0e77460"),
+				"TGS",
+				"TGS")
+		};
+		
+		var actual = await sut.GetBrandRelationsAsync().ToArrayAsync();
+
+		Assert.AreEqual(expected, actual);
+	}
 }

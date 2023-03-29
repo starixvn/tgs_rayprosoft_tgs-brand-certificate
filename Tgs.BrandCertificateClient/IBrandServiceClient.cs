@@ -25,4 +25,6 @@ public interface IBrandServiceClient
 	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes, CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<BrandListItem> QueryBrandListAsync(BrandListQuery query, CancellationToken cancellationToken = default);
+	
+	IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default);
 }

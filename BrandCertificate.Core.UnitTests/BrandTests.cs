@@ -197,26 +197,16 @@ public class BrandTests
     }
 
     [Test]
-    public async Task 用BrandIds查詢BrandList()
+    public async Task 取得Brand關係表()
     {
         var fakeTgsRepository = Substitute.For<ITgsRepository>();
 
-        var sut = new BrandListQueryService(fakeTgsRepository);
+        var sut = new BrandRelationQueryService(fakeTgsRepository);
 
-        var brandIds = new[] { Guid.NewGuid() };
-
-        var query = new BrandListQuery(
-            brandIds,
-            null,
-            BrandStatus.Archived);
-
-        _ = await sut.QueryAsync(query).ToArrayAsync();
+        _ = await sut.QueryAsync(new BrandRelationQuery()).ToArrayAsync();
 
         _ = fakeTgsRepository.Received(1)
-            .QueryBrandListByBrandsAsync(
-                Arg.Is(query.BrandIds),
-                Arg.Is(query.BrandCode),
-                Arg.Is(query.Status),
+            .GetBrandRelationsAsync(
                 Arg.Any<CancellationToken>());
     }
 }

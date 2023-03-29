@@ -212,4 +212,21 @@ public class BrandController : ControllerBase
 				UpdatedOn = item.UpdatedOn
 			});
 	}
+
+	[HttpGet("relations", Name = "GetBrandRelations")]
+	public IAsyncEnumerable<BrandRelationViewModel> GetBrandRelationsAsync(
+		[FromServices] IQueryService<BrandRelationQuery, BrandRelationInfo> queryService)
+		=> queryService.QueryAsync(new BrandRelationQuery(), HttpContext.RequestAborted)
+			.Select(info => new BrandRelationViewModel
+			{
+				BrandId = info.BrandId,
+				BrandCode = info.BrandCode,
+				BrandName = info.BrandName,
+				LicenseeId = info.LicenseeId,
+				LicenseeCode = info .LicenseeCode,
+				LicenseeName = info.LicenseeName,
+				ResellerId = info.ResellerId,
+				ResellerCode = info.ResellerCode,
+				ResellerName = info.ResellerName
+			});
 }

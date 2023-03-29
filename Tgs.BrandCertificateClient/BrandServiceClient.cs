@@ -249,6 +249,21 @@ internal class BrandServiceClient : IBrandServiceClient
 			.SelectMany(arr => arr.ToAsyncEnumerable());
 	}
 
+	public IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default)
+		=> _httpClient
+			.GetAsync("/brand/relations", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<IEnumerable<BrandRelationInfo>>(_SerializerOptions, cancellationToken)
+				.ToAsyncEnumerable())
+			.Where(arr => arr is not null)
+			.SelectMany(arr => arr!.ToAsyncEnumerable())
+			.ToArrayAsync(cancellationToken)
+			.AsTask()
+			.ToAsyncEnumerable()
+			.SelectMany(arr => arr.ToAsyncEnumerable());
+
 	public async ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
 	{
 		var dict = new Dictionary<string, object>
@@ -271,4 +286,5 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		_ = response.EnsureSuccessStatusCode();
 	}
+	
 }
