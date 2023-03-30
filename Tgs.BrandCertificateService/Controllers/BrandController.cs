@@ -73,9 +73,7 @@ public class BrandController : ControllerBase
 	/// Gets the brand maintenance infos asynchronous.
 	/// </summary>
 	/// <param name="queryService">The query service.</param>
-	/// <param name="getService">The get service.</param>
 	/// <param name="request">The request.</param>
-	/// <param name="paging">The paging.</param>
 	/// <returns></returns>
 	[HttpGet("maintenance")]
 	public IAsyncEnumerable<BrandMaintenanceInfoViewModel> GetBrandMaintenanceInfosAsync(
@@ -99,11 +97,12 @@ public class BrandController : ControllerBase
 	}
 
 	/// <summary>
-	/// Batche update brand maintenance time asynchronous.
+	/// Batch update brand maintenance time asynchronous.
 	/// </summary>
 	/// <param name="commandService">The command service.</param>
 	/// <param name="request">The request.</param>
 	/// <returns></returns>
+	/// <remarks>
 	/// <b>Example</b><br />
 	///
 	///     Post
@@ -191,4 +190,43 @@ public class BrandController : ControllerBase
 
 		return queryService.QueryAsync(query, HttpContext.RequestAborted);
 	}
+
+	[HttpGet(Name = "QueryBrandList")]
+	public IAsyncEnumerable<BrandListItemViewModel> QueryBrandListAsync(
+		[FromServices] IQueryService<BrandListQuery, BrandListItem> queryService,
+		[FromQuery] BrandListQueryViewModel viewModel)
+	{
+		var query = new BrandListQuery(
+			viewModel.BrandIds,
+			viewModel.Keyword,
+			viewModel.BrandStatus);
+
+		return queryService.QueryAsync(query, HttpContext.RequestAborted)
+			.Select(item => new BrandListItemViewModel
+			{ 
+				BrandId = item.BrandId,
+				Status = item.Status,
+				Description = item.Description,
+				OperationalEmail = item.OperationalEmail,
+				CreatedOn = item.CreatedOn,
+				UpdatedOn = item.UpdatedOn
+			});
+	}
+
+	[HttpGet("relations", Name = "GetBrandRelations")]
+	public IAsyncEnumerable<BrandRelationViewModel> GetBrandRelationsAsync(
+		[FromServices] IQueryService<BrandRelationQuery, BrandRelationInfo> queryService)
+		=> queryService.QueryAsync(new BrandRelationQuery(), HttpContext.RequestAborted)
+			.Select(info => new BrandRelationViewModel
+			{
+				BrandId = info.BrandId,
+				BrandCode = info.BrandCode,
+				BrandName = info.BrandName,
+				LicenseeId = info.LicenseeId,
+				LicenseeCode = info .LicenseeCode,
+				LicenseeName = info.LicenseeName,
+				ResellerId = info.ResellerId,
+				ResellerCode = info.ResellerCode,
+				ResellerName = info.ResellerName
+			});
 }

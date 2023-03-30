@@ -1,5 +1,5 @@
 ﻿{
-   "CodeGenerationMode": 2,
+   "CodeGenerationMode": 3,
    "ContextClassName": "TgsContext",
    "ContextNamespace": "Entities",
    "DefaultDacpacSchema": null,
@@ -35,25 +35,30 @@
          "ObjectType": 0
       },
       {
+         "Name": "dbo.resellers",
+         "ObjectType": 0
+      },
+      {
          "Name": "dbo.vip_levels",
          "ObjectType": 0
       }
    ],
-   "UiHint": "tgs",
+   "UiHint": "Tgs",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
+   "UseDateOnlyTimeOnly": false,
    "UseDbContextSplitting": true,
    "UseFluentApiOnly": true,
    "UseHandleBars": false,
    "UseHierarchyId": false,
    "UseInflector": true,
    "UseLegacyPluralizer": false,
-   "UseManyToManyEntity": false,
-   "UseNoDefaultConstructor": true,
+   "UseManyToManyEntity": true,
+   "UseNoDefaultConstructor": false,
    "UseNoObjectFilter": false,
    "UseNodaTime": false,
-   "UseNullableReferences": false,
+   "UseNullableReferences": true,
    "UseSchemaFolders": false,
    "UseSpatial": false,
    "UseT4": false

@@ -1,8 +1,10 @@
 ﻿using System.Reflection;
+using FluentdForward.OpenTelemetry.MessagePack;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -22,7 +24,9 @@ builder.Logging
 			var nodeIp = builder.Configuration.GetValue<string>("NODE_IP")!;
 			fluentOptions.Host = nodeIp;
 			fluentOptions.Tag = builder.Configuration.GetValue<string>("OTEL_SERVICE_NAME")!;
-			fluentOptions.UseMessagePack();
+			fluentOptions.UseMessagePack(LogRecordFormatterResolver.GetResolverInstanceWithExtendInfo(
+				"MachineName",
+				() => Environment.MachineName));
 		});
 	});
 
@@ -87,26 +91,33 @@ builder.Services
 
 builder.Services
 	.AddOptions<OtlpExporterOptions>()
-	.Configure<IConfiguration>((options, conifg) =>
+	.Configure<IConfiguration>((options, config) =>
 	{
-		var nodeIp = conifg.GetValue<string>("NODE_IP");
+		var nodeIp = config.GetValue<string>("NODE_IP");
 
 		if (!string.IsNullOrWhiteSpace(nodeIp))
 			options.Endpoint = new Uri($"http://{nodeIp}:4317");
 
-		conifg.GetSection("Opentelemetry:Tracing").Bind(options);
+		config.GetSection("Opentelemetry:Tracing").Bind(options);
 	})
 	.Services
 	.AddProfileViewer()
-	.AddOpenTelemetryTracing(builder => builder
-		.SetResourceBuilder(ResourceBuilder.CreateDefault()
-			.AddEnvironmentVariableDetector())
+	.AddOpenTelemetry()
+	.ConfigureResource(_ => ResourceBuilder.CreateDefault()
+		.AddEnvironmentVariableDetector())
+	.WithTracing(tracerProviderBuilder => tracerProviderBuilder
 		.AddSource("Tgs.*")
 		.AddAspNetCoreInstrumentation()
 		.AddHttpClientInstrumentation()
 		.AddNpgsql()
 		.AddProfileViewExporter()
 		.AddOtlpExporter())
+	.WithMetrics(meterProviderBuilder => meterProviderBuilder
+		.AddRuntimeInstrumentation()
+		.AddAspNetCoreInstrumentation()
+		.AddHttpClientInstrumentation()
+		.AddOtlpExporter())
+	.Services
 	.Configure<AspNetCoreInstrumentationOptions>(options => options.Filter =
 		httpContext => !httpContext.Request.Path.HasValue
 			|| !httpContext.Request.Path.StartsWithSegments("/swagger")

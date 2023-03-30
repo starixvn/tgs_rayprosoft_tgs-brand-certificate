@@ -159,16 +159,16 @@ internal class TgsRepository : ITgsRepository
 			.FirstAsync(bm => bm.Id == brandMaintenanceId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
-		return new BrandMaintenanceModel(brandMaintenance.Content);
+		return new BrandMaintenanceModel(brandMaintenance.Content ?? string.Empty);
 	}
 
-	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? Content, CancellationToken cancellationToken = default)
+	public async ValueTask UpdateBrandMaintenanceContentAsync(Guid brandMaintenanceId, string? content, CancellationToken cancellationToken = default)
 	{
 		var brandMaintenance = await _dbContext.BrandMaintenances
 			.FirstAsync(bm => bm.Id == brandMaintenanceId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
-		brandMaintenance.Content = Content;
+		brandMaintenance.Content = content;
 
 		_ = _dbContext.BrandMaintenances.Update(brandMaintenance);
 
@@ -216,7 +216,7 @@ internal class TgsRepository : ITgsRepository
 			.ConfigureAwait(false);
 	}
 
-	public async ValueTask<bool> UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument PlayerRegisterFlowSettings, CancellationToken cancellationToken = default)
+	public async ValueTask<bool> UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument playerRegisterFlowSettings, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
 			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
@@ -225,7 +225,7 @@ internal class TgsRepository : ITgsRepository
 		if (brand == null)
 			return false;
 
-		brand.PlayerRegisterFlowSettings = JsonSerializer.Serialize(PlayerRegisterFlowSettings);
+		brand.PlayerRegisterFlowSettings = JsonSerializer.Serialize(playerRegisterFlowSettings);
 
 		_ = _dbContext.Brands.Update(brand);
 
@@ -238,13 +238,61 @@ internal class TgsRepository : ITgsRepository
 
 	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
 		CancellationToken cancellationToken = default)
-	=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
+		=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
 
-	public async ValueTask<int?> GetTimeSpanMinutesByBrandIdAsync(Guid brandId, CancellationToken cancellationToken = default)
-	{
-		var brand = await _dbContext.Brands.FirstOrDefaultAsync(x => x.Id == brandId, cancellationToken: cancellationToken);
+	public IAsyncEnumerable<BrandListItem> QueryAllBrandsAsync(CancellationToken cancellationToken = default)
+		=> _dbContext.Brands
+			.Select(b => new
+			{
+				BrandId = b.Id,
+				BrandCode = b.Code,
+				BrandName = b.Name,
+				b.Status,
+				b.Description,
+				b.OperationalEmail,
+				b.CreatedOn,
+				b.UpdatedOn
+			})
+			.ToArrayAsync(cancellationToken: cancellationToken)
+			.ToAsyncEnumerable()
+			.SelectMany(arr => arr.ToAsyncEnumerable())
+			.Select(b => new BrandListItem(
+				b.BrandId,
+				b.BrandCode,
+				b.BrandName,
+				(BrandStatus)b.Status,
+				b.Description,
+				b.OperationalEmail,
+				b.CreatedOn,
+				b.UpdatedOn));
 
-		return brand?.TimeSpanMinutes;
-	}
-
+	public IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default)
+		=> _dbContext.Brands
+			.Include(b => b.Licensee)
+			.ThenInclude(l => l.Reseller)
+			.Select(b => new
+			{
+				BrandId = b.Id,
+				BrandName = b.Name,
+				BrandCode = b.Code,
+				LicenseeId = b.Licensee.Id,
+				LicenseeName = b.Licensee.Name,
+				LicenseeCode = b.Licensee.Code,
+				ResellerId = b.Licensee.Reseller.Id,
+				ResellerName = b.Licensee.Reseller.Name,
+				ResellerCode = b.Licensee.Reseller.Code
+			})
+			.ToArrayAsync(cancellationToken: cancellationToken)
+			.ToAsyncEnumerable()
+			.SelectMany(arr => arr.ToAsyncEnumerable())
+			.Select(info => new BrandRelationInfo(
+				info.BrandId,
+				info.BrandCode,
+				info.BrandName,
+				info.LicenseeId,
+				info.LicenseeCode,
+				info.LicenseeName,
+				info.ResellerId,
+				info.ResellerCode,
+				info.ResellerName));
 }
