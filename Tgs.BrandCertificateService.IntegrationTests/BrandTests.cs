@@ -535,7 +535,7 @@ public class BrandTests
 	}
 
 	[Test]
-	public async Task 以BrandCode查詢Brand列表()
+	public async Task 以Keyword查詢Brand列表()
 	{
 		await using var web = new TestBrandCertificateApplication();
 
@@ -575,7 +575,7 @@ public class BrandTests
 
 		var query = new BrandListQuery
 		{
-			BrandCode = "Test"
+			Keyword = "Test"
 		};
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
@@ -683,56 +683,6 @@ public class BrandTests
 	}
 
 	[Test]
-	public async Task 以BrandName查詢Brand列表()
-	{
-		await using var web = new TestBrandCertificateApplication();
-
-		var http = web.CreateClient();
-
-		var dbContext = web.Services.GetRequiredService<TgsContext>();
-
-		var brandId = Guid.NewGuid();
-		await dbContext.Brands.AddRangeAsync(
-			new Brand
-			{
-				Id = brandId,
-				Code = "Test1",
-				Name = "Test1",
-				ApiKey = string.Empty,
-				ClientId = string.Empty,
-				SecretKey = string.Empty,
-				CreatedByUsername = string.Empty,
-				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Active
-			},
-			new Brand
-			{
-				Id = Guid.NewGuid(),
-				Code = "Test2",
-				Name = "Test2",
-				ApiKey = string.Empty,
-				ClientId = string.Empty,
-				SecretKey = string.Empty,
-				CreatedByUsername = string.Empty,
-				UpdatedByUsername = string.Empty,
-				Status = (short)BrandStatus.Archived
-			});
-
-		_ = await dbContext.SaveChangesAsync();
-
-		var sut = new BrandServiceClient(http);
-
-		var query = new BrandListQuery
-		{
-			BrandName = "Test1"
-		};
-
-		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
-
-		Assert.AreEqual(1, actual.Length);
-	}
-
-	[Test]
 	public async Task 取得Brand關聯表()
 	{
 		await using var web = new TestBrandCertificateApplication();
@@ -748,7 +698,7 @@ public class BrandTests
 			Name = "TGS",
 			CreatedByUsername = string.Empty,
 			UpdatedByUsername = string.Empty,
-			Status = (short)ResellerStatus.Active
+			Status = (short)BrandStatus.Active
 		});
 		
 		var licensee = await dbContext.Licensees.AddAsync(new Licensee
@@ -756,7 +706,7 @@ public class BrandTests
 			Id = Guid.Parse("66c5fef5-217b-4929-9a08-72c2479a8f4e"), 
 			Code = "TGS",
 			Name = "TGS",
-			Status = (short)LicenseeStatus.Active,
+			Status = (short)BrandStatus.Active,
 			CreatedByUsername = string.Empty,
 			UpdatedByUsername = string.Empty,
 			Reseller = reseller.Entity

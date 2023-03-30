@@ -225,11 +225,8 @@ internal class BrandServiceClient : IBrandServiceClient
 	{
 		var queryStrings = new QueryBuilder();
 
-		if (!string.IsNullOrEmpty(query.BrandCode))
-			queryStrings.Add("brandCode", query.BrandCode);
-
-		if (!string.IsNullOrEmpty(query.BrandName))
-			queryStrings.Add("brandName", query.BrandName);
+		if (!string.IsNullOrEmpty(query.Keyword))
+			queryStrings.Add("keyword", query.Keyword);
 
 		if (query.Status is not null)
 			queryStrings.Add("status", query.Status.Value.ToString());

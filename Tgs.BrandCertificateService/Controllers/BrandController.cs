@@ -191,15 +191,14 @@ public class BrandController : ControllerBase
 		return queryService.QueryAsync(query, HttpContext.RequestAborted);
 	}
 
-	[HttpGet(Name = "GetBrandList")]
+	[HttpGet(Name = "QueryBrandList")]
 	public IAsyncEnumerable<BrandListItemViewModel> QueryBrandListAsync(
 		[FromServices] IQueryService<BrandListQuery, BrandListItem> queryService,
 		[FromQuery] BrandListQueryViewModel viewModel)
 	{
 		var query = new BrandListQuery(
 			viewModel.BrandIds,
-			viewModel.BrandCode,
-			viewModel.BrandName,
+			viewModel.Keyword,
 			viewModel.BrandStatus);
 
 		return queryService.QueryAsync(query, HttpContext.RequestAborted)

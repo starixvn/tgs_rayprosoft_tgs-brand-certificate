@@ -9,10 +9,7 @@ public class BrandListQueryViewModel
 	public Guid[] BrandIds { get; set; } = Array.Empty<Guid>();
 
 	[FromQuery]
-	public string? BrandCode { get; set; }
-
-	[FromQuery]
-	public string? BrandName { get; set; }
+	public string? Keyword { get; set; }
 
 	[FromQuery(Name = "status")]
 	public BrandStatus? BrandStatus { get; set; }

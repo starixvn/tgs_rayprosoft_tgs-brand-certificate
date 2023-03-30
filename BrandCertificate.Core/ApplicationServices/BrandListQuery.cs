@@ -2,7 +2,6 @@
 
 public record BrandListQuery(
 	IEnumerable<Guid> BrandIds,
-	string? BrandCode,
-	string? BrandName,
+	string? Keyword,
 	BrandStatus? Status);
 
