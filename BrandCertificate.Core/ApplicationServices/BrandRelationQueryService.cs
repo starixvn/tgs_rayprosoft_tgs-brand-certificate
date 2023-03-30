@@ -12,9 +12,8 @@ internal class BrandRelationQueryService : IQueryService<BrandRelationQuery, Bra
 		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
 	}
 
-
 	public IAsyncEnumerable<BrandRelationInfo> QueryAsync(
-		BrandRelationQuery query, 
-		CancellationToken cancellationToken = default) 
+		BrandRelationQuery query,
+		CancellationToken cancellationToken = default)
 		=> _tgsRepository.GetBrandRelationsAsync(cancellationToken);
 }

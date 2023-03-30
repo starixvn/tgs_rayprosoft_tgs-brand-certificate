@@ -14,15 +14,23 @@ internal class BrandListQueryService : IQueryService<BrandListQuery, BrandListIt
 
 	public IAsyncEnumerable<BrandListItem> QueryAsync(
 		BrandListQuery query,
-		CancellationToken cancellationToken = default) 
-		=> query.BrandIds.Any()
-			? _tgsRepository.QueryBrandListByBrandsAsync(
-				query.BrandIds,
-				query.Keyword,
-				query.Status,
-				cancellationToken)
-			: _tgsRepository.QueryBrandListAsync(
-				query.Keyword,
-				query.Status,
-				cancellationToken);
+		CancellationToken cancellationToken = default)
+	{
+		var brands = _tgsRepository.QueryAllBrandsAsync(cancellationToken);
+
+		if (query.BrandIds.Any())
+			brands = brands.Where(b => query.BrandIds.Contains(b.BrandId));
+
+		if (query.Status is not null)
+			brands = brands.Where(b => b.Status == query.Status);
+
+		if (!string.IsNullOrEmpty(query.Keyword))
+		{
+			brands = brands
+				.Where(b => b.BrandCode.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase)
+				            || b.BrandName.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase));
+		}
+
+		return brands;
+	}
 }

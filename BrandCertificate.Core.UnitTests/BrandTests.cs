@@ -190,9 +190,7 @@ public class BrandTests
         _ = await sut.QueryAsync(query).ToArrayAsync();
 
         _ = fakeTgsRepository.Received(1)
-            .QueryBrandListAsync(
-                Arg.Is(query.Keyword),
-                Arg.Is(query.Status),
+            .QueryAllBrandsAsync(
                 Arg.Any<CancellationToken>());
     }
 

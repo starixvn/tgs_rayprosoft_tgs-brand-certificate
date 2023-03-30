@@ -2,6 +2,8 @@
 
 public record BrandListItem(
 	Guid BrandId,
+	string BrandCode,
+	string BrandName,
 	BrandStatus Status,
 	string? Description,
 	string? OperationalEmail,

@@ -240,19 +240,13 @@ internal class TgsRepository : ITgsRepository
 		CancellationToken cancellationToken = default)
 		=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
 
-	public IAsyncEnumerable<BrandListItem> QueryBrandListByBrandsAsync(
-		IEnumerable<Guid> brandIds,
-		string? keyword,
-		BrandStatus? status,
-		CancellationToken cancellationToken = default)
-	{
-		var brands = InternalBrandListQuery(keyword, status)
-			.Where(b => brandIds.Contains(b.Id));
-
-		return brands
+	public IAsyncEnumerable<BrandListItem> QueryAllBrandsAsync(CancellationToken cancellationToken = default)
+		=> _dbContext.Brands
 			.Select(b => new
 			{
 				BrandId = b.Id,
+				BrandCode = b.Code,
+				BrandName = b.Name,
 				b.Status,
 				b.Description,
 				b.OperationalEmail,
@@ -264,41 +258,13 @@ internal class TgsRepository : ITgsRepository
 			.SelectMany(arr => arr.ToAsyncEnumerable())
 			.Select(b => new BrandListItem(
 				b.BrandId,
+				b.BrandCode,
+				b.BrandName,
 				(BrandStatus)b.Status,
 				b.Description,
 				b.OperationalEmail,
 				b.CreatedOn,
 				b.UpdatedOn));
-	}
-
-	public IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
-		string? keyword,
-		BrandStatus? status,
-		CancellationToken cancellationToken = default)
-	{
-		var brands = InternalBrandListQuery(keyword, status);
-
-		return brands
-			.Select(b => new
-			{
-				BrandId = b.Id,
-				b.Status,
-				b.Description,
-				b.OperationalEmail,
-				b.CreatedOn,
-				b.UpdatedOn
-			})
-			.ToArrayAsync(cancellationToken: cancellationToken)
-			.ToAsyncEnumerable()
-			.SelectMany(arr => arr.ToAsyncEnumerable())
-			.Select(b => new BrandListItem(
-				b.BrandId,
-				(BrandStatus)b.Status,
-				b.Description,
-				b.OperationalEmail,
-				b.CreatedOn,
-				b.UpdatedOn));
-	}
 
 	public IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default)
 		=> _dbContext.Brands
@@ -329,21 +295,4 @@ internal class TgsRepository : ITgsRepository
 				info.ResellerId,
 				info.ResellerCode,
 				info.ResellerName));
-
-	private IQueryable<Brand> InternalBrandListQuery(
-		string? keyword, 
-		BrandStatus? status)
-	{
-		var brands = _dbContext.Brands.AsQueryable();
-
-		if (status is not null)
-			brands = brands.Where(b => b.Status == (short)status);
-
-		if (!string.IsNullOrEmpty(keyword))
-			brands = brands.Where(b => 
-				b.Code.ToLower().Contains(keyword.ToLower()) 
-				|| b.Name.ToLower().Contains(keyword.ToLower()));
-
-		return brands;
-	}
 }
