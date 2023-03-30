@@ -264,6 +264,23 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ToAsyncEnumerable()
 			.SelectMany(arr => arr.ToAsyncEnumerable());
 
+	public async ValueTask UpdateBrandStatusAsync(
+		Guid brandId, 
+		BrandStatus status, 
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = new StringContent(string.Empty);
+		requestContent.Headers.Add("Modifier", modifier);
+
+		var response = await _httpClient.PutAsync(
+			$"/brand/status/{brandId}/{status}",
+			requestContent,
+			cancellationToken).ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
+
 	public async ValueTask UpdateBrandMaintenanceTimeAsync(Guid brandId, TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
 	{
 		var dict = new Dictionary<string, object>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
+using Tgs.BrandCertificate.Repositories.Entities;
 using Tgs.BrandCertificateService.ViewModels;
 using Tgs.ServiceUtility;
 
@@ -67,6 +68,21 @@ public class BrandController : ControllerBase
 		var query = new GetBrandStatusQuery(brandId);
 
 		return getService.GetAsync(query, HttpContext.RequestAborted);
+	}
+
+	[HttpPut("status/{brandId}/{status}", Name = "UpdateBrandStatus")]
+	public ValueTask UpdateBrandStatusAsync(
+		[FromServices] ICommandService<UpdateBrandStatusCommand> commandService,
+		Guid brandId,
+		BrandStatus status,
+		[FromHeader(Name = "Modifier")] string modifier)
+	{
+		var command = new UpdateBrandStatusCommand(
+			brandId,
+			status,
+			modifier);
+
+		return commandService.ExecuteAsync(command, HttpContext.RequestAborted);
 	}
 
 	/// <summary>

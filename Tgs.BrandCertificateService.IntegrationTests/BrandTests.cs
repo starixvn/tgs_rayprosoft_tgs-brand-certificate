@@ -770,4 +770,74 @@ public class BrandTests
 
 		Assert.AreEqual(expected, actual);
 	}
+
+	[Test]
+	public async Task 更新BrandStatus()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid()
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+		
+		await sut.UpdateBrandStatusAsync(brandId, BrandStatus.Inactive, "ModifyUser");
+
+		Assert.AreEqual((short)BrandStatus.Inactive, brand.Status);
+	}
+
+	[Test]
+	public async Task 若Brand已經Archived不更新Status()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Archived,
+			LicenseeId = Guid.NewGuid()
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		await sut.UpdateBrandStatusAsync(brandId, BrandStatus.Inactive, "ModifyUser");
+
+		Assert.AreEqual((short)BrandStatus.Archived, brand.Status);
+	}
 }

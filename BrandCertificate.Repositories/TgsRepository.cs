@@ -295,4 +295,24 @@ internal class TgsRepository : ITgsRepository
 				info.ResellerId,
 				info.ResellerCode,
 				info.ResellerName));
+
+	public async ValueTask UpdateBrandStatusAsync(
+		Guid brandId, 
+		BrandStatus status, 
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands
+			.FindAsync(new object?[] {brandId}, cancellationToken)
+			.ConfigureAwait(false);
+
+		if (brand is null || brand.Status is (short)BrandStatus.Archived)
+			return;
+
+		brand.Status = (short)status;
+		brand.UpdatedOn = DateTime.UtcNow;
+		brand.UpdatedByUsername = modifier;
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
 }

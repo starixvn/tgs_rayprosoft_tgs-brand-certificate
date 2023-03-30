@@ -31,4 +31,10 @@ public interface ITgsRepository
 	IAsyncEnumerable<BrandListItem> QueryAllBrandsAsync(CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default);
+
+	ValueTask UpdateBrandStatusAsync(
+		Guid brandId, 
+		BrandStatus status, 
+		string modifier, 
+		CancellationToken cancellationToken = default);
 }

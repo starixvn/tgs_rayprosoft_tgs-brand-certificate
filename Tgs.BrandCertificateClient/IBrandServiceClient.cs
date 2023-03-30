@@ -27,4 +27,10 @@ public interface IBrandServiceClient
 	IAsyncEnumerable<BrandListItem> QueryBrandListAsync(BrandListQuery query, CancellationToken cancellationToken = default);
 	
 	IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default);
+
+	ValueTask UpdateBrandStatusAsync(
+		Guid brandId, 
+		BrandStatus status, 
+		string modifier, 
+		CancellationToken cancellationToken = default);
 }

@@ -207,4 +207,25 @@ public class BrandTests
             .GetBrandRelationsAsync(
                 Arg.Any<CancellationToken>());
     }
+
+    [Test]
+    public async Task 更新Brand狀態()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new UpdateBrandStatusCommandService(fakeTgsRepository);
+
+        var command = new UpdateBrandStatusCommand(
+            Guid.NewGuid(),
+            BrandStatus.Active,
+            "user1");
+
+        await sut.ExecuteAsync(command);
+
+        _ = fakeTgsRepository.Received(1)
+            .UpdateBrandStatusAsync(
+                Arg.Is(command.BrandId),
+                Arg.Is(command.Status),
+                Arg.Is(command.Modifier));
+    }
 }
