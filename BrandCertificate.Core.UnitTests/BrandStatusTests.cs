@@ -58,4 +58,64 @@ internal class BrandStatusTests
 
         Assert.AreEqual(BrandStatus.Active, actual);
     }
+
+    [Test]
+    public async Task 當Reseller為Archived_BrandStatus為Archived()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandStatusQueryService(fakeTgsRepository);
+
+        var query = new GetBrandStatusQuery(Guid.NewGuid());
+
+        _ = fakeTgsRepository.GetBrandStatusInfoAsync(Arg.Is(query.BrandId))
+            .Returns(new BrandStatusInfo(
+                BrandStatus.Archived,
+                BrandStatus.Active,
+                BrandStatus.Active));
+
+        var actual = await sut.GetAsync(query);
+
+        Assert.AreEqual(BrandStatus.Archived, actual);
+    }
+
+    [Test]
+    public async Task 當Licensee為Archived_BrandStatus為Archived()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandStatusQueryService(fakeTgsRepository);
+
+        var query = new GetBrandStatusQuery(Guid.NewGuid());
+
+        _ = fakeTgsRepository.GetBrandStatusInfoAsync(Arg.Is(query.BrandId))
+            .Returns(new BrandStatusInfo(
+                BrandStatus.Inactive,
+                BrandStatus.Archived,
+                BrandStatus.Active));
+
+        var actual = await sut.GetAsync(query);
+
+        Assert.AreEqual(BrandStatus.Archived, actual);
+    }
+
+    [Test]
+    public async Task 當Brand為Archived_BrandStatus為Archived()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandStatusQueryService(fakeTgsRepository);
+
+        var query = new GetBrandStatusQuery(Guid.NewGuid());
+
+        _ = fakeTgsRepository.GetBrandStatusInfoAsync(Arg.Is(query.BrandId))
+            .Returns(new BrandStatusInfo(
+                BrandStatus.Active,
+                BrandStatus.Active,
+                BrandStatus.Archived));
+
+        var actual = await sut.GetAsync(query);
+
+        Assert.AreEqual(BrandStatus.Archived, actual);
+    }
 }

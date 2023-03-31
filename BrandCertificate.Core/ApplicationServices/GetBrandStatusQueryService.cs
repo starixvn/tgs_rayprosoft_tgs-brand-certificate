@@ -25,6 +25,11 @@ internal class GetBrandStatusQueryService : IGetService<GetBrandStatusQuery, Bra
 		    && brandStatusInfo.BrandStatus is BrandStatus.Active)
 			return BrandStatus.Active;
 
+		if (brandStatusInfo.ResellerStatus is BrandStatus.Archived
+		    || brandStatusInfo.LicenseeStatus is BrandStatus.Archived
+		    || brandStatusInfo.BrandStatus is BrandStatus.Archived)
+			return BrandStatus.Archived;
+
 		return BrandStatus.Archived;
 	}
 }
