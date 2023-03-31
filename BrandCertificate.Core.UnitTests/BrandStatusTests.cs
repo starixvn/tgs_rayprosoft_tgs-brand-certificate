@@ -7,7 +7,6 @@ namespace BrandCertificate.Core.UnitTests;
 
 internal class BrandStatusTests
 {
-
     [Test]
     public async Task 從Repository取得BrandStatus()
     {
@@ -40,4 +39,23 @@ internal class BrandStatusTests
         Assert.AreEqual(BrandStatus.Inactive, actual);
     }
 
+    [Test]
+    public async Task 當Brand全關聯階層皆為Active_BrandStatus為Active()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandStatusQueryService(fakeTgsRepository);
+
+        var query = new GetBrandStatusQuery(Guid.NewGuid());
+
+        _ = fakeTgsRepository.GetBrandStatusInfoAsync(Arg.Is(query.BrandId))
+            .Returns(new BrandStatusInfo(
+                BrandStatus.Active,
+                BrandStatus.Active,
+                BrandStatus.Active));
+
+        var actual = await sut.GetAsync(query);
+
+        Assert.AreEqual(BrandStatus.Active, actual);
+    }
 }
