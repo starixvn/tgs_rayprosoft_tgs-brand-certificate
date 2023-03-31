@@ -178,4 +178,64 @@ internal class BrandStatusTests
 
         Assert.AreEqual(BrandStatus.Inactive, actual);
     }
+
+    [Test]
+    public async Task 當Reseller為Maintenance_BrandStatus為Maintenance()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandStatusQueryService(fakeTgsRepository);
+
+        var query = new GetBrandStatusQuery(Guid.NewGuid());
+
+        _ = fakeTgsRepository.GetBrandStatusInfoAsync(Arg.Is(query.BrandId))
+            .Returns(new BrandStatusInfo(
+                BrandStatus.Maintenance,
+                BrandStatus.Active,
+                BrandStatus.Active));
+
+        var actual = await sut.GetAsync(query);
+
+        Assert.AreEqual(BrandStatus.Maintenance, actual);
+    }
+
+    [Test]
+    public async Task 當Licensee為Maintenance_BrandStatus為Maintenance()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandStatusQueryService(fakeTgsRepository);
+
+        var query = new GetBrandStatusQuery(Guid.NewGuid());
+
+        _ = fakeTgsRepository.GetBrandStatusInfoAsync(Arg.Is(query.BrandId))
+            .Returns(new BrandStatusInfo(
+                BrandStatus.Active,
+                BrandStatus.Maintenance,
+                BrandStatus.Active));
+
+        var actual = await sut.GetAsync(query);
+
+        Assert.AreEqual(BrandStatus.Maintenance, actual);
+    }
+
+    [Test]
+    public async Task 當Brand為Maintenance_BrandStatus為Maintenance()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandStatusQueryService(fakeTgsRepository);
+
+        var query = new GetBrandStatusQuery(Guid.NewGuid());
+
+        _ = fakeTgsRepository.GetBrandStatusInfoAsync(Arg.Is(query.BrandId))
+            .Returns(new BrandStatusInfo(
+                BrandStatus.Active,
+                BrandStatus.Active,
+                BrandStatus.Maintenance));
+
+        var actual = await sut.GetAsync(query);
+
+        Assert.AreEqual(BrandStatus.Maintenance, actual);
+    }
 }
