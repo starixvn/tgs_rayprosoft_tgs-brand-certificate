@@ -113,6 +113,27 @@ public class BrandTests
 
 		var dbContext = web.Services.GetRequiredService<TgsContext>();
 
+		var reseller = await dbContext.Resellers.AddAsync(new Reseller
+		{
+			Id = brandId,
+			Code = "Test",
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active
+		});
+
+		var licensee = await dbContext.Licensees.AddAsync(new Licensee
+		{
+			Id = brandId,
+			Code = "Test",
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			Reseller = reseller.Entity
+		});
+
 		_ = await dbContext.Brands.AddAsync(new Brand
 		{
 			Id = brandId,
@@ -123,7 +144,8 @@ public class BrandTests
 			Name = "Test",
 			SecretKey = string.Empty,
 			UpdatedByUsername = string.Empty,
-			Status = (short)BrandStatus.Archived
+			Status = (short)BrandStatus.Archived,
+			Licensee = licensee.Entity
 		});
 
 		_ = await dbContext.SaveChangesAsync();

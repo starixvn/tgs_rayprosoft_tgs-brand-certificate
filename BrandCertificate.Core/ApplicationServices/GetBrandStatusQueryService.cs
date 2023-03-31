@@ -12,7 +12,14 @@ internal class GetBrandStatusQueryService : IGetService<GetBrandStatusQuery, Bra
 	}
 
 	public async ValueTask<BrandStatus> GetAsync(GetBrandStatusQuery query, CancellationToken cancellationToken = default)
-		=> await _tgsRepository
-			.GetBrandStatusAsync(query.BrandId, cancellationToken)
-			.ConfigureAwait(false) ?? BrandStatus.Inactive;
+	{
+		var brandStatusInfo = await _tgsRepository
+			.GetBrandStatusInfoAsync(query.BrandId, cancellationToken)
+			.ConfigureAwait(false);
+			
+		if (brandStatusInfo is null)
+			return BrandStatus.Inactive;
+
+		return BrandStatus.Archived;
+	}
 }
