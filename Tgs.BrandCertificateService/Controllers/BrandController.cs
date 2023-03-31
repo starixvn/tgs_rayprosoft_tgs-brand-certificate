@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
-using Tgs.BrandCertificate.Repositories.Entities;
 using Tgs.BrandCertificateService.ViewModels;
 using Tgs.ServiceUtility;
 
@@ -220,7 +219,7 @@ public class BrandController : ControllerBase
 
 		return queryService.QueryAsync(query, HttpContext.RequestAborted)
 			.Select(item => new BrandListItemViewModel
-			{ 
+			{
 				BrandId = item.BrandId,
 				Status = item.Status,
 				Description = item.Description,
@@ -240,7 +239,7 @@ public class BrandController : ControllerBase
 				BrandCode = info.BrandCode,
 				BrandName = info.BrandName,
 				LicenseeId = info.LicenseeId,
-				LicenseeCode = info .LicenseeCode,
+				LicenseeCode = info.LicenseeCode,
 				LicenseeName = info.LicenseeName,
 				ResellerId = info.ResellerId,
 				ResellerCode = info.ResellerCode,
