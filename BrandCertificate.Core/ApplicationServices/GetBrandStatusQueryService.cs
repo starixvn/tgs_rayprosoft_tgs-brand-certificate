@@ -12,7 +12,34 @@ internal class GetBrandStatusQueryService : IGetService<GetBrandStatusQuery, Bra
 	}
 
 	public async ValueTask<BrandStatus> GetAsync(GetBrandStatusQuery query, CancellationToken cancellationToken = default)
-		=> await _tgsRepository
-			.GetBrandStatusAsync(query.BrandId, cancellationToken)
-			.ConfigureAwait(false) ?? BrandStatus.Inactive;
+	{
+		var brandStatusInfo = await _tgsRepository
+			.GetBrandStatusInfoAsync(query.BrandId, cancellationToken)
+			.ConfigureAwait(false);
+
+		if (brandStatusInfo is null)
+			return BrandStatus.Inactive;
+
+		if (brandStatusInfo.ResellerStatus is BrandStatus.Active
+			&& brandStatusInfo.LicenseeStatus is BrandStatus.Active
+			&& brandStatusInfo.BrandStatus is BrandStatus.Active)
+			return BrandStatus.Active;
+
+		if (brandStatusInfo.ResellerStatus is BrandStatus.Archived
+			|| brandStatusInfo.LicenseeStatus is BrandStatus.Archived
+			|| brandStatusInfo.BrandStatus is BrandStatus.Archived)
+			return BrandStatus.Archived;
+
+		if (brandStatusInfo.ResellerStatus is BrandStatus.Inactive
+			|| brandStatusInfo.LicenseeStatus is BrandStatus.Inactive
+			|| brandStatusInfo.BrandStatus is BrandStatus.Inactive)
+			return BrandStatus.Inactive;
+
+		if (brandStatusInfo.ResellerStatus is BrandStatus.Maintenance
+			|| brandStatusInfo.LicenseeStatus is BrandStatus.Maintenance
+			|| brandStatusInfo.BrandStatus is BrandStatus.Maintenance)
+			return BrandStatus.Maintenance;
+
+		return BrandStatus.Inactive;
+	}
 }

@@ -28,6 +28,7 @@ internal class TgsRepository : ITgsRepository
 			: new BrandInfo(
 				brand.Id,
 				brand.Code,
+				(BrandStatus)brand.Status,
 				brandCurrency.CurrencyCode,
 				brand.EnableSms,
 				brand.EnableSmsRegisterFlow,
@@ -62,16 +63,15 @@ internal class TgsRepository : ITgsRepository
 				registerFlowSettings);
 	}
 
-	public async ValueTask<BrandStatus?> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default)
-	{
-		var brand = await _dbContext.Brands
-			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
+	public async ValueTask<BrandStatusInfo?> GetBrandStatusInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> await _dbContext.Brands
+			.Where(b => b.Id == brandId)
+			.Select(b => new BrandStatusInfo(
+				(BrandStatus)b.Licensee.Reseller.Status,
+				(BrandStatus)b.Licensee.Status,
+				(BrandStatus)b.Status))
+			.FirstOrDefaultAsync(cancellationToken)
 			.ConfigureAwait(false);
-
-		return brand is null
-			? null
-			: (BrandStatus)brand.Status;
-	}
 
 	public IAsyncEnumerable<VipLevel> QueryVipLevelsAsync(Guid brandId, CancellationToken cancellationToken = default)
 		=> _dbContext.VipLevelRows
@@ -295,4 +295,24 @@ internal class TgsRepository : ITgsRepository
 				info.ResellerId,
 				info.ResellerCode,
 				info.ResellerName));
+
+	public async ValueTask UpdateBrandStatusAsync(
+		Guid brandId, 
+		BrandStatus status, 
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands
+			.FindAsync(new object?[] {brandId}, cancellationToken)
+			.ConfigureAwait(false);
+
+		if (brand is null)
+			return;
+
+		brand.Status = (short)status;
+		brand.UpdatedOn = DateTime.UtcNow;
+		brand.UpdatedByUsername = modifier;
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
 }

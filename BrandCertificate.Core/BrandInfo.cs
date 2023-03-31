@@ -3,6 +3,7 @@
 public record BrandInfo(
 	Guid Id,
 	string Code,
+	BrandStatus Status,
 	string Currency,
 	bool SmsEnabled,
 	bool SmsRegisterFlowEnabled,

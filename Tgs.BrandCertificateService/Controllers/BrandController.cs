@@ -27,6 +27,7 @@ public class BrandController : ControllerBase
 			{
 				Id = brandInfo.Id,
 				Code = brandInfo.Code,
+				Status = brandInfo.Status,
 				Currency = brandInfo.Currency,
 				PlayerIdentityEnabled = brandInfo.PlayerIdentityEnabled,
 				SmsEnabled = brandInfo.SmsEnabled,
@@ -67,6 +68,21 @@ public class BrandController : ControllerBase
 		var query = new GetBrandStatusQuery(brandId);
 
 		return getService.GetAsync(query, HttpContext.RequestAborted);
+	}
+
+	[HttpPut("status/{brandId}/{status}", Name = "UpdateBrandStatus")]
+	public ValueTask UpdateBrandStatusAsync(
+		[FromServices] ICommandService<UpdateBrandStatusCommand> commandService,
+		Guid brandId,
+		BrandStatus status,
+		[FromHeader(Name = "Modifier")] string modifier)
+	{
+		var command = new UpdateBrandStatusCommand(
+			brandId,
+			status,
+			modifier);
+
+		return commandService.ExecuteAsync(command, HttpContext.RequestAborted);
 	}
 
 	/// <summary>
@@ -203,7 +219,7 @@ public class BrandController : ControllerBase
 
 		return queryService.QueryAsync(query, HttpContext.RequestAborted)
 			.Select(item => new BrandListItemViewModel
-			{ 
+			{
 				BrandId = item.BrandId,
 				Status = item.Status,
 				Description = item.Description,
@@ -223,7 +239,7 @@ public class BrandController : ControllerBase
 				BrandCode = info.BrandCode,
 				BrandName = info.BrandName,
 				LicenseeId = info.LicenseeId,
-				LicenseeCode = info .LicenseeCode,
+				LicenseeCode = info.LicenseeCode,
 				LicenseeName = info.LicenseeName,
 				ResellerId = info.ResellerId,
 				ResellerCode = info.ResellerCode,

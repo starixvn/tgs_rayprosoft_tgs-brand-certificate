@@ -113,6 +113,27 @@ public class BrandTests
 
 		var dbContext = web.Services.GetRequiredService<TgsContext>();
 
+		var reseller = await dbContext.Resellers.AddAsync(new Reseller
+		{
+			Id = brandId,
+			Code = "Test",
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active
+		});
+
+		var licensee = await dbContext.Licensees.AddAsync(new Licensee
+		{
+			Id = brandId,
+			Code = "Test",
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			Reseller = reseller.Entity
+		});
+
 		_ = await dbContext.Brands.AddAsync(new Brand
 		{
 			Id = brandId,
@@ -123,7 +144,8 @@ public class BrandTests
 			Name = "Test",
 			SecretKey = string.Empty,
 			UpdatedByUsername = string.Empty,
-			Status = (short)BrandStatus.Archived
+			Status = (short)BrandStatus.Archived,
+			Licensee = licensee.Entity
 		});
 
 		_ = await dbContext.SaveChangesAsync();
@@ -769,5 +791,40 @@ public class BrandTests
 		var actual = await sut.GetBrandRelationsAsync().ToArrayAsync();
 
 		Assert.AreEqual(expected, actual);
+	}
+
+	[Test]
+	public async Task 更新BrandStatus()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid()
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+		
+		await sut.UpdateBrandStatusAsync(brandId, BrandStatus.Inactive, "ModifyUser");
+
+		Assert.AreEqual((short)BrandStatus.Inactive, brand.Status);
 	}
 }

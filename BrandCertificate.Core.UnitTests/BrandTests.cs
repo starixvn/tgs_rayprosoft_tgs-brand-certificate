@@ -41,21 +41,6 @@ public class BrandTests
     }
 
     [Test]
-    public async Task Get_Brand_Status_From_Repository()
-    {
-        var fakeTgsRepository = Substitute.For<ITgsRepository>();
-
-        var sut = new GetBrandStatusQueryService(fakeTgsRepository);
-
-        var query = new GetBrandStatusQuery(Guid.NewGuid());
-
-        _ = await sut.GetAsync(query);
-
-        _ = fakeTgsRepository.Received(1)
-            .GetBrandStatusAsync(Arg.Is(query.BrandId));
-    }
-
-    [Test]
     public async Task Get_Brand_PaymentSettings()
     {
         var fakeTgsRepository = Substitute.For<ITgsRepository>();
@@ -206,5 +191,26 @@ public class BrandTests
         _ = fakeTgsRepository.Received(1)
             .GetBrandRelationsAsync(
                 Arg.Any<CancellationToken>());
+    }
+
+    [Test]
+    public async Task 更新Brand狀態()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new UpdateBrandStatusCommandService(fakeTgsRepository);
+
+        var command = new UpdateBrandStatusCommand(
+            Guid.NewGuid(),
+            BrandStatus.Active,
+            "user1");
+
+        await sut.ExecuteAsync(command);
+
+        _ = fakeTgsRepository.Received(1)
+            .UpdateBrandStatusAsync(
+                Arg.Is(command.BrandId),
+                Arg.Is(command.Status),
+                Arg.Is(command.Modifier));
     }
 }

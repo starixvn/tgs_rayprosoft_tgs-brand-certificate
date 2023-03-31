@@ -5,6 +5,8 @@ public record BrandInfo
 
 	public string Code { get; init; } = default!;
 
+	public BrandStatus Status { get; init; } = default!;
+
 	public string Currency { get; init; } = default!;
 
 	public bool SmsEnabled { get; init; }
