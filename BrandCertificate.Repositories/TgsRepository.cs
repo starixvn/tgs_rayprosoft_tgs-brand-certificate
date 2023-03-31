@@ -306,7 +306,7 @@ internal class TgsRepository : ITgsRepository
 			.FindAsync(new object?[] {brandId}, cancellationToken)
 			.ConfigureAwait(false);
 
-		if (brand is null || brand.Status is (short)BrandStatus.Archived)
+		if (brand is null)
 			return;
 
 		brand.Status = (short)status;
