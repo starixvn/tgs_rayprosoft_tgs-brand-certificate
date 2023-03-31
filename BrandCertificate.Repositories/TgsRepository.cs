@@ -28,6 +28,7 @@ internal class TgsRepository : ITgsRepository
 			: new BrandInfo(
 				brand.Id,
 				brand.Code,
+				(BrandStatus)brand.Status,
 				brandCurrency.CurrencyCode,
 				brand.EnableSms,
 				brand.EnableSmsRegisterFlow,

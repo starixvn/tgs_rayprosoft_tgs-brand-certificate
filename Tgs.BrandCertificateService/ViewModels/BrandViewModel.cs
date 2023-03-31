@@ -1,22 +1,26 @@
-﻿namespace Tgs.BrandCertificateService.ViewModels;
+﻿using Tgs.BrandCertificate;
+
+namespace Tgs.BrandCertificateService.ViewModels;
 
 public class BrandViewModel
 {
-	public Guid Id { get; set; }
+	public Guid Id { get; init; }
 
-	public string Code { get; set; } = default!;
+	public string Code { get; init; } = default!;
 
-	public string Currency { get; set; } = default!;
+	public string Currency { get; init; } = default!;
 
-	public bool SmsEnabled { get; set; }
+	public BrandStatus Status { get; init; }
 
-	public bool SmsRegisterFlowEnabled { get; set; }
+	public bool SmsEnabled { get; init; }
 
-	public bool PlayerIdentityEnabled { get; set; }
+	public bool SmsRegisterFlowEnabled { get; init; }
 
-	public bool EmailRegisterFlowEnabled { get; set; }
+	public bool PlayerIdentityEnabled { get; init; }
 
-	public bool BankInfoRegisterFlowEnabled { get; set; }
+	public bool EmailRegisterFlowEnabled { get; init; }
 
-	public int? TimeSpanMinutes { get; set; }
+	public bool BankInfoRegisterFlowEnabled { get; init; }
+
+	public int? TimeSpanMinutes { get; init; }
 }

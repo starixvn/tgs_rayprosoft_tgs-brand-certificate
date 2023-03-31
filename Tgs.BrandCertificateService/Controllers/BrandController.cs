@@ -28,6 +28,7 @@ public class BrandController : ControllerBase
 			{
 				Id = brandInfo.Id,
 				Code = brandInfo.Code,
+				Status = brandInfo.Status,
 				Currency = brandInfo.Currency,
 				PlayerIdentityEnabled = brandInfo.PlayerIdentityEnabled,
 				SmsEnabled = brandInfo.SmsEnabled,
