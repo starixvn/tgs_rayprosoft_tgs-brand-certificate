@@ -51,6 +51,22 @@ public class BrandTests
 	}
 
 	[Test]
+	public async Task 找不到BrandInfo會拿到Null()
+	{
+		var brandId = Guid.NewGuid();
+
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandInfoAsync(brandId);
+
+		Assert.IsNull(actual);
+	}
+
+	[Test]
 	public async Task Get_BrandFrontendInfo_By_Id()
 	{
 		var brandId = Guid.NewGuid();
@@ -564,7 +580,7 @@ public class BrandTests
 		var http = web.CreateClient();
 
 		var dbContext = web.Services.GetRequiredService<TgsContext>();
-		
+
 		await dbContext.Brands.AddRangeAsync(
 			new Brand
 			{
@@ -613,7 +629,7 @@ public class BrandTests
 		var http = web.CreateClient();
 
 		var dbContext = web.Services.GetRequiredService<TgsContext>();
-		
+
 		await dbContext.Brands.AddRangeAsync(
 			new Brand
 			{
@@ -696,7 +712,7 @@ public class BrandTests
 
 		var query = new BrandListQuery
 		{
-			BrandIds = new [] {brandId}
+			BrandIds = new[] { brandId }
 		};
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
@@ -722,10 +738,10 @@ public class BrandTests
 			UpdatedByUsername = string.Empty,
 			Status = (short)BrandStatus.Active
 		});
-		
+
 		var licensee = await dbContext.Licensees.AddAsync(new Licensee
 		{
-			Id = Guid.Parse("66c5fef5-217b-4929-9a08-72c2479a8f4e"), 
+			Id = Guid.Parse("66c5fef5-217b-4929-9a08-72c2479a8f4e"),
 			Code = "TGS",
 			Name = "TGS",
 			Status = (short)BrandStatus.Active,
@@ -787,7 +803,7 @@ public class BrandTests
 				"TGS",
 				"TGS")
 		};
-		
+
 		var actual = await sut.GetBrandRelationsAsync().ToArrayAsync();
 
 		Assert.AreEqual(expected, actual);
@@ -822,7 +838,7 @@ public class BrandTests
 		_ = await dbContext.SaveChangesAsync();
 
 		var sut = new BrandServiceClient(http);
-		
+
 		await sut.UpdateBrandStatusAsync(brandId, BrandStatus.Inactive, "ModifyUser");
 
 		Assert.AreEqual((short)BrandStatus.Inactive, brand.Status);
