@@ -19,23 +19,24 @@ internal class TgsRepository : ITgsRepository
 			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
+		if (brand is null)
+			return null;
+
 		var brandCurrency = await _dbContext.BrandCurrencies
 			.FirstAsync(bc => bc.BrandId == brandId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
-		return brand == null
-			? null
-			: new BrandInfo(
-				brand.Id,
-				brand.Code,
-				(BrandStatus)brand.Status,
-				brandCurrency.CurrencyCode,
-				brand.EnableSms,
-				brand.EnableSmsRegisterFlow,
-				brand.EnablePlayerIdentity,
-				brand.EnableEmailRegisterFlow,
-				brand.EnableBankInfoRegisterFlow,
-				brand.TimeSpanMinutes);
+		return new BrandInfo(
+			brand.Id,
+			brand.Code,
+			(BrandStatus)brand.Status,
+			brandCurrency.CurrencyCode,
+			brand.EnableSms,
+			brand.EnableSmsRegisterFlow,
+			brand.EnablePlayerIdentity,
+			brand.EnableEmailRegisterFlow,
+			brand.EnableBankInfoRegisterFlow,
+			brand.TimeSpanMinutes);
 	}
 
 	public async ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
@@ -297,13 +298,13 @@ internal class TgsRepository : ITgsRepository
 				info.ResellerName));
 
 	public async ValueTask UpdateBrandStatusAsync(
-		Guid brandId, 
-		BrandStatus status, 
+		Guid brandId,
+		BrandStatus status,
 		string modifier,
 		CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
-			.FindAsync(new object?[] {brandId}, cancellationToken)
+			.FindAsync(new object?[] { brandId }, cancellationToken)
 			.ConfigureAwait(false);
 
 		if (brand is null)

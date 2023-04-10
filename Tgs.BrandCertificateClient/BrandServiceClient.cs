@@ -42,7 +42,9 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ReadAsStringAsync(cancellationToken)
 			.ConfigureAwait(false);
 
-		return JsonSerializer.Deserialize<BrandInfo>(json, _SerializerOptions);
+		return string.IsNullOrEmpty(json)
+			? null 
+			: JsonSerializer.Deserialize<BrandInfo>(json, _SerializerOptions);
 	}
 
 	public async ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
