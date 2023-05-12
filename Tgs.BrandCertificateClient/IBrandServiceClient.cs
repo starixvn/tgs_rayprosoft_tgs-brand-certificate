@@ -4,6 +4,8 @@ public interface IBrandServiceClient
 {
 	ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 
+	ValueTask<BrandInfo?> GetBrandInfoByCodeAsync(string brandCode, CancellationToken cancellationToken = default);
+
 	ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	ValueTask<BrandStatus> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default);
@@ -25,12 +27,12 @@ public interface IBrandServiceClient
 	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes, CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<BrandListItem> QueryBrandListAsync(BrandListQuery query, CancellationToken cancellationToken = default);
-	
+
 	IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default);
 
 	ValueTask UpdateBrandStatusAsync(
-		Guid brandId, 
-		BrandStatus status, 
-		string modifier, 
+		Guid brandId,
+		BrandStatus status,
+		string modifier,
 		CancellationToken cancellationToken = default);
 }

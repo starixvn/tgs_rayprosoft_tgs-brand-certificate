@@ -4,13 +4,14 @@
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Tgs.BrandCertificate.Clients</RootNamespace>
     <Nullable>enable</Nullable>
-    <Version>0.0.25</Version>
+    <Version>0.0.26</Version>
     <Authors>Raypro</Authors>
     <PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-brand-certificate</PackageProjectUrl>
     <RepositoryUrl>https://gitlab.com/rayprosoft/tgs-brand-certificate.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>tgs brand</PackageTags>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>Tgs.BrandCertificateClient</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

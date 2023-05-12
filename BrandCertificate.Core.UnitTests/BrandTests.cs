@@ -26,6 +26,21 @@ public class BrandTests
     }
 
     [Test]
+    public async Task 取得BrandInfo依據BrandCode()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetBrandInfoByCodeQueryService(fakeTgsRepository);
+
+        var query = new GetBrandInfoByCodeQuery("GPI");
+
+        _ = await sut.GetAsync(query);
+
+        _ = fakeTgsRepository.Received(1)
+            .GetBrandInfoByCodeAsync(Arg.Is(query.BrandCode));
+    }
+
+    [Test]
     public async Task Get_BrandFrontendInfo_From_Repository()
     {
         var fakeTgsRepository = Substitute.For<ITgsRepository>();

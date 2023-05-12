@@ -10,12 +10,40 @@ namespace Tgs.BrandCertificateService.Controllers;
 [ApiController]
 public class BrandController : ControllerBase
 {
-	[HttpGet("{brandId}", Name = "GetBrandInfo")]
+	[HttpGet("{brandId:Guid}", Name = "GetBrandInfo")]
 	public async Task<BrandViewModel?> GetBrandInfoAsync(
 		[FromServices] IGetService<GetBrandInfoQuery, BrandInfo?> getBrandService,
 		Guid brandId)
 	{
 		var query = new GetBrandInfoQuery(brandId);
+
+		var brandInfo = await getBrandService
+			.GetAsync(query, HttpContext.RequestAborted)
+			.ConfigureAwait(false);
+
+		return brandInfo is null
+			? null
+			: new BrandViewModel
+			{
+				Id = brandInfo.Id,
+				Code = brandInfo.Code,
+				Status = brandInfo.Status,
+				Currency = brandInfo.Currency,
+				PlayerIdentityEnabled = brandInfo.PlayerIdentityEnabled,
+				SmsEnabled = brandInfo.SmsEnabled,
+				SmsRegisterFlowEnabled = brandInfo.SmsRegisterFlowEnabled,
+				BankInfoRegisterFlowEnabled = brandInfo.BankInfoRegisterFlowEnabled,
+				EmailRegisterFlowEnabled = brandInfo.EmailRegisterFlowEnabled,
+				TimeSpanMinutes = brandInfo.TimeSpanMinutes
+			};
+	}
+
+	[HttpGet("{brandCode}", Name = "GetBrandInfoByCode")]
+	public async Task<BrandViewModel?> GetBrandInfoByCodeAsync(
+		[FromServices] IGetService<GetBrandInfoByCodeQuery, BrandInfo?> getBrandService,
+		string brandCode)
+	{
+		var query = new GetBrandInfoByCodeQuery(brandCode);
 
 		var brandInfo = await getBrandService
 			.GetAsync(query, HttpContext.RequestAborted)

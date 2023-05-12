@@ -316,4 +316,31 @@ internal class TgsRepository : ITgsRepository
 
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
+
+	public async ValueTask<BrandInfo?> GetBrandInfoByCodeAsync(string brandCode, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands
+			.Where(row => row.Code == brandCode)
+			.FirstOrDefaultAsync(cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		if (brand is null)
+			return null;
+
+		var brandCurrency = await _dbContext.BrandCurrencies
+			.FirstAsync(bc => bc.BrandId == brand.Id, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		return new BrandInfo(
+			brand.Id,
+			brand.Code,
+			(BrandStatus)brand.Status,
+			brandCurrency.CurrencyCode,
+			brand.EnableSms,
+			brand.EnableSmsRegisterFlow,
+			brand.EnablePlayerIdentity,
+			brand.EnableEmailRegisterFlow,
+			brand.EnableBankInfoRegisterFlow,
+			brand.TimeSpanMinutes);
+	}
 }

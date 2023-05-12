@@ -43,7 +43,7 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ConfigureAwait(false);
 
 		return string.IsNullOrEmpty(json)
-			? null 
+			? null
 			: JsonSerializer.Deserialize<BrandInfo>(json, _SerializerOptions);
 	}
 
@@ -222,7 +222,7 @@ internal class BrandServiceClient : IBrandServiceClient
 	}
 
 	public IAsyncEnumerable<BrandListItem> QueryBrandListAsync(
-		BrandListQuery query, 
+		BrandListQuery query,
 		CancellationToken cancellationToken = default)
 	{
 		var queryStrings = new QueryBuilder();
@@ -233,7 +233,7 @@ internal class BrandServiceClient : IBrandServiceClient
 		if (query.Status is not null)
 			queryStrings.Add("status", query.Status.Value.ToString());
 
-		foreach(var brandId in query.BrandIds)
+		foreach (var brandId in query.BrandIds)
 			queryStrings.Add("brandId", brandId.ToString());
 
 		return _httpClient
@@ -267,8 +267,8 @@ internal class BrandServiceClient : IBrandServiceClient
 			.SelectMany(arr => arr.ToAsyncEnumerable());
 
 	public async ValueTask UpdateBrandStatusAsync(
-		Guid brandId, 
-		BrandStatus status, 
+		Guid brandId,
+		BrandStatus status,
 		string modifier,
 		CancellationToken cancellationToken = default)
 	{
@@ -305,5 +305,16 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		_ = response.EnsureSuccessStatusCode();
 	}
-	
+
+	public async ValueTask<BrandInfo?> GetBrandInfoByCodeAsync(string brandCode, CancellationToken cancellationToken = default)
+		=> await _httpClient.GetAsync($"/brand/{brandCode}", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<BrandInfo>(_SerializerOptions, cancellationToken)
+				.ToAsyncEnumerable())
+			.Where(info => info is not null)
+			.Select(info => info!)
+			.FirstOrDefaultAsync(cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
 }
