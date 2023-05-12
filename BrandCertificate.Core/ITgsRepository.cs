@@ -6,6 +6,8 @@ public interface ITgsRepository
 {
 	ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 
+	ValueTask<BrandInfo?> GetBrandInfoByCodeAsync(string brandCode, CancellationToken cancellationToken = default);
+
 	ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	ValueTask<BrandStatusInfo?> GetBrandStatusInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
@@ -33,8 +35,8 @@ public interface ITgsRepository
 	IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default);
 
 	ValueTask UpdateBrandStatusAsync(
-		Guid brandId, 
-		BrandStatus status, 
-		string modifier, 
+		Guid brandId,
+		BrandStatus status,
+		string modifier,
 		CancellationToken cancellationToken = default);
 }
