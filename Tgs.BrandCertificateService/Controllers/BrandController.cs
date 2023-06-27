@@ -273,4 +273,14 @@ public class BrandController : ControllerBase
 				ResellerCode = info.ResellerCode,
 				ResellerName = info.ResellerName
 			});
+
+	[HttpGet("currencies", Name = "GetAllBrandCurrencies")]
+	public IAsyncEnumerable<BrandCurrencyViewModel> GetAllBrandCurrenciesAsync(
+		[FromServices] IQueryService<GetAllBrandCurrenciesQuery, BrandCurrencyInfo> queryService)
+		=> queryService.QueryAsync(new(), HttpContext.RequestAborted)
+			.Select(info => new BrandCurrencyViewModel
+			{
+				BrandId = info.BrandId,
+				CurrencyCode = info.Currency
+			});
 }

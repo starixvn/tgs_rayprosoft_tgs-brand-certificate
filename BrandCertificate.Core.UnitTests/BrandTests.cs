@@ -228,4 +228,19 @@ public class BrandTests
                 Arg.Is(command.Status),
                 Arg.Is(command.Modifier));
     }
+
+    [Test]
+    public async Task 取得所有Brand的幣別資訊()
+    {
+        var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+        var sut = new GetAllBrandCurrenciesQueryService(fakeTgsRepository);
+
+        var query = new GetAllBrandCurrenciesQuery();
+
+        _ = await sut.QueryAsync(query).ToArrayAsync();
+
+        _ = fakeTgsRepository.Received(1)
+            .GetAllBrandCurrenciesAsync();
+    }
 }

@@ -35,4 +35,6 @@ public interface IBrandServiceClient
 		BrandStatus status,
 		string modifier,
 		CancellationToken cancellationToken = default);
+
+	IAsyncEnumerable<BrandCurrencyInfo> GetAllBrandCurrenciesAsync(CancellationToken cancellationToken = default);
 }
