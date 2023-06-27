@@ -317,4 +317,13 @@ internal class BrandServiceClient : IBrandServiceClient
 			.Select(info => info!)
 			.FirstOrDefaultAsync(cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
+
+	public IAsyncEnumerable<BrandCurrencyInfo> GetAllBrandCurrenciesAsync(CancellationToken cancellationToken = default)
+		=> _httpClient.GetAsync("/brand/currencies", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<IAsyncEnumerable<BrandCurrencyInfo>>(_SerializerOptions, cancellationToken)
+				.ToAsyncEnumerable()
+				.SelectMany(arr => arr!));
 }

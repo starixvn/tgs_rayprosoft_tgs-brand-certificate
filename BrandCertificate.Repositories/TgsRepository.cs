@@ -239,7 +239,9 @@ internal class TgsRepository : ITgsRepository
 
 	public IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
 		CancellationToken cancellationToken = default)
-		=> _dbContext.Brands.Where(x => x.TimeSpanMinutes == timeSpanMinutes).Select(x => x.Id).ToAsyncEnumerable();
+		=> _dbContext.Brands
+			.Where(x => x.TimeSpanMinutes == timeSpanMinutes)
+			.Select(x => x.Id).ToAsyncEnumerable();
 
 	public IAsyncEnumerable<BrandListItem> QueryAllBrandsAsync(CancellationToken cancellationToken = default)
 		=> _dbContext.Brands
@@ -281,7 +283,7 @@ internal class TgsRepository : ITgsRepository
 				LicenseeCode = b.Licensee.Code,
 				ResellerId = b.Licensee.Reseller.Id,
 				ResellerName = b.Licensee.Reseller.Name,
-				ResellerCode = b.Licensee.Reseller.Code
+				ResellerCode = b.Licensee.Reseller.Code,
 			})
 			.ToArrayAsync(cancellationToken: cancellationToken)
 			.ToAsyncEnumerable()
@@ -343,4 +345,17 @@ internal class TgsRepository : ITgsRepository
 			brand.EnableBankInfoRegisterFlow,
 			brand.TimeSpanMinutes);
 	}
+
+	public IAsyncEnumerable<BrandCurrencyInfo> GetAllBrandCurrenciesAsync(CancellationToken cancellationToken = default)
+		=> _dbContext.BrandCurrencyInfos
+			.FromSqlRaw("""
+				SELECT DISTINCT
+					brand_id,
+					first_value(currency_code) OVER w AS currency
+				FROM
+					dbo.brand_currencies
+				WINDOW w AS (PARTITION BY brand_id ORDER BY currency_code);
+				""")
+			.AsNoTracking()
+			.ToAsyncEnumerable();
 }

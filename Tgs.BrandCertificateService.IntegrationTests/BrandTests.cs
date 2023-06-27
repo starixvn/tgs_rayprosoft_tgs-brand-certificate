@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using ExpectedObjects;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using NUnit.Framework;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.Clients;
@@ -846,6 +847,41 @@ public class BrandTests
 		};
 
 		var actual = await sut.GetBrandRelationsAsync().ToArrayAsync();
+
+		Assert.AreEqual(expected, actual);
+	}
+
+	[Test]
+	public async Task 取得全部Brand的幣別()
+	{
+		var fakeTgsRepository = Substitute.For<ITgsRepository>();
+
+		await using var web = new TestBrandCertificateApplication(hostBuilder => hostBuilder
+			.ConfigureServices(services => services
+				.AddSingleton(fakeTgsRepository)));
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandCurrencies = new[]
+		{
+			new BrandCertificate.BrandCurrencyInfo(
+				Guid.NewGuid(),
+				"CNY"),
+			new BrandCertificate.BrandCurrencyInfo(
+				Guid.NewGuid(),
+				"TWD")
+		};
+
+		_ = fakeTgsRepository.GetAllBrandCurrenciesAsync(Arg.Any<CancellationToken>())
+			.Returns(brandCurrencies.ToAsyncEnumerable());
+
+		var expected = brandCurrencies.Select(info => new BrandCertificate.Clients.BrandCurrencyInfo(
+			info.BrandId,
+			info.Currency)).ToArray();
+
+		var actual = await sut.GetAllBrandCurrenciesAsync().ToArrayAsync();
 
 		Assert.AreEqual(expected, actual);
 	}
