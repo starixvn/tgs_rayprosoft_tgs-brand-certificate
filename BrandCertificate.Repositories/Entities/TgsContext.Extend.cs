@@ -10,7 +10,13 @@ public partial class TgsContext
 
 	partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
 	{
-		_ = modelBuilder.Entity<BrandCurrencyInfo>()
+		var brandCurrencyInfoBuilder = modelBuilder.Entity<BrandCurrencyInfo>()
 			.HasNoKey();
+		brandCurrencyInfoBuilder
+			.Property(info => info.BrandId)
+			.HasColumnName("brand_id");
+		brandCurrencyInfoBuilder
+			.Property(info => info.Currency)
+			.HasColumnName("currency");
 	}
 }
