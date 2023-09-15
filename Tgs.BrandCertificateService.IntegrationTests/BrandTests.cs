@@ -239,7 +239,9 @@ public class BrandTests
 
 		var sut = new BrandServiceClient(http);
 
+#pragma warning disable CS0618 // 類型或成員已經過時
 		var actual = await sut.GetVipLevelInfosAsync(brandId).ToArrayAsync();
+#pragma warning restore CS0618 // 類型或成員已經過時
 
 		Assert.AreEqual(1, actual.Length);
 	}

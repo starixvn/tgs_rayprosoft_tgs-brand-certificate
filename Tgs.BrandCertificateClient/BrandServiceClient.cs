@@ -77,6 +77,7 @@ internal class BrandServiceClient : IBrandServiceClient
 		return JsonSerializer.Deserialize<BrandStatus>(json, _SerializerOptions)!;
 	}
 
+	[Obsolete("淘汰")]
 	public async IAsyncEnumerable<VipLevelInfo> GetVipLevelInfosAsync(
 		Guid brandId,
 		[EnumeratorCancellation] CancellationToken cancellationToken = default)
