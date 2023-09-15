@@ -6,6 +6,7 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.BrandCertificateService.Controllers;
 
+[Obsolete("淘汰")]
 [Route("[controller]")]
 [ApiController]
 public class VipLevelController : ControllerBase
