@@ -98,6 +98,26 @@ public class BrandController : ControllerBase
 		return getService.GetAsync(query, HttpContext.RequestAborted);
 	}
 
+	[HttpGet("sms/{brandId}", Name = "GetBrandSmsSettings")]
+	public async ValueTask<BrandSmsVendorSettingsViewModel?> GetBrandSmsSettingsAsync(
+		[FromServices] IGetService<GetBrandSmsVendorSettingsQuery, SmsSettingsInfo?> getService,
+		Guid brandId)
+	{
+		var query = new GetBrandSmsVendorSettingsQuery(brandId);
+
+		var info = await getService.GetAsync(
+			query,
+			HttpContext.RequestAborted).ConfigureAwait(false);
+
+		return info is null
+			? null
+			: new BrandSmsVendorSettingsViewModel
+			{
+				Code = info.Code,
+				SmsSettings = info.VendorSettings
+			};
+	}
+
 	[HttpPut("status/{brandId}/{status}", Name = "UpdateBrandStatus")]
 	public ValueTask UpdateBrandStatusAsync(
 		[FromServices] ICommandService<UpdateBrandStatusCommand> commandService,

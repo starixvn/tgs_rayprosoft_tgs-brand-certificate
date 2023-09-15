@@ -922,4 +922,46 @@ public class BrandTests
 
 		Assert.AreEqual((short)BrandStatus.Inactive, brand.Status);
 	}
+
+	[Test]
+	public async Task 取得Brand的Sms設定值()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+		var vendorSettings = new TestSmsSettings("123456");
+		var vendorCode = "Test";
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid(),
+			SmsVendorCode = vendorCode,
+			SmsVendorSettings = JsonSerializer.Serialize(vendorSettings)
+		};
+
+		var expected = new SmsVendorInfo<TestSmsSettings>(vendorCode, vendorSettings);
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var actual = await sut.GetBrandSmsSettingsAsync<TestSmsSettings>(brandId);
+
+		Assert.AreEqual(expected, actual);
+	}
 }

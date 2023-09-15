@@ -1,4 +1,6 @@
-﻿namespace Tgs.BrandCertificate.Clients;
+﻿using System.Text.Json;
+
+namespace Tgs.BrandCertificate.Clients;
 
 public interface IBrandServiceClient
 {
@@ -38,4 +40,9 @@ public interface IBrandServiceClient
 		CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<BrandCurrencyInfo> GetAllBrandCurrenciesAsync(CancellationToken cancellationToken = default);
+
+	ValueTask<SmsVendorInfo<TSmsSettings>?> GetBrandSmsSettingsAsync<TSmsSettings>(
+		Guid brandId,
+		JsonSerializerOptions? jsonSerializerOptions = null,
+		CancellationToken cancellationToken = default);
 }

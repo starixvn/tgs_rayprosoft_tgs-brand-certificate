@@ -358,4 +358,15 @@ internal class TgsRepository : ITgsRepository
 				""")
 			.AsNoTracking()
 			.ToAsyncEnumerable();
+
+	public async ValueTask<SmsSettingsInfo?> GetBrandSmsSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FindAsync(
+			new object?[] { brandId },
+			cancellationToken: cancellationToken).ConfigureAwait(false);
+
+		return brand?.SmsVendorSettings is null || string.IsNullOrEmpty(brand?.SmsVendorCode)
+			? null
+			: new SmsSettingsInfo(brand.SmsVendorCode, JsonDocument.Parse(brand?.SmsVendorSettings!));
+	}
 }

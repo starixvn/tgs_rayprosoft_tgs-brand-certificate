@@ -41,4 +41,6 @@ public interface ITgsRepository
 		CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<BrandCurrencyInfo> GetAllBrandCurrenciesAsync(CancellationToken cancellationToken = default);
+
+	ValueTask<SmsSettingsInfo?> GetBrandSmsSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
 }

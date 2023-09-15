@@ -327,4 +327,16 @@ internal class BrandServiceClient : IBrandServiceClient
 				.ReadFromJsonAsync<IAsyncEnumerable<BrandCurrencyInfo>>(_SerializerOptions, cancellationToken)
 				.ToAsyncEnumerable()
 				.SelectMany(arr => arr!));
+
+	public ValueTask<SmsVendorInfo<TSmsSettings>?> GetBrandSmsSettingsAsync<TSmsSettings>(
+		Guid brandId,
+		JsonSerializerOptions? jsonSerializerOptions = null,
+		CancellationToken cancellationToken = default)
+		=> _httpClient.GetAsync($"/brand/sms/{brandId}", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<SmsVendorInfo<TSmsSettings>>(jsonSerializerOptions, cancellationToken)
+				.ToAsyncEnumerable())
+			.FirstOrDefaultAsync(cancellationToken: cancellationToken);
 }
