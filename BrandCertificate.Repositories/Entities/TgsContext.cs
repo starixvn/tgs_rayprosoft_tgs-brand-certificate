@@ -16,6 +16,8 @@ public partial class TgsContext : DbContext
 
     public virtual DbSet<Brand> Brands { get; set; }
 
+    public virtual DbSet<BrandBetLimit> BrandBetLimits { get; set; }
+
     public virtual DbSet<BrandCurrency> BrandCurrencies { get; set; }
 
     public virtual DbSet<BrandMaintenance> BrandMaintenances { get; set; }
@@ -33,6 +35,7 @@ public partial class TgsContext : DbContext
             .HasPostgresExtension("pg_trgm");
 
             modelBuilder.ApplyConfiguration(new Configurations.BrandConfiguration());
+            modelBuilder.ApplyConfiguration(new Configurations.BrandBetLimitConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.BrandCurrencyConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.BrandMaintenanceConfiguration());
             modelBuilder.ApplyConfiguration(new Configurations.LicenseeConfiguration());

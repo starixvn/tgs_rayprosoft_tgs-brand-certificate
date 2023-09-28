@@ -964,4 +964,32 @@ public class BrandTests
 
 		Assert.AreEqual(expected, actual);
 	}
+
+	[Test]
+	public async Task 取得Brand預設BetLimitId()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.BrandBetLimits
+			.AddAsync(new BrandBetLimit
+			{
+				BrandId = brandId,
+				BetLimitId = 100,
+				IsDefault = true
+			});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var actual = await sut.GetBrandBetLimitIdAsync(brandId);
+
+		Assert.AreEqual(100, actual);
+	}
 }

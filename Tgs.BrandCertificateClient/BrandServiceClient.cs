@@ -339,4 +339,16 @@ internal class BrandServiceClient : IBrandServiceClient
 				.ReadFromJsonAsync<SmsVendorInfo<TSmsSettings>>(jsonSerializerOptions, cancellationToken)
 				.ToAsyncEnumerable())
 			.FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+	public async ValueTask<int?> GetBrandBetLimitIdAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> await _httpClient.GetAsync(
+			$"/bet-limit/{brandId}",
+			cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<int?>(_SerializerOptions, cancellationToken)
+				.ToAsyncEnumerable())
+			.FirstOrDefaultAsync(cancellationToken)
+			.ConfigureAwait(false);
 }
