@@ -217,36 +217,6 @@ public class BrandTests
 	}
 
 	[Test]
-	[Obsolete("過時Api")]
-	public async Task Get_VipLevels_By_Brand()
-	{
-		var brandId = Guid.NewGuid();
-
-		await using var web = new TestBrandCertificateApplication();
-
-		var http = web.CreateClient();
-
-		var dbContext = web.Services.GetRequiredService<TgsContext>();
-
-		_ = await dbContext.VipLevelRows.AddAsync(new VipLevelRow
-		{
-			Id = Guid.NewGuid(),
-			Level = 1,
-			BrandId = brandId,
-			CreatedByUsername = string.Empty,
-			UpdatedByUsername = string.Empty
-		});
-
-		_ = await dbContext.SaveChangesAsync();
-
-		var sut = new BrandServiceClient(http);
-
-		var actual = await sut.GetVipLevelInfosAsync(brandId).ToArrayAsync();
-
-		ClassicAssert.AreEqual(1, actual.Length);
-	}
-
-	[Test]
 	public async Task Get_Brand_PaymentSettings()
 	{
 		var brandId = Guid.NewGuid();

@@ -95,6 +95,8 @@ public partial class Brand
 
     public DateTime UpdatedOn { get; set; }
 
+    public bool EnablePlayerAgent { get; set; }
+
     public virtual ICollection<BrandBetLimit> BrandBetLimits { get; set; } = new List<BrandBetLimit>();
 
     public virtual ICollection<BrandCurrency> BrandCurrencies { get; set; } = new List<BrandCurrency>();

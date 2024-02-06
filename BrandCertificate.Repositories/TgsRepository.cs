@@ -240,12 +240,6 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		}).ToAsyncEnumerable();
 	}
 
-	public IAsyncEnumerable<VipLevel> QueryVipLevelsAsync(Guid brandId, CancellationToken cancellationToken = default)
-		=> _dbContext.VipLevelRows
-			.Where(vip => vip.BrandId == brandId)
-			.Select(vip => new VipLevel(vip.Id, vip.Level))
-			.ToAsyncEnumerable();
-
 	public async ValueTask UpdateAllBrandMaintenanceTimeAsync(TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default)
 	{
 		var brandMaintenances = (from brand in _dbContext.Brands.AsQueryable()

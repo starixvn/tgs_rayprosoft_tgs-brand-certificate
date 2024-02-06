@@ -75,25 +75,6 @@ internal class BrandServiceClient : IBrandServiceClient
 		return JsonSerializer.Deserialize<BrandStatus>(json, _SerializerOptions)!;
 	}
 
-	[Obsolete("淘汰")]
-	public async IAsyncEnumerable<VipLevelInfo> GetVipLevelInfosAsync(
-		Guid brandId,
-		[EnumeratorCancellation] CancellationToken cancellationToken = default)
-	{
-		var response = await _httpClient
-			.GetAsync($"/viplevel/{brandId}", cancellationToken)
-			.ConfigureAwait(false);
-
-		_ = response.EnsureSuccessStatusCode();
-
-		var vipLevels = await response.Content
-			.ReadFromJsonAsync<VipLevelInfo[]>(_SerializerOptions, cancellationToken)
-			.ConfigureAwait(false) ?? Array.Empty<VipLevelInfo>();
-
-		foreach (var vipLevel in vipLevels)
-			yield return vipLevel;
-	}
-
 	public async IAsyncEnumerable<BrandMaintenanceInfo> GetBrandMaintenanceInfosAsync(
 		string brandCode,
 		[EnumeratorCancellation] CancellationToken cancellationToken = default)
