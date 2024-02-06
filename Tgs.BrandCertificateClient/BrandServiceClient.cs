@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
-using DateOnlyTimeOnly.AspNet.Converters;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Tgs.BrandCertificate.Clients;
@@ -18,8 +17,7 @@ internal class BrandServiceClient : IBrandServiceClient
 		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 		WriteIndented = true,
 		Converters = {
-			new JsonStringEnumConverter(),
-			new TimeOnlyJsonConverter()
+			new JsonStringEnumConverter()
 		}
 	};
 

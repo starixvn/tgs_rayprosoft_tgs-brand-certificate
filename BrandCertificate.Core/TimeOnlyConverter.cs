@@ -3,17 +3,12 @@ using System.Text.Json.Serialization;
 
 namespace Tgs.BrandCertificate;
 
-public class TimeOnlyConverter : JsonConverter<TimeOnly>
+public class TimeOnlyConverter(string? serializationFormat) : JsonConverter<TimeOnly>
 {
-	private readonly string _serializationFormat;
+	private readonly string _serializationFormat = serializationFormat ?? "HH:mm";
 
 	public TimeOnlyConverter() : this(null)
 	{
-	}
-
-	public TimeOnlyConverter(string? serializationFormat)
-	{
-		this._serializationFormat = serializationFormat ?? "HH:mm";
 	}
 
 	public override TimeOnly Read(ref Utf8JsonReader reader,

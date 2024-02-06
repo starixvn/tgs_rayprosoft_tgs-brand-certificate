@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Tgs.BrandCertificate.Clients;
 using Tgs.BrandCertificate.Repositories.Entities;
 
@@ -21,7 +22,7 @@ public class CertificateTests
 
 		var actual = await testClient.GetSystemValidateSecurityKeyAsync();
 
-		Assert.IsNotNull(actual);
+		ClassicAssert.IsNotNull(actual);
 	}
 
 	[Test]
@@ -59,7 +60,7 @@ public class CertificateTests
 
 		var actual = await testClient.MakeJsonWebTokenAsync(brandId);
 
-		Assert.IsNotNull(actual);
+		ClassicAssert.IsNotNull(actual);
 	}
 
 	[Test]
@@ -108,13 +109,13 @@ public class CertificateTests
 				ValidateIssuer = true,
 				ValidateAudience = false,
 				ValidateLifetime = false,
-				ValidIssuers = new[] { "tgs" },
+				ValidIssuers = ["tgs"],
 				NameClaimType = ClaimTypes.NameIdentifier,
 				IssuerSigningKey = securityKey
 			},
 			out _);
 
-		Assert.AreEqual(brandId, Guid.Parse(actual.Identity!.Name!));
+		ClassicAssert.AreEqual(brandId, Guid.Parse(actual.Identity!.Name!));
 	}
 
 	[Test]
@@ -165,7 +166,7 @@ public class CertificateTests
 					ValidateIssuer = true,
 					ValidateAudience = false,
 					ValidateLifetime = false,
-					ValidIssuers = new[] { "tgs" },
+					ValidIssuers = ["tgs"],
 					NameClaimType = ClaimTypes.NameIdentifier,
 					IssuerSigningKey = securityKey
 				},

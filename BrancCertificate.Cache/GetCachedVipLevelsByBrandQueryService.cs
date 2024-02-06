@@ -5,18 +5,12 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.BrandCertificate.Cache;
 
-internal class GetCachedVipLevelsByBrandQueryService : IQueryService<GetVipLevelsByBrandQuery, VipLevel>
+internal class GetCachedVipLevelsByBrandQueryService(
+	IQueryService<GetVipLevelsByBrandQuery, VipLevel> sourceService,
+	IMemoryCache memoryCache) : IQueryService<GetVipLevelsByBrandQuery, VipLevel>
 {
-	private readonly IQueryService<GetVipLevelsByBrandQuery, VipLevel> _sourceService;
-	private readonly IMemoryCache _memoryCache;
-
-	public GetCachedVipLevelsByBrandQueryService(
-		IQueryService<GetVipLevelsByBrandQuery, VipLevel> sourceService,
-		IMemoryCache memoryCache)
-	{
-		_sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
-		_memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-	}
+	private readonly IQueryService<GetVipLevelsByBrandQuery, VipLevel> _sourceService = sourceService ?? throw new ArgumentNullException(nameof(sourceService));
+	private readonly IMemoryCache _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
 
 	public async IAsyncEnumerable<VipLevel> QueryAsync(
 		GetVipLevelsByBrandQuery query,

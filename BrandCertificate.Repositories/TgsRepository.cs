@@ -4,15 +4,10 @@ using Tgs.BrandCertificate.Repositories.Entities;
 
 namespace Tgs.BrandCertificate.Repositories;
 
-internal class TgsRepository : ITgsRepository
+internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 {
 
-	private readonly TgsContext _dbContext;
-
-	public TgsRepository(TgsContext dbContext)
-	{
-		_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-	}
+	private readonly TgsContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
 	public IAsyncEnumerable<BrandCurrencyInfo> GetAllBrandCurrenciesAsync(CancellationToken cancellationToken = default)
 		=> _dbContext.BrandCurrencyInfos
@@ -36,7 +31,7 @@ internal class TgsRepository : ITgsRepository
 	public async ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
-			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
+			.FindAsync([brandId], cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
 		if (brand is null)
@@ -67,7 +62,7 @@ internal class TgsRepository : ITgsRepository
 	public async ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
-			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
+			.FindAsync([brandId], cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
 		if (brand is null)
@@ -169,7 +164,7 @@ internal class TgsRepository : ITgsRepository
 	public async ValueTask<SmsSettingsInfo?> GetBrandSmsSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands.FindAsync(
-			new object?[] { brandId },
+			[brandId],
 			cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		return brand?.SmsVendorSettings is null || string.IsNullOrEmpty(brand?.SmsVendorCode)
@@ -340,7 +335,7 @@ internal class TgsRepository : ITgsRepository
 	public async ValueTask<bool> UpdateBrandPlayerRegisterFlowSettingAsync(Guid brandId, JsonDocument playerRegisterFlowSettings, CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
-			.FindAsync(new object?[] { brandId }, cancellationToken: cancellationToken)
+			.FindAsync([brandId], cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
 		if (brand == null)
@@ -364,7 +359,7 @@ internal class TgsRepository : ITgsRepository
 		CancellationToken cancellationToken = default)
 	{
 		var brand = await _dbContext.Brands
-			.FindAsync(new object?[] { brandId }, cancellationToken)
+			.FindAsync([brandId], cancellationToken)
 			.ConfigureAwait(false);
 
 		if (brand is null)

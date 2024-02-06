@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Tgs.BrandCertificate.ApplicationServices;
 using Tgs.BrandCertificateService;
 
@@ -45,12 +46,12 @@ public class TokenTests
                 ValidateIssuer = true,
                 ValidateAudience = false,
                 ValidateLifetime = false,
-                ValidIssuers = new[] { "tgs" },
+                ValidIssuers = ["tgs"],
                 NameClaimType = ClaimTypes.NameIdentifier,
                 IssuerSigningKey = securityKey
             });
 
-        Assert.AreEqual(
+        ClassicAssert.AreEqual(
             brandId,
             Guid.Parse(actual.ClaimsIdentity.Name!));
     }
