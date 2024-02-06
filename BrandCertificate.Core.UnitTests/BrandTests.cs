@@ -3,7 +3,7 @@ using NSubstitute;
 using NUnit.Framework;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
-using Tgs.MessageQueue;
+using Valhalla.MessageQueue;
 
 namespace BrandCertificate.Core.UnitTests;
 

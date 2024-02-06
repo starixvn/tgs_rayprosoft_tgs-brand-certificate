@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <RootNamespace>Tgs.BrandCertificate.Clients</RootNamespace>
     <Nullable>enable</Nullable>
-    <Version>0.0.29</Version>
+    <Version>0.1.0</Version>
     <Authors>Raypro</Authors>
     <PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-brand-certificate</PackageProjectUrl>
     <RepositoryUrl>https://gitlab.com/rayprosoft/tgs-brand-certificate.git</RepositoryUrl>
@@ -29,21 +29,23 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="DateOnlyTimeOnly.AspNet" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.5.22">
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.8.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="PhoenixToolkits.NuGet.BuildTools" Version="0.0.2" />
+    <PackageReference Include="PhoenixToolkits.NuGet.BuildTools" Version="0.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0">
       <PrivateAssets>All</PrivateAssets>
       <IncludeAssets></IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.27.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.3.1" />
     <PackageReference Include="System.Interactive.Async" Version="6.0.1" />
   </ItemGroup>
 

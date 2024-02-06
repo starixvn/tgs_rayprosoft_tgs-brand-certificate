@@ -11,14 +11,9 @@ using Tgs.BrandCertificate.Repositories.Entities;
 
 namespace Tgs.BrandCertificateService.IntegrationTests;
 
-internal class TestBrandCertificateApplication : WebApplicationFactory<Program>
+internal class TestBrandCertificateApplication(Action<IWebHostBuilder>? webHostConfigure = null) : WebApplicationFactory<Program>
 {
-	private readonly Action<IWebHostBuilder>? _webHostConfigure;
-
-	public TestBrandCertificateApplication(Action<IWebHostBuilder>? webHostConfigure = null)
-	{
-		_webHostConfigure = webHostConfigure;
-	}
+	private readonly Action<IWebHostBuilder>? _webHostConfigure = webHostConfigure;
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{

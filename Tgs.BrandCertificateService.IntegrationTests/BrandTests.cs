@@ -3,6 +3,7 @@ using ExpectedObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.Clients;
 using Tgs.BrandCertificate.Repositories.Entities;
@@ -47,8 +48,8 @@ public class BrandTests
 
 		var actual = await sut.GetBrandInfoAsync(brandId);
 
-		Assert.IsNotNull(actual);
-		Assert.AreEqual(brandId, actual!.Id);
+		ClassicAssert.IsNotNull(actual);
+		ClassicAssert.AreEqual(brandId, actual!.Id);
 	}
 
 	[Test]
@@ -88,8 +89,8 @@ public class BrandTests
 
 		var actual = await sut.GetBrandInfoByCodeAsync(brandCode);
 
-		Assert.IsNotNull(actual);
-		Assert.AreEqual(brandId, actual!.Id);
+		ClassicAssert.IsNotNull(actual);
+		ClassicAssert.AreEqual(brandId, actual!.Id);
 	}
 
 	[Test]
@@ -105,7 +106,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandInfoAsync(brandId);
 
-		Assert.IsNull(actual);
+		ClassicAssert.IsNull(actual);
 	}
 
 	[Test]
@@ -212,10 +213,11 @@ public class BrandTests
 
 		var actual = await sut.GetBrandStatusAsync(brandId);
 
-		Assert.AreEqual(BrandStatus.Archived, actual);
+		ClassicAssert.AreEqual(BrandStatus.Archived, actual);
 	}
 
 	[Test]
+	[Obsolete("過時Api")]
 	public async Task Get_VipLevels_By_Brand()
 	{
 		var brandId = Guid.NewGuid();
@@ -239,11 +241,9 @@ public class BrandTests
 
 		var sut = new BrandServiceClient(http);
 
-#pragma warning disable CS0618 // 類型或成員已經過時
 		var actual = await sut.GetVipLevelInfosAsync(brandId).ToArrayAsync();
-#pragma warning restore CS0618 // 類型或成員已經過時
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -284,7 +284,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandPaymentSettingsAsync(brandId);
 
-		Assert.AreEqual(expected, actual);
+		ClassicAssert.AreEqual(expected, actual);
 	}
 
 	[Test]
@@ -331,7 +331,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandMaintenanceInfosAsync(brandCode: "").ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -383,8 +383,8 @@ public class BrandTests
 
 		var bm = dbContext.BrandMaintenances.Where(bm => bm.BrandId == brandId).First();
 
-		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
-		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
+		ClassicAssert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
+		ClassicAssert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
 	}
 
 	[Test]
@@ -432,7 +432,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandMaintenanceInfoByIdAsync(brandMaintenanceId);
 
-		Assert.AreEqual("Content", actual.Content);
+		ClassicAssert.AreEqual("Content", actual.Content);
 	}
 
 	[Test]
@@ -483,7 +483,7 @@ public class BrandTests
 
 		var bm = dbContext.BrandMaintenances.Where(bm => bm.Id == brandMaintenanceId).First();
 
-		Assert.AreEqual("This is new content", bm.Content);
+		ClassicAssert.AreEqual("This is new content", bm.Content);
 	}
 
 	[Test]
@@ -533,8 +533,8 @@ public class BrandTests
 
 		var bm = dbContext.BrandMaintenances.Where(bm => bm.BrandId == brandId).First();
 
-		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
-		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
+		ClassicAssert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
+		ClassicAssert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
 	}
 
 	[Test]
@@ -570,7 +570,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandIdsByTimeSpanMinutesAsync(timeSpanMinutes).ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -613,7 +613,7 @@ public class BrandTests
 
 		var brandInfo = await sut.GetBrandInfoAsync(brandId);
 
-		Assert.AreEqual(timeSpanMinutes, brandInfo?.TimeSpanMinutes);
+		ClassicAssert.AreEqual(timeSpanMinutes, brandInfo?.TimeSpanMinutes);
 	}
 
 	[Test]
@@ -662,7 +662,7 @@ public class BrandTests
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
 
-		Assert.AreEqual(2, actual.Length);
+		ClassicAssert.AreEqual(2, actual.Length);
 	}
 
 	[Test]
@@ -711,7 +711,7 @@ public class BrandTests
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -761,7 +761,7 @@ public class BrandTests
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -850,7 +850,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandRelationsAsync().ToArrayAsync();
 
-		Assert.AreEqual(expected, actual);
+		ClassicAssert.AreEqual(expected, actual);
 	}
 
 	[Test]
@@ -885,7 +885,7 @@ public class BrandTests
 
 		var actual = await sut.GetAllBrandCurrenciesAsync().ToArrayAsync();
 
-		Assert.AreEqual(expected, actual);
+		ClassicAssert.AreEqual(expected, actual);
 	}
 
 	[Test]
@@ -920,7 +920,7 @@ public class BrandTests
 
 		await sut.UpdateBrandStatusAsync(brandId, BrandStatus.Inactive, "ModifyUser");
 
-		Assert.AreEqual((short)BrandStatus.Inactive, brand.Status);
+		ClassicAssert.AreEqual((short)BrandStatus.Inactive, brand.Status);
 	}
 
 	[Test]
@@ -962,7 +962,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandSmsSettingsAsync<TestSmsSettings>(brandId);
 
-		Assert.AreEqual(expected, actual);
+		ClassicAssert.AreEqual(expected, actual);
 	}
 
 	[Test]
@@ -990,6 +990,6 @@ public class BrandTests
 
 		var actual = await sut.GetBrandBetLimitIdAsync(brandId);
 
-		Assert.AreEqual(100, actual);
+		ClassicAssert.AreEqual(100, actual);
 	}
 }

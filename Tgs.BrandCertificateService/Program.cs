@@ -1,18 +1,14 @@
 ﻿using System.Reflection;
 using FluentdForward.OpenTelemetry.MessagePack;
 using Microsoft.EntityFrameworkCore;
+using NATS.Client.Core;
 using Npgsql;
 using OpenTelemetry.Exporter;
-using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Configuration
-	.AddJsonFile("/config/appsettings.json", true)
-	.AddEnvironmentVariables();
 
 builder.Logging
 	.AddOpenTelemetry(options =>
@@ -47,21 +43,21 @@ builder.Services
 	.AddBrandCertificateCache();
 
 builder.Services
+	.AddKeyedSingleton(
+		"Nats",
+		(sp, _) => new NatsConnection(NatsOpts.Default with
+		{
+			Url = builder.Configuration.GetConnectionString("Nats")!
+		}))
 	.AddMessageQueue()
 	.AddNatsMessageQueue(config => config
-		.ConfigQueueOptions((options, sp) =>
-		{
-			var config = sp.GetRequiredService<IConfiguration>();
-
-			options.Url = config.GetConnectionString("Nats")!;
-		})
+		.ConfigureResolveConnection(sp => sp.GetRequiredKeyedService<NatsConnection>("Nats"))
 		.AddHandler(
 			Tgs.BrandCertificate.Cache.MessageQueue.ProcessorTypes.BrandFrontendInfoChangedEventHandlerType,
 			"tgs.brand.frontendinfo.changed"))
 	.AddNatsGlobPatternExchange("*");
 
 builder.Services
-	.AddDateOnlyTimeOnlyStringConverters()
 	.AddRouting(options => options.LowercaseUrls = true)
 	.AddControllers();
 
@@ -86,9 +82,9 @@ builder.Services
 			c.IncludeXmlComments(path);
 
 		c.ApplyWebApiToolkitSupport();
-		c.UseDateOnlyTimeOnlyStringConverters();
 	});
 
+var excludeExtensions = new[] { "html", "ico", "png", "jpg" };
 builder.Services
 	.AddOptions<OtlpExporterOptions>()
 	.Configure<IConfiguration>((options, config) =>
@@ -107,7 +103,14 @@ builder.Services
 		.AddEnvironmentVariableDetector())
 	.WithTracing(tracerProviderBuilder => tracerProviderBuilder
 		.AddSource("Tgs.*")
-		.AddAspNetCoreInstrumentation()
+		.AddSource("Valhalla.*")
+		.AddAspNetCoreInstrumentation(options => options.Filter =
+		httpContext => !httpContext.Request.Path.HasValue
+			|| !httpContext.Request.Path.StartsWithSegments("/swagger")
+			&& !httpContext.Request.Path.StartsWithSegments("/healthz")
+			&& !httpContext.Request.Path.StartsWithSegments("/metrics")
+			&& !excludeExtensions.Any(
+				ext => httpContext.Request.Path.Value.EndsWith($".{ext}")))
 		.AddHttpClientInstrumentation()
 		.AddNpgsql()
 		.AddProfileViewExporter()
@@ -116,15 +119,7 @@ builder.Services
 		.AddRuntimeInstrumentation()
 		.AddAspNetCoreInstrumentation()
 		.AddHttpClientInstrumentation()
-		.AddOtlpExporter())
-	.Services
-	.Configure<AspNetCoreInstrumentationOptions>(options => options.Filter =
-		httpContext => !httpContext.Request.Path.HasValue
-			|| !httpContext.Request.Path.StartsWithSegments("/swagger")
-			&& !httpContext.Request.Path.StartsWithSegments("/healthz")
-			&& !httpContext.Request.Path.StartsWithSegments("/metrics")
-			&& !new[] { "html", "ico", "png", "jpg" }.Any(
-				ext => httpContext.Request.Path.Value.EndsWith($".{ext}")));
+		.AddOtlpExporter());
 
 var app = builder.Build();
 
