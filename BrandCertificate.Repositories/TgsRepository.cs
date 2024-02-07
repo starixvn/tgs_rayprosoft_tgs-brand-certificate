@@ -187,6 +187,28 @@ internal class TgsRepository : ITgsRepository
 			.FirstOrDefaultAsync(cancellationToken)
 			.ConfigureAwait(false);
 
+	public IAsyncEnumerable<BrandAgentDividendInfo> GetBrandAgentDividendInfosAsync(
+		CancellationToken cancellationToken = default)
+	{
+		return _dbContext.Brands
+			.Select(x => new BrandAgentDividendInfo(x.Id,
+				x.Code,
+				(BrandStatus)x.Status,
+				(AgentDividendType)x.AgentDividendType,
+				(SettlementIntervalType)x.SettlementIntervalType,
+				x.AutoSentAgentBonus,
+				x.CheckDividendActiveCount,
+				x.PlatformCharge,
+				x.PreviousSettlementFrom,
+				x.PreviousSettlementTo,
+				x.CurrentSettlementFrom,
+				x.CurrentSettlementTo,
+				x.NextSettlementFrom,
+				x.NextSettlementTo,
+				x.SettlementDay))
+			.ToAsyncEnumerable();
+	}
+
 	public IAsyncEnumerable<BrandListItem> QueryAllBrandsAsync(CancellationToken cancellationToken = default)
 		=> _dbContext.Brands
 			.Select(b => new
@@ -377,4 +399,70 @@ internal class TgsRepository : ITgsRepository
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 
+	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(Guid brandId,
+		DateTime previousSettlementFrom,
+		DateTime previousSettlementTo,
+		DateTime currentSettlementFrom,
+		DateTime currentSettlementTo,
+		DateTime nextSettlementFrom,
+		DateTime nextSettlementTo,
+		CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FirstAsync(x => x.Id == brandId, cancellationToken: cancellationToken);
+
+		brand.PreviousSettlementFrom = previousSettlementFrom;
+		brand.PreviousSettlementTo = previousSettlementTo;
+		brand.CurrentSettlementFrom = currentSettlementFrom;
+		brand.CurrentSettlementTo = currentSettlementTo;
+		brand.NextSettlementFrom = nextSettlementFrom;
+		brand.NextSettlementTo = nextSettlementTo;
+
+		_ = _dbContext.Brands.Update(brand);
+
+		_ = _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public async ValueTask CreateBrandAsync(CreateBrandInfo createBrand, CancellationToken cancellationToken = default)
+	{
+		var brand = new Brand
+		{
+			Id = createBrand.BrandId,
+			LicenseeId = createBrand.LicenseeId,
+			Code = createBrand.Code,
+			Name = createBrand.Name,
+			PreviousSettlementFrom = createBrand.CurrentSettlementFrom.UtcDateTime,
+			PreviousSettlementTo = createBrand.CurrentSettlementTo.UtcDateTime,
+			CurrentSettlementFrom = createBrand.CurrentSettlementFrom.UtcDateTime,
+			CurrentSettlementTo = createBrand.CurrentSettlementTo.UtcDateTime,
+			NextSettlementFrom = createBrand.NextSettlementFrom.UtcDateTime,
+			NextSettlementTo = createBrand.NextSettlementTo.UtcDateTime,
+			AutoSentAgentBonus = createBrand.AutoSendAgentBonus,
+			AutoSentPlayerBonus = true,
+			Status = (short)BrandStatus.Active,
+			AgentDividendType = (short)createBrand.AgentDividendType,
+			Description = createBrand.Description,
+			OperationalEmail = createBrand.OperationalEmail,
+			SettlementDay = createBrand.SettlementDay,
+			SettlementIntervalType = (short)createBrand.SettlementIntervalType,
+			ApiKey = createBrand.ApiKey,
+			ClientId = createBrand.Code,
+			SecretKey = createBrand.SecretKey,
+			CreatedByUsername = createBrand.EditorUsername,
+			UpdatedByUsername = createBrand.EditorUsername,
+			CreatedOn = DateTime.UtcNow,
+			UpdatedOn = DateTime.UtcNow,
+			PlatformCharge = createBrand.PlatformCharge,
+			CheckDividendActiveCount = createBrand.CheckDividendActiveCount,
+			EnablePlayerIdentity = createBrand.EnablePlayerIdentity,
+			AutoClearWageringRequirement = createBrand.AutoClearWageringRequirement,
+			AutoClearWageringRequirementBalance = createBrand.AutoClearWageringRequirementBalance,
+			DepositHandlingFeeRateTenPercentile = createBrand.DepositHandlingFeeRateTenPercentile,
+			WithdrawHandlingFeeRateTenPercentile = createBrand.WithdrawHandlingFeeRateTenPercentile,
+			TimeSpanMinutes = createBrand.TimeSpanMinutes,
+		};
+
+		_ = await _dbContext.Brands.AddAsync(brand, cancellationToken).ConfigureAwait(false);
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
 }

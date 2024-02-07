@@ -303,4 +303,47 @@ public class BrandController : ControllerBase
 				BrandId = info.BrandId,
 				CurrencyCode = info.Currency
 			});
+
+	[HttpGet("agent-dividends", Name = "GetBrandAgentDividendInfos")]
+	public IAsyncEnumerable<BrandAgentDividendInfoViewModel> GetBrandAgentDividendInfosAsync(
+		[FromServices] IQueryService<GetBrandAgentDividendInfoQuery, BrandAgentDividendInfo> getService)
+	{
+		var query = new GetBrandAgentDividendInfoQuery();
+
+		return getService
+			.QueryAsync(query, HttpContext.RequestAborted)
+			.Select(x => new BrandAgentDividendInfoViewModel
+			{
+				Id = x.Id,
+				Code = x.Code,
+				Status = x.Status,
+				AgentDividendType = x.AgentDividendType,
+				SettlementIntervalType = x.SettlementIntervalType,
+				AutoSentAgentBonus = x.AutoSentAgentBonus,
+				CheckDividendActiveCount = x.CheckDividendActiveCount,
+				PlatformCharge = x.PlatformCharge,
+				PreviousSettlementFrom = x.PreviousSettlementFrom,
+				PreviousSettlementTo = x.PreviousSettlementTo,
+				CurrentSettlementFrom = x.CurrentSettlementFrom,
+				CurrentSettlementTo = x.CurrentSettlementTo,
+				NextSettlementFrom = x.NextSettlementFrom,
+				NextSettlementTo = x.NextSettlementTo,
+				SettlementDay = x.SettlementDay
+			});
+	}
+
+	[HttpPatch("agent-dividend-time-interval", Name = "UpdateBrandAgentDividendTimeInterval")]
+	public ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
+		[FromServices] ICommandService<UpdateBrandAgentDividendTimeIntervalCommand> commandService,
+		[FromBody] UpdateBrandAgentDividendTimeIntervalRequest request)
+	{
+		return commandService.ExecuteAsync(new UpdateBrandAgentDividendTimeIntervalCommand(request.BrandId,
+			request.PreviousSettlementFrom,
+			request.PreviousSettlementTo,
+			request.CurrentSettlementFrom,
+			request.CurrentSettlementTo,
+			request.NextSettlementFrom,
+			request.NextSettlementTo));
+	}
+
 }

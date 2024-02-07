@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Web;
@@ -204,6 +206,28 @@ internal class BrandServiceClient : IBrandServiceClient
 		return settings;
 	}
 
+	public async IAsyncEnumerable<BrandAgentDividendInfo> GetBrandAgentDividendInfosAsync([EnumeratorCancellation]
+		CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync("/brand/agent-dividends", HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+		var playerAllAgentRebates = JsonSerializer.DeserializeAsyncEnumerable<BrandAgentDividendInfo>(
+			responseStream,
+			_SerializerOptions,
+			cancellationToken);
+
+		await foreach (var playerAllAgentRebate in playerAllAgentRebates)
+		{
+			yield return playerAllAgentRebate!;
+		}
+	}
+
 	public async IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes,
 		[EnumeratorCancellation] CancellationToken cancellationToken = default)
 	{
@@ -280,6 +304,25 @@ internal class BrandServiceClient : IBrandServiceClient
 			$"/brand/status/{brandId}/{status}",
 			requestContent,
 			cancellationToken).ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
+
+	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
+		UpdateBrandAgentDividendTimeIntervalRequest request,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = new StringContent(
+			JsonSerializer.Serialize(request, _SerializerOptions),
+			Encoding.UTF8,
+			MediaTypeNames.Application.Json);
+
+		var response = await _httpClient
+			.PatchAsync(
+				$"/brand/agent-dividend-time-interval",
+				requestContent,
+				cancellationToken)
+			.ConfigureAwait(false);
 
 		_ = response.EnsureSuccessStatusCode();
 	}

@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
+using Tgs.BrandCertificate;
 using Tgs.BrandCertificateService;
+using Tgs.Core.Infrastructures.Security;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -13,5 +15,9 @@ public static class ServiceCollectionExtensions
 			.Configure(configure)
 			.Services
 			.AddSingleton<BrandCertificateManager>()
-			.RegisterAllServiceUtilityTypes(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient);
+			.RegisterAllServiceUtilityTypes(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient)
+			.AddTransient<ICredentialGenerator, CredentialGenerator>()
+			.AddTransient<IHashProvider, HashProvider>()
+			.AddTransient<IPasswordHandler, PasswordHandler>()
+			.AddSerialNumberGenerator();
 }

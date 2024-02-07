@@ -992,4 +992,110 @@ public class BrandTests
 
 		Assert.AreEqual(100, actual);
 	}
+
+	[Test]
+	public async Task Get_Brand_Agent_Dividends()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "name",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			AgentDividendType = (short)AgentDividendType.OnePercentage,
+			SettlementIntervalType = (short)SettlementIntervalType.DoubleWeekly,
+			AutoSentAgentBonus = true,
+			CheckDividendActiveCount = true,
+			PlatformCharge = 10M,
+			PreviousSettlementFrom = DateTime.UtcNow,
+			PreviousSettlementTo = DateTime.UtcNow,
+			CurrentSettlementFrom = DateTime.UtcNow,
+			CurrentSettlementTo = DateTime.UtcNow,
+			NextSettlementFrom = DateTime.UtcNow,
+			NextSettlementTo = DateTime.UtcNow,
+			SettlementDay = null
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var actual = await sut.GetBrandAgentDividendInfosAsync(default).ToArrayAsync();
+
+		Assert.That(actual.Length, Is.EqualTo(1));
+	}
+
+	[Test]
+	public async Task Update_Brand_Agent_Dividend_Time_Interval()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var previousSettlementFrom = DateTimeOffset.Parse("2024-01-10 16:00:00+8").UtcDateTime;
+		var previousSettlementTo = DateTimeOffset.Parse("2024-01-10 16:00:00+8").UtcDateTime;
+		var currentSettlementFrom = DateTimeOffset.Parse("2024-01-11 16:00:00+8").UtcDateTime;
+		var currentSettlementTo = DateTimeOffset.Parse("2024-01-11 16:00:00+8").UtcDateTime;
+		var nextSettlementFrom = DateTimeOffset.Parse("2024-01-12 16:00:00+8").UtcDateTime;
+		var nextSettlementTo = DateTimeOffset.Parse("2024-01-12 16:00:00+8").UtcDateTime;
+
+		var brandId = Guid.NewGuid();
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid(),
+			PreviousSettlementFrom = DateTime.UtcNow,
+			PreviousSettlementTo = DateTime.UtcNow,
+			CurrentSettlementFrom = DateTime.UtcNow,
+			CurrentSettlementTo = DateTime.UtcNow,
+			NextSettlementFrom = DateTime.UtcNow,
+			NextSettlementTo = DateTime.UtcNow,
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		await sut.UpdateBrandAgentDividendTimeIntervalAsync(new UpdateBrandAgentDividendTimeIntervalRequest(brandId,
+			previousSettlementFrom,
+			previousSettlementTo,
+			currentSettlementFrom,
+			currentSettlementTo,
+			nextSettlementFrom,
+			nextSettlementTo));
+
+		Assert.That(brand.PreviousSettlementFrom, Is.EqualTo(previousSettlementFrom));
+		Assert.That(brand.PreviousSettlementTo, Is.EqualTo(previousSettlementTo));
+		Assert.That(brand.CurrentSettlementFrom, Is.EqualTo(currentSettlementFrom));
+		Assert.That(brand.CurrentSettlementTo, Is.EqualTo(currentSettlementTo));
+		Assert.That(brand.NextSettlementFrom, Is.EqualTo(nextSettlementFrom));
+		Assert.That(brand.NextSettlementTo, Is.EqualTo(nextSettlementTo));
+	}
 }
