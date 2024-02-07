@@ -962,4 +962,80 @@ public class BrandTests
 
 		ClassicAssert.AreEqual(100, actual);
 	}
+
+	[Test]
+	public async Task 整合測試_取得平台資金檢查設定()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid(),
+			EnablePlatformAccountFundCheck = true
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var actual = await sut.GetBrandPlatformAccountFundAsync(brandId);
+
+		Assert.That(actual, Is.True);
+	}
+
+	[Test]
+	public async Task 整合測試_設定平台資金檢查設定()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+		var modifier = "test1";
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid(),
+			EnablePlatformAccountFundCheck = false
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		await sut.SetBrandPlatformAccountFundAsync(brandId, true, modifier);
+
+		Assert.That(brand.EnablePlatformAccountFundCheck, Is.True);
+		Assert.That(brand.UpdatedByUsername, Is.EqualTo(modifier));
+	}
 }

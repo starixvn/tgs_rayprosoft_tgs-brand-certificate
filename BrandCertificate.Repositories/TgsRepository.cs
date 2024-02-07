@@ -6,7 +6,6 @@ namespace Tgs.BrandCertificate.Repositories;
 
 internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 {
-
 	private readonly TgsContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 
 	public IAsyncEnumerable<BrandCurrencyInfo> GetAllBrandCurrenciesAsync(CancellationToken cancellationToken = default)
@@ -352,9 +351,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		string modifier,
 		CancellationToken cancellationToken = default)
 	{
-		var brand = await _dbContext.Brands
-			.FindAsync([brandId], cancellationToken)
-			.ConfigureAwait(false);
+		var brand = await _dbContext.Brands.FindAsync(
+			[brandId],
+			cancellationToken).ConfigureAwait(false);
 
 		if (brand is null)
 			return;
@@ -366,4 +365,32 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 
+	public async ValueTask<bool?> GetBrandPlatformAccountFundCheckFlagAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FindAsync(
+			[brandId],
+			cancellationToken).ConfigureAwait(false);
+
+		return brand?.EnablePlatformAccountFundCheck;
+	}
+
+	public async ValueTask SetBrandPlatformAccountFundCheckFlagAsync(
+		Guid brandId,
+		bool enabled,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FindAsync(
+			[brandId],
+			cancellationToken).ConfigureAwait(false);
+
+		if (brand is null)
+			return;
+
+		brand.EnablePlatformAccountFundCheck = enabled;
+		brand.UpdatedOn = DateTime.UtcNow;
+		brand.UpdatedByUsername = modifier;
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
 }

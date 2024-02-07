@@ -26,8 +26,6 @@ public partial class TgsContext : DbContext
 
     public virtual DbSet<Reseller> Resellers { get; set; }
 
-    public virtual DbSet<VipLevelRow> VipLevelRows { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -40,7 +38,6 @@ public partial class TgsContext : DbContext
         modelBuilder.ApplyConfiguration(new Configurations.BrandMaintenanceConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.LicenseeConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.ResellerConfiguration());
-        modelBuilder.ApplyConfiguration(new Configurations.VipLevelRowConfiguration());
         OnModelCreatingPartial(modelBuilder);
     }
 

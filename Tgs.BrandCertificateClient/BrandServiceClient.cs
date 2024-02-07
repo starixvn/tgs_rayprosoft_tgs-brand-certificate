@@ -330,4 +330,34 @@ internal class BrandServiceClient : IBrandServiceClient
 				.ToAsyncEnumerable())
 			.FirstOrDefaultAsync(cancellationToken)
 			.ConfigureAwait(false);
+
+	public ValueTask<bool?> GetBrandPlatformAccountFundAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> _httpClient.GetAsync($"/brand/platform-account-fund/{brandId}", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<bool?>(_SerializerOptions, cancellationToken)
+				.ToAsyncEnumerable())
+			.FirstOrDefaultAsync(cancellationToken);
+
+	public async ValueTask SetBrandPlatformAccountFundAsync(
+		Guid brandId,
+		bool enabled,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = JsonContent.Create(
+			enabled,
+			MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json),
+			_SerializerOptions);
+
+		requestContent.Headers.Add("Modifier", modifier);
+
+		var response = await _httpClient.PatchAsync(
+			$"/brand/platform-account-fund/{brandId}",
+			requestContent,
+			cancellationToken).ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
 }

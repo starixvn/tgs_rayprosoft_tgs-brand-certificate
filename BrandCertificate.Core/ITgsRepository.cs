@@ -43,4 +43,8 @@ public interface ITgsRepository
 		BrandStatus status,
 		string modifier,
 		CancellationToken cancellationToken = default);
+
+	ValueTask<bool?> GetBrandPlatformAccountFundCheckFlagAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask SetBrandPlatformAccountFundCheckFlagAsync(Guid brandId, bool enabled, string modifier, CancellationToken cancellationToken = default);
 }
