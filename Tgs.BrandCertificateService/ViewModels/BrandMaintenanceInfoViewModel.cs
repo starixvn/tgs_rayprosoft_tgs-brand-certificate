@@ -13,10 +13,8 @@ public class BrandMaintenanceInfoViewModel
 
 	public Guid BrandId { get; set; }
 
-	[JsonConverter(typeof(TimeOnlyConverter))]
 	public TimeOnly? BeginTime { get; set; }
 
-	[JsonConverter(typeof(TimeOnlyConverter))]
 	public TimeOnly? EndTime { get; set; }
 
 	public Guid? BrandMaintenanceId { get; set; }

@@ -26,21 +26,18 @@ public partial class TgsContext : DbContext
 
     public virtual DbSet<Reseller> Resellers { get; set; }
 
-    public virtual DbSet<VipLevelRow> VipLevelRows { get; set; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
             .HasPostgresExtension("ltree")
             .HasPostgresExtension("pg_trgm");
 
-            modelBuilder.ApplyConfiguration(new Configurations.BrandConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.BrandBetLimitConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.BrandCurrencyConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.BrandMaintenanceConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.LicenseeConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.ResellerConfiguration());
-            modelBuilder.ApplyConfiguration(new Configurations.VipLevelRowConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.BrandConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.BrandBetLimitConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.BrandCurrencyConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.BrandMaintenanceConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.LicenseeConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.ResellerConfiguration());
         OnModelCreatingPartial(modelBuilder);
     }
 

@@ -75,25 +75,6 @@ internal class BrandServiceClient : IBrandServiceClient
 		return JsonSerializer.Deserialize<BrandStatus>(json, _SerializerOptions)!;
 	}
 
-	[Obsolete("淘汰")]
-	public async IAsyncEnumerable<VipLevelInfo> GetVipLevelInfosAsync(
-		Guid brandId,
-		[EnumeratorCancellation] CancellationToken cancellationToken = default)
-	{
-		var response = await _httpClient
-			.GetAsync($"/viplevel/{brandId}", cancellationToken)
-			.ConfigureAwait(false);
-
-		_ = response.EnsureSuccessStatusCode();
-
-		var vipLevels = await response.Content
-			.ReadFromJsonAsync<VipLevelInfo[]>(_SerializerOptions, cancellationToken)
-			.ConfigureAwait(false) ?? Array.Empty<VipLevelInfo>();
-
-		foreach (var vipLevel in vipLevels)
-			yield return vipLevel;
-	}
-
 	public async IAsyncEnumerable<BrandMaintenanceInfo> GetBrandMaintenanceInfosAsync(
 		string brandCode,
 		[EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -349,4 +330,34 @@ internal class BrandServiceClient : IBrandServiceClient
 				.ToAsyncEnumerable())
 			.FirstOrDefaultAsync(cancellationToken)
 			.ConfigureAwait(false);
+
+	public ValueTask<bool?> GetBrandPlatformAccountFundAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> _httpClient.GetAsync($"/brand/platform-account-fund/{brandId}", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<bool?>(_SerializerOptions, cancellationToken)
+				.ToAsyncEnumerable())
+			.FirstOrDefaultAsync(cancellationToken);
+
+	public async ValueTask SetBrandPlatformAccountFundAsync(
+		Guid brandId,
+		bool enabled,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = JsonContent.Create(
+			enabled,
+			MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json),
+			_SerializerOptions);
+
+		requestContent.Headers.Add("Modifier", modifier);
+
+		var response = await _httpClient.PatchAsync(
+			$"/brand/platform-account-fund/{brandId}",
+			requestContent,
+			cancellationToken).ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
 }

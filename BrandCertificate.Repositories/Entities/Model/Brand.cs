@@ -95,6 +95,10 @@ public partial class Brand
 
     public DateTime UpdatedOn { get; set; }
 
+    public bool EnablePlayerAgent { get; set; }
+
+    public bool EnablePlatformAccountFundCheck { get; set; }
+
     public virtual ICollection<BrandBetLimit> BrandBetLimits { get; set; } = new List<BrandBetLimit>();
 
     public virtual ICollection<BrandCurrency> BrandCurrencies { get; set; } = new List<BrandCurrency>();
@@ -102,6 +106,4 @@ public partial class Brand
     public virtual BrandMaintenance? BrandMaintenance { get; set; }
 
     public virtual Licensee Licensee { get; set; } = null!;
-
-    public virtual ICollection<VipLevelRow> VipLevelRows { get; set; } = new List<VipLevelRow>();
 }

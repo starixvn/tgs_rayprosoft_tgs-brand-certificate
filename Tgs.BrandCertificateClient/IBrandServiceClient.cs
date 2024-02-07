@@ -4,7 +4,6 @@ namespace Tgs.BrandCertificate.Clients;
 
 public interface IBrandServiceClient
 {
-
 	IAsyncEnumerable<BrandCurrencyInfo> GetAllBrandCurrenciesAsync(CancellationToken cancellationToken = default);
 
 	ValueTask<int?> GetBrandBetLimitIdAsync(Guid brandId, CancellationToken cancellationToken = default);
@@ -12,6 +11,7 @@ public interface IBrandServiceClient
 	ValueTask<BrandFrontendInfo> GetBrandFrontendInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<Guid> GetBrandIdsByTimeSpanMinutesAsync(int timeSpanMinutes, CancellationToken cancellationToken = default);
+
 	ValueTask<BrandInfo?> GetBrandInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	ValueTask<BrandInfo?> GetBrandInfoByCodeAsync(string brandCode, CancellationToken cancellationToken = default);
@@ -31,9 +31,6 @@ public interface IBrandServiceClient
 
 	ValueTask<BrandStatus> GetBrandStatusAsync(Guid brandId, CancellationToken cancellationToken = default);
 
-	[Obsolete("淘汰")]
-	IAsyncEnumerable<VipLevelInfo> GetVipLevelInfosAsync(Guid brandId, CancellationToken cancellationToken = default);
-
 	IAsyncEnumerable<BrandListItem> QueryBrandListAsync(BrandListQuery query, CancellationToken cancellationToken = default);
 
 	ValueTask UpdateAllBrandMaintenanceTimeAsync(TimeOnly beginTime, TimeOnly endTime, CancellationToken cancellationToken = default);
@@ -48,4 +45,7 @@ public interface IBrandServiceClient
 		string modifier,
 		CancellationToken cancellationToken = default);
 
+	ValueTask<bool?> GetBrandPlatformAccountFundAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask SetBrandPlatformAccountFundAsync(Guid brandId, bool enabled, string modifier, CancellationToken cancellationToken = default);
 }
