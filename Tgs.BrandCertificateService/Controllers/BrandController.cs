@@ -346,4 +346,107 @@ public class BrandController : ControllerBase
 			request.NextSettlementTo));
 	}
 
+	[HttpPut(Name = "UpdateBrand")]
+	public ValueTask<Guid> UpdateBrandAsync(
+	[FromServices] IGetService<UpdateBrandQuery, Guid> getService,
+	[FromBody] UpdateBrandRequest request)
+	{
+		var query = new UpdateBrandQuery(
+			request.Id,
+			request.Name,
+			request.Description,
+			request.OperationalEmail,
+			request.PlatformCharge,
+			request.EnablePlayerIdentity,
+			request.SettlementIntervalType,
+			request.SettlementDay,
+			request.CheckDividendActiveCount,
+			request.AutoClearWageringRequirement,
+			request.AutoSendAgentBonus,
+			request.EnablePlayerAgent,
+			request.AutoClearWageringRequirementBalance,
+			request.DepositHandlingFeeRateTenPercentile,
+			request.WithdrawHandlingFeeRateTenPercentile,
+			request.EditorUsername);
+
+		return getService.GetAsync(query, HttpContext.RequestAborted);
+	}
+
+	[HttpPost(Name = "CreateBrand")]
+	public ValueTask<Guid> CreateBrandAsync(
+		[FromServices] IGetService<CreateBrandQuery, Guid> getService,
+		[FromBody] CreateBrandRequest request)
+	{
+		var query = new CreateBrandQuery(request.Code,
+			request.Name,
+			request.Description,
+			request.OperationalEmail,
+			request.PlatformCharge,
+			request.TimeSpanMinutes,
+			request.EnablePlayerIdentity,
+			request.LicenseeId,
+			request.SettlementIntervalType,
+			request.SettlementDay,
+			request.AgentDividendType,
+			request.CheckDividendActiveCount,
+			request.AutoClearWageringRequirement,
+			request.AutoSendAgentBonus,
+			request.EnablePlayerAgent,
+			request.AutoClearWageringRequirementBalance,
+			request.DepositHandlingFeeRateTenPercentile,
+			request.WithdrawHandlingFeeRateTenPercentile,
+			request.EditorUsername);
+
+		return getService.GetAsync(query, HttpContext.RequestAborted);
+	}
+
+	[HttpGet("full-info/{brandId:Guid}", Name = "GetBrandFullInfo")]
+	public async Task<BrandFullInfoViewModel?> GetBrandFullInfoAsync(
+		[FromServices] IGetService<GetBrandFullInfoQuery, BrandFullInfo?> getBrandService,
+		Guid brandId)
+	{
+		var query = new GetBrandFullInfoQuery(brandId);
+
+		var brandInfo = await getBrandService
+			.GetAsync(query, HttpContext.RequestAborted)
+			.ConfigureAwait(false);
+
+		return brandInfo is null
+			? null
+			: new BrandFullInfoViewModel
+			{
+				Id = brandInfo.Id,
+				LicenseeId = brandInfo.LicenseeId,
+				LicenseeName = brandInfo.LicenseeName,
+				Code = brandInfo.Code,
+				Name = brandInfo.Name,
+				Description = brandInfo.Description,
+				OperationalEmail = brandInfo.OperationalEmail,
+				Status = brandInfo.Status,
+				AgentDividendType = brandInfo.AgentDividendType,
+				SettlementIntervalType = brandInfo.SettlementIntervalType,
+				Currency = brandInfo.Currency,
+				ClientId = brandInfo.ClientId,
+				SecretKey = brandInfo.SecretKey,
+				ApiKey = brandInfo.ApiKey,
+				SmsEnabled = brandInfo.SmsEnabled,
+				PlayerIdentityEnabled = brandInfo.PlayerIdentityEnabled,
+				SmsRegisterFlowEnabled = brandInfo.SmsRegisterFlowEnabled,
+				BankInfoRegisterFlowEnabled = brandInfo.BankInfoRegisterFlowEnabled,
+				EmailRegisterFlowEnabled = brandInfo.EmailRegisterFlowEnabled,
+				CheckDividendActiveCount = brandInfo.CheckDividendActiveCount,
+				EnablePlayerIdentity = brandInfo.EnablePlayerIdentity,
+				AutoClearWageringRequirement = brandInfo.AutoClearWageringRequirement,
+				AutoSendAgentBonus = brandInfo.AutoSendAgentBonus,
+				EnablePlayerAgent = brandInfo.EnablePlayerAgent,
+				AutoClearWageringRequirementBalance = brandInfo.AutoClearWageringRequirementBalance,
+				DepositHandlingFeeRateTenPercentile = brandInfo.DepositHandlingFeeRateTenPercentile,
+				WithdrawHandlingFeeRateTenPercentile = brandInfo.WithdrawHandlingFeeRateTenPercentile,
+				PlatformCharge = brandInfo.PlatformCharge,
+				CreatedOn = brandInfo.CreatedOn,
+				UpdatedOn = brandInfo.UpdatedOn,
+				SettlementDay = brandInfo.SettlementDay,
+				TimeSpanMinutes = brandInfo.TimeSpanMinutes
+			};
+	}
 }

@@ -308,6 +308,71 @@ internal class BrandServiceClient : IBrandServiceClient
 		_ = response.EnsureSuccessStatusCode();
 	}
 
+	public async ValueTask<Guid> CreateBrandAsync(CreateBrandRequest request, CancellationToken cancellationToken = default)
+	{
+		var requestContent = new StringContent(
+			JsonSerializer.Serialize(request, new JsonSerializerOptions
+			{
+				PropertyNameCaseInsensitive = true
+			}),
+			Encoding.UTF8,
+			MediaTypeNames.Application.Json);
+
+		var response = await _httpClient
+			.PostAsync(
+				"/brand",
+				requestContent,
+				cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		return await response.Content
+			.ReadFromJsonAsync<Guid>(_SerializerOptions, cancellationToken)
+			.ConfigureAwait(false);
+	}
+
+	public async ValueTask<Guid> UpdateBrandAsync(UpdateBrandRequest request, CancellationToken cancellationToken = default)
+	{
+		var requestContent = new StringContent(
+			JsonSerializer.Serialize(request, new JsonSerializerOptions
+			{
+				PropertyNameCaseInsensitive = true
+			}),
+			Encoding.UTF8,
+			MediaTypeNames.Application.Json);
+
+		var response = await _httpClient
+			.PutAsync(
+				"/brand",
+				requestContent,
+				cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		return await response.Content
+			.ReadFromJsonAsync<Guid>(_SerializerOptions, cancellationToken)
+			.ConfigureAwait(false);
+	}
+
+	public async ValueTask<BrandFullInfo?> GetBrandFullInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/full-info/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var json = await response.Content
+			.ReadAsStringAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+		return string.IsNullOrEmpty(json)
+			? null
+			: JsonSerializer.Deserialize<BrandFullInfo>(json, _SerializerOptions);
+	}
+
 	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
 		UpdateBrandAgentDividendTimeIntervalRequest request,
 		CancellationToken cancellationToken = default)

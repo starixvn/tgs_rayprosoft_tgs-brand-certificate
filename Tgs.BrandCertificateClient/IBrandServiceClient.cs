@@ -48,7 +48,13 @@ public interface IBrandServiceClient
 		string modifier,
 		CancellationToken cancellationToken = default);
 
-	ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
-		UpdateBrandAgentDividendTimeIntervalRequest request,
+	ValueTask<Guid> CreateBrandAsync(
+		CreateBrandRequest request,
 		CancellationToken cancellationToken = default);
+
+	ValueTask<Guid> UpdateBrandAsync(
+		UpdateBrandRequest request,
+		CancellationToken cancellationToken = default);
+
+	ValueTask<BrandFullInfo?> GetBrandFullInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 }

@@ -59,4 +59,8 @@ public interface ITgsRepository
 		CancellationToken cancellationToken = default);
 
 	ValueTask CreateBrandAsync(CreateBrandInfo createBrand, CancellationToken cancellationToken = default);
+
+	ValueTask UpdateBrandAsync(UpdateBrandInfo updateBrand, CancellationToken cancellationToken = default);
+
+	ValueTask<BrandFullInfo?> GetBrandFullInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 }
