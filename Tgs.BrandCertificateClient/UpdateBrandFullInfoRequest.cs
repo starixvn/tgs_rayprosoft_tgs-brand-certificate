@@ -1,6 +1,6 @@
 ﻿namespace Tgs.BrandCertificate.Clients;
 
-public record UpdateBrandRequest
+public record UpdateBrandFullInfoRequest
 {
 	public Guid Id { get; init; }
 	public string Name { get; init; } = string.Empty;

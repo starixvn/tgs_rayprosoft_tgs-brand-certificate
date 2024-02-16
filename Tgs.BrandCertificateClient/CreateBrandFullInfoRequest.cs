@@ -1,6 +1,6 @@
 ﻿namespace Tgs.BrandCertificate.Clients;
 
-public record CreateBrandRequest
+public record CreateBrandFullInfoRequest
 {
 	public string Code { get; init; } = string.Empty;
 	public string Name { get; init; } = string.Empty;

@@ -287,7 +287,7 @@ internal class BrandServiceClient : IBrandServiceClient
 		_ = response.EnsureSuccessStatusCode();
 	}
 
-	public async ValueTask<Guid> CreateBrandAsync(CreateBrandRequest request, CancellationToken cancellationToken = default)
+	public async ValueTask<Guid> CreateBrandAsync(CreateBrandFullInfoRequest request, CancellationToken cancellationToken = default)
 	{
 		var requestContent = new StringContent(
 			JsonSerializer.Serialize(request, new JsonSerializerOptions
@@ -311,7 +311,7 @@ internal class BrandServiceClient : IBrandServiceClient
 			.ConfigureAwait(false);
 	}
 
-	public async ValueTask<Guid> UpdateBrandAsync(UpdateBrandRequest request, CancellationToken cancellationToken = default)
+	public async ValueTask<Guid> UpdateBrandAsync(UpdateBrandFullInfoRequest request, CancellationToken cancellationToken = default)
 	{
 		var requestContent = new StringContent(
 			JsonSerializer.Serialize(request, new JsonSerializerOptions
