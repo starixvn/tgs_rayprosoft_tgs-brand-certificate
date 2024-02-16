@@ -352,6 +352,25 @@ internal class BrandServiceClient : IBrandServiceClient
 			: JsonSerializer.Deserialize<BrandFullInfo>(json, _SerializerOptions);
 	}
 
+	public async IAsyncEnumerable<string?> GetBrandDomainsAsync(Guid brandId, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient.GetAsync($"/api/brandDomain/list/{brandId}", HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+		var urls = JsonSerializer.DeserializeAsyncEnumerable<string>(
+			responseStream,
+			_SerializerOptions,
+			cancellationToken);
+
+		await foreach (var url in urls)
+		{
+			yield return url!;
+		}
+	}
+
 	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
 		UpdateBrandAgentDividendTimeIntervalRequest request,
 		CancellationToken cancellationToken = default)

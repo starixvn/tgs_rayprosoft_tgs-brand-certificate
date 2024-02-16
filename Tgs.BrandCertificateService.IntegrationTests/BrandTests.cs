@@ -1373,4 +1373,38 @@ public class BrandTests
 		Assert.That(actual.SettlementDay, Is.EqualTo(null));
 		Assert.That(actual.TimeSpanMinutes, Is.EqualTo(null));
 	}
+
+	[Test]
+	public async Task Get_Brand_Domains()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+
+		await dbContext.BrandDomains.AddRangeAsync(
+			new BrandDomain
+			{
+				Id = Guid.NewGuid(),
+				BrandId = brandId,
+				Url = "Test1"
+			},
+			new BrandDomain
+			{
+				Id = Guid.NewGuid(),
+				BrandId = brandId,
+				Url = "Test2",
+			});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandDomainsAsync(brandId).ToArrayAsync();
+
+		Assert.That(actual.Length, Is.EqualTo(2));
+	}
 }

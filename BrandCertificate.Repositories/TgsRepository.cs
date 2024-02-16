@@ -564,4 +564,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 			brand.TimeSpanMinutes);
 
 	}
+
+	public IAsyncEnumerable<string> GetBrandDomainsAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		return _dbContext.BrandDomains.Where(x => x.BrandId == brandId).Select(x => x.Url).ToAsyncEnumerable();
+	}
 }

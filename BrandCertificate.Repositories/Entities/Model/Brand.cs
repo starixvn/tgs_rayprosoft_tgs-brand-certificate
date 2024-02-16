@@ -103,6 +103,8 @@ public partial class Brand
 
     public virtual ICollection<BrandCurrency> BrandCurrencies { get; set; } = new List<BrandCurrency>();
 
+    public virtual ICollection<BrandDomain> BrandDomains { get; set; } = new List<BrandDomain>();
+
     public virtual BrandMaintenance? BrandMaintenance { get; set; }
 
     public virtual Licensee Licensee { get; set; } = null!;
