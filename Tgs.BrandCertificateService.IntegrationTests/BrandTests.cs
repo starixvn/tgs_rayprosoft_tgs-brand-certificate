@@ -1156,7 +1156,7 @@ public class BrandTests
 
 		var sut = new BrandServiceClient(http);
 
-		var brandId = await sut.CreateBrandAsync(new CreateBrandRequest
+		var brandId = await sut.CreateBrandAsync(new CreateBrandFullInfoRequest
 		{
 			Code = "code",
 			Name = "name",
@@ -1238,7 +1238,7 @@ public class BrandTests
 
 		_ = await dbContext.SaveChangesAsync();
 
-		var responseBrandId = await sut.UpdateBrandAsync(new UpdateBrandRequest
+		var responseBrandId = await sut.UpdateBrandAsync(new UpdateBrandFullInfoRequest
 		{
 			Id = brandId,
 			Name = "name1",

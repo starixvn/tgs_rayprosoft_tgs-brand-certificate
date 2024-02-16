@@ -22,6 +22,8 @@ public interface IBrandServiceClient
 
 	ValueTask<BrandPaymentSettings?> GetBrandPaymentSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
 
+	IAsyncEnumerable<BrandRelationInfo> GetBrandRelationsAsync(CancellationToken cancellationToken = default);
+
 	IAsyncEnumerable<BrandAgentDividendInfo> GetBrandAgentDividendInfosAsync(CancellationToken cancellationToken = default);
 
 	ValueTask<SmsVendorInfo<TSmsSettings>?> GetBrandSmsSettingsAsync<TSmsSettings>(
@@ -50,11 +52,11 @@ public interface IBrandServiceClient
 	ValueTask SetBrandPlatformAccountFundAsync(Guid brandId, bool enabled, string modifier, CancellationToken cancellationToken = default);
 	
 	ValueTask<Guid> CreateBrandAsync(
-		CreateBrandRequest request,
+		CreateBrandFullInfoRequest request,
 		CancellationToken cancellationToken = default);
 
 	ValueTask<Guid> UpdateBrandAsync(
-		UpdateBrandRequest request,
+		UpdateBrandFullInfoRequest request,
 		CancellationToken cancellationToken = default);
 
 	ValueTask<BrandFullInfo?> GetBrandFullInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
