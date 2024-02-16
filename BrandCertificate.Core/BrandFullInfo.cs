@@ -3,7 +3,9 @@
 public record BrandFullInfo(
 	Guid Id,
 	Guid LicenseeId,
+	Guid ResellerId,
 	string LicenseeName,
+	string ResellerName,
 	string Code,
 	string Name,
 	string? Description,

@@ -28,17 +28,23 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
             entity.Property(e => e.Id)
             .ValueGeneratedNever()
             .HasColumnName("id");
-            entity.Property(e => e.AgentDividendType).HasColumnName("agent_dividend_type");
+            entity.Property(e => e.AgentDividendType)
+            .HasDefaultValue((short)0)
+            .HasColumnName("agent_dividend_type");
             entity.Property(e => e.ApiKey)
             .HasMaxLength(64)
             .HasColumnName("api_key");
-            entity.Property(e => e.AutoClearWageringRequirement).HasColumnName("auto_clear_wagering_requirement");
+            entity.Property(e => e.AutoClearWageringRequirement)
+            .HasDefaultValue(false)
+            .HasColumnName("auto_clear_wagering_requirement");
             entity.Property(e => e.AutoClearWageringRequirementBalance)
             .HasPrecision(18, 6)
             .HasColumnName("auto_clear_wagering_requirement_balance");
             entity.Property(e => e.AutoSentAgentBonus).HasColumnName("auto_sent_agent_bonus");
             entity.Property(e => e.AutoSentPlayerBonus).HasColumnName("auto_sent_player_bonus");
-            entity.Property(e => e.CheckDividendActiveCount).HasColumnName("check_dividend_active_count");
+            entity.Property(e => e.CheckDividendActiveCount)
+            .HasDefaultValue(false)
+            .HasColumnName("check_dividend_active_count");
             entity.Property(e => e.ClientId)
             .HasMaxLength(128)
             .HasColumnName("client_id");
@@ -65,7 +71,6 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
             entity.Property(e => e.EnableAgentSms)
             .HasDefaultValue(false)
             .HasColumnName("enable_agent_sms");
-            entity.Property(e => e.EnablePlayerAgent).HasColumnName("enable_player_agent");
             entity.Property(e => e.EnableBankInfoRegisterFlow)
             .HasDefaultValue(false)
             .HasColumnName("enable_bank_info_register_flow");
@@ -119,7 +124,9 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
             .HasMaxLength(32)
             .HasColumnName("secret_key");
             entity.Property(e => e.SettlementDay).HasColumnName("settlement_day");
-            entity.Property(e => e.SettlementIntervalType).HasColumnName("settlement_interval_type");
+            entity.Property(e => e.SettlementIntervalType)
+            .HasDefaultValue((short)0)
+            .HasColumnName("settlement_interval_type");
             entity.Property(e => e.SmsVendorCode).HasColumnName("sms_vendor_code");
             entity.Property(e => e.SmsVendorSettings)
             .HasColumnType("jsonb")

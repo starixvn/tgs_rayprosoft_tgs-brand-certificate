@@ -1281,7 +1281,8 @@ public class BrandTests
 	public async Task Get_Brand_Full_Info_By_Id()
 	{
 		var brandId = Guid.NewGuid();
-		var LicenseeId = Guid.NewGuid();
+		var licenseeId = Guid.NewGuid();
+		var resellerId = Guid.NewGuid();
 
 		await using var web = new TestBrandCertificateApplication();
 
@@ -1316,11 +1317,20 @@ public class BrandTests
 			},
 			Licensee = new Licensee
 			{
-				Id = LicenseeId,
+				Id = licenseeId,
+				ResellerId = resellerId,
 				Code = "licensee",
 				Name = "licensee",
 				CreatedByUsername = "user",
-				UpdatedByUsername = "user"
+				UpdatedByUsername = "user",
+				Reseller = new Reseller
+				{
+					Id = resellerId,
+					Code = "reseller",
+					Name = "reseller",
+					CreatedByUsername = "user",
+					UpdatedByUsername = "user"
+				}
 			}
 		});
 
@@ -1331,8 +1341,10 @@ public class BrandTests
 		var actual = await sut.GetBrandFullInfoAsync(brandId);
 
 		Assert.That(actual!.Id, Is.EqualTo(brandId));
-		Assert.That(actual.LicenseeId, Is.EqualTo(LicenseeId));
+		Assert.That(actual.LicenseeId, Is.EqualTo(licenseeId));
 		Assert.That(actual.LicenseeName, Is.EqualTo("licensee"));
+		Assert.That(actual.ResellerId, Is.EqualTo(resellerId));
+		Assert.That(actual.ResellerName, Is.EqualTo("reseller"));
 		Assert.That(actual.Code, Is.EqualTo("Test"));
 		Assert.That(actual.Name, Is.EqualTo("Test"));
 		Assert.That(actual.Description, Is.EqualTo(null));
@@ -1360,5 +1372,39 @@ public class BrandTests
 		Assert.That(actual.SettlementIntervalType, Is.EqualTo(SettlementIntervalType.DoubleWeekly));
 		Assert.That(actual.SettlementDay, Is.EqualTo(null));
 		Assert.That(actual.TimeSpanMinutes, Is.EqualTo(null));
+	}
+
+	[Test]
+	public async Task Get_Brand_Domains()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+
+		await dbContext.BrandDomains.AddRangeAsync(
+			new BrandDomain
+			{
+				Id = Guid.NewGuid(),
+				BrandId = brandId,
+				Url = "Test1"
+			},
+			new BrandDomain
+			{
+				Id = Guid.NewGuid(),
+				BrandId = brandId,
+				Url = "Test2",
+			});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandDomainsAsync(brandId).ToArrayAsync();
+
+		Assert.That(actual.Length, Is.EqualTo(2));
 	}
 }

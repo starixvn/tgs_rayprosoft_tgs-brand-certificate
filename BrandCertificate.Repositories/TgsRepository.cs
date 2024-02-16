@@ -516,6 +516,7 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 	{
 		var brand = await _dbContext.Brands
 			.Include(x => x.Licensee)
+			.ThenInclude(x => x.Reseller)
 			.FirstOrDefaultAsync(x => x.Id == brandId, cancellationToken)
 			.ConfigureAwait(false);
 
@@ -529,7 +530,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		return new BrandFullInfo(
 			brand.Id,
 			brand.LicenseeId,
+			brand.Licensee.ResellerId,
 			brand.Licensee.Name,
+			brand.Licensee.Reseller.Name,
 			brand.Code,
 			brand.Name,
 			brand.Description,
@@ -560,5 +563,10 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 			brand.SettlementDay,
 			brand.TimeSpanMinutes);
 
+	}
+
+	public IAsyncEnumerable<string> GetBrandDomainsAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		return _dbContext.BrandDomains.Where(x => x.BrandId == brandId).Select(x => x.Url).ToAsyncEnumerable();
 	}
 }

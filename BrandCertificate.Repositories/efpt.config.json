@@ -28,6 +28,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "dbo.brand_domains",
+         "ObjectType": 0
+      },
+      {
          "Name": "dbo.brand_maintenance",
          "ObjectType": 0
       },
