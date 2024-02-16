@@ -2,15 +2,10 @@
 
 namespace Tgs.BrandCertificate.ApplicationServices;
 
-internal class BrandListQueryService : IQueryService<BrandListQuery, BrandListItem>
+internal class BrandListQueryService(
+	ITgsRepository tgsRepository) : IQueryService<BrandListQuery, BrandListItem>
 {
-	private readonly ITgsRepository _tgsRepository;
-
-	public BrandListQueryService(
-		ITgsRepository tgsRepository)
-	{
-		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
-	}
+	private readonly ITgsRepository _tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
 
 	public IAsyncEnumerable<BrandListItem> QueryAsync(
 		BrandListQuery query,
@@ -28,7 +23,7 @@ internal class BrandListQueryService : IQueryService<BrandListQuery, BrandListIt
 		{
 			brands = brands
 				.Where(b => b.BrandCode.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase)
-				            || b.BrandName.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase));
+							|| b.BrandName.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase));
 		}
 
 		return brands;

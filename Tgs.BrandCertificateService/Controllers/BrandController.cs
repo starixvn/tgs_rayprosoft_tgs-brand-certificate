@@ -255,6 +255,28 @@ public class BrandController : ControllerBase
 		return queryService.QueryAsync(query, HttpContext.RequestAborted);
 	}
 
+	[HttpGet("platform-account-fund/{brandId:Guid}", Name = "GetBrandPlatformAccountFundCheckFlag")]
+	public ValueTask<bool?> GetBrandPlatformAccountFundCheckFlagAsync(
+		[FromServices] IGetService<GetBrandPlatformAccountFundCheckFlagQuery, bool?> getService,
+		Guid brandId)
+	{
+		var query = new GetBrandPlatformAccountFundCheckFlagQuery(brandId);
+
+		return getService.GetAsync(query, HttpContext.RequestAborted);
+	}
+
+	[HttpPatch("platform-account-fund/{brandId:Guid}", Name = "SetBrandPlatformAccountFundCheck")]
+	public ValueTask SetBrandPlatformAccountFundCheckAsync(
+		[FromServices] ICommandService<SetBrandPlatformAccountFundCheckCommand> setService,
+		[FromHeader(Name = "Modifier")] string modifier,
+		Guid brandId,
+		[FromBody] bool isEnabled)
+	{
+		var command = new SetBrandPlatformAccountFundCheckCommand(brandId, isEnabled, modifier);
+
+		return setService.ExecuteAsync(command, HttpContext.RequestAborted);
+	}
+
 	[HttpGet(Name = "QueryBrandList")]
 	public IAsyncEnumerable<BrandListItemViewModel> QueryBrandListAsync(
 		[FromServices] IQueryService<BrandListQuery, BrandListItem> queryService,

@@ -2,15 +2,10 @@
 
 namespace Tgs.BrandCertificate.ApplicationServices;
 
-internal class UpdateBrandStatusCommandService : ICommandService<UpdateBrandStatusCommand>
+internal class UpdateBrandStatusCommandService(
+	ITgsRepository tgsRepository) : ICommandService<UpdateBrandStatusCommand>
 {
-	private readonly ITgsRepository _tgsRepository;
-
-	public UpdateBrandStatusCommandService(
-		ITgsRepository tgsRepository)
-	{
-		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
-	}
+	private readonly ITgsRepository _tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
 
 	public ValueTask ExecuteAsync(
 		UpdateBrandStatusCommand command, 

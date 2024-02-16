@@ -33,6 +33,7 @@ internal class BrandCertificateMiddleware
 
 				try
 				{
+					var issuers = new[] { "tgs" };
 					var result = await handler.ValidateTokenAsync(
 						jwt,
 						new TokenValidationParameters
@@ -40,7 +41,7 @@ internal class BrandCertificateMiddleware
 							ValidateIssuer = true,
 							ValidateAudience = false,
 							ValidateLifetime = false,
-							ValidIssuers = new[] { "tgs" },
+							ValidIssuers = issuers,
 							NameClaimType = ClaimTypes.NameIdentifier,
 							IssuerSigningKey = securityKey
 						}).ConfigureAwait(false);

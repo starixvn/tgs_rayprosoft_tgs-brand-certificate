@@ -2,15 +2,10 @@
 
 namespace Tgs.BrandCertificate.ApplicationServices;
 
-internal class BrandRelationQueryService : IQueryService<BrandRelationQuery, BrandRelationInfo>
+internal class BrandRelationQueryService(
+	ITgsRepository tgsRepository) : IQueryService<BrandRelationQuery, BrandRelationInfo>
 {
-	private readonly ITgsRepository _tgsRepository;
-
-	public BrandRelationQueryService(
-		ITgsRepository tgsRepository)
-	{
-		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
-	}
+	private readonly ITgsRepository _tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
 
 	public IAsyncEnumerable<BrandRelationInfo> QueryAsync(
 		BrandRelationQuery query,

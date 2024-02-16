@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -45,5 +46,5 @@ internal class BrandCertificateManager
 	}
 
 	public string GenerateJwk()
-		=> JsonExtensions.SerializeToJson(_validateJsonWebKey);
+		=> JsonSerializer.Serialize(_validateJsonWebKey);
 }

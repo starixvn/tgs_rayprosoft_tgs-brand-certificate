@@ -1,0 +1,2 @@
+﻿namespace Tgs.BrandCertificate.ApplicationServices;
+public record GetBrandPlatformAccountFundCheckFlagQuery(Guid BrandId);

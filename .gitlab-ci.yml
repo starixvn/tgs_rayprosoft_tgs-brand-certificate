@@ -24,89 +24,41 @@ unit-test:
   extends: .unit-test-template
 
 push-nuget:
-  stage: publish
-  needs:
-    - unit-test
-  only:
-    - main
-  cache:
-    key: $BuildCacheKey
-    untracked: true
-    policy: pull
+  extends: .push-nuget-template
   script:
-    - dotnet pack -c $BuildConfiguration "Tgs.BrandCertificateClient/Tgs.BrandCertificateClient.csproj"
-    - dotnet nuget push "Tgs.BrandCertificateClient/bin/$BuildConfiguration/*.nupkg" -s "raypro-baget" -k $NugetApiKey --skip-duplicate
+    - push_package 'Tgs.BrandCertificateClient'
   artifacts:
-    name: Nuget
-    untracked: false
-    expire_in: "30 days"
     paths:
       - Tgs.BrandCertificateClient/bin/$BuildConfiguration/*.nupkg
 
-
 push-docker-image:
   extends: .push-docker-image-template
-  variables:
-    project: Tgs.BrandCertificateService/Tgs.BrandCertificateService.csproj
+  script:
+    - push_docker 'Tgs.BrandCertificateService' $ImageName $Tag
 
 push-k8s-template:
   extends: .push-k8s-template
+  script:
+    - push_k8s_template $HelmTemplateFolderName
 
 .brand-cert-deploy:
   extends: .deploy-template
   script:
-    - export resources=$(kubectl get cm resources-setting -o jsonpath={.data.$TgsSettingKey})
-    - export dedicated=$(kubectl get cm tgs-settings -o jsonpath={.data.dedicated})
-    - export node_selector=$(kubectl get cm tgs-settings -o jsonpath={.data.node-selector})
-    - export autoscaling=$(kubectl get cm autoscaling-setting -o jsonpath={.data.$TgsSettingKey})
     - |
-      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
-        -n $namespace \
-        --name-template tgs \
-        -f - 
-      {
-        "replicaCount": $replica,
-        "nodeSelector": $node_selector,
-        "tolerations": [$dedicated],
-        "resources": $resources,
-        "autoscaling": $autoscaling,
-        "ingress": {
-          "enabled": true,
-          "hosts": [{
-            "host": "$ingress_host",
-            "paths": [{"path":"/", "pathType": "Prefix"}]
-          }],
-          "tls": [{
-            "secretName": "$ingress_host",
-            "hosts": ["$ingress_host"]
-          }]
+      cat << EOF | deploy_k8s $TgsSettingKey $HelmTemplateFolderName $namespace
+        {
+          "ingress": {
+            "enabled": true,
+            "hosts": [{
+              "host": "$ingress_host",
+              "paths": [{"path":"/", "pathType": "Prefix"}]
+            }],
+            "tls": [{
+              "secretName": "$ingress_host",
+              "hosts": ["$ingress_host"]
+            }]
+          }
         }
-      }
-      EOF
-    - |
-      cat << EOF | yq e -P | helm template artifacts/k8s/$HelmTemplateFolderName \
-        -n $namespace \
-        --name-template tgs \
-        -f - \
-        | kubectl -n $namespace apply -f -
-      {
-        "replicaCount": $replica,
-        "nodeSelector": $node_selector,
-        "tolerations": [$dedicated],
-        "resources": $resources,
-        "autoscaling": $autoscaling,
-        "ingress": {
-          "enabled": true,
-          "hosts": [{
-            "host": "$ingress_host",
-            "paths": [{"path":"/", "pathType": "Prefix"}]
-          }],
-          "tls": [{
-            "secretName": "$ingress_host",
-            "hosts": ["$ingress_host"]
-          }]
-        }
-      }
       EOF
 
 deploy-dev:
@@ -125,6 +77,7 @@ deploy-dev:
   only:
     - main
   when: always
+  
 
 deploy-staging:
   extends: .brand-cert-deploy

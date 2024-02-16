@@ -3,6 +3,7 @@ using ExpectedObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.Clients;
 using Tgs.BrandCertificate.Repositories.Entities;
@@ -47,8 +48,8 @@ public class BrandTests
 
 		var actual = await sut.GetBrandInfoAsync(brandId);
 
-		Assert.IsNotNull(actual);
-		Assert.AreEqual(brandId, actual!.Id);
+		ClassicAssert.IsNotNull(actual);
+		ClassicAssert.AreEqual(brandId, actual!.Id);
 	}
 
 	[Test]
@@ -88,8 +89,8 @@ public class BrandTests
 
 		var actual = await sut.GetBrandInfoByCodeAsync(brandCode);
 
-		Assert.IsNotNull(actual);
-		Assert.AreEqual(brandId, actual!.Id);
+		ClassicAssert.IsNotNull(actual);
+		ClassicAssert.AreEqual(brandId, actual!.Id);
 	}
 
 	[Test]
@@ -105,7 +106,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandInfoAsync(brandId);
 
-		Assert.IsNull(actual);
+		ClassicAssert.IsNull(actual);
 	}
 
 	[Test]
@@ -212,38 +213,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandStatusAsync(brandId);
 
-		Assert.AreEqual(BrandStatus.Archived, actual);
-	}
-
-	[Test]
-	public async Task Get_VipLevels_By_Brand()
-	{
-		var brandId = Guid.NewGuid();
-
-		await using var web = new TestBrandCertificateApplication();
-
-		var http = web.CreateClient();
-
-		var dbContext = web.Services.GetRequiredService<TgsContext>();
-
-		_ = await dbContext.VipLevelRows.AddAsync(new VipLevelRow
-		{
-			Id = Guid.NewGuid(),
-			Level = 1,
-			BrandId = brandId,
-			CreatedByUsername = string.Empty,
-			UpdatedByUsername = string.Empty
-		});
-
-		_ = await dbContext.SaveChangesAsync();
-
-		var sut = new BrandServiceClient(http);
-
-#pragma warning disable CS0618 // 類型或成員已經過時
-		var actual = await sut.GetVipLevelInfosAsync(brandId).ToArrayAsync();
-#pragma warning restore CS0618 // 類型或成員已經過時
-
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(BrandStatus.Archived, actual);
 	}
 
 	[Test]
@@ -284,7 +254,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandPaymentSettingsAsync(brandId);
 
-		Assert.AreEqual(expected, actual);
+		ClassicAssert.AreEqual(expected, actual);
 	}
 
 	[Test]
@@ -331,7 +301,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandMaintenanceInfosAsync(brandCode: "").ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -383,8 +353,8 @@ public class BrandTests
 
 		var bm = dbContext.BrandMaintenances.Where(bm => bm.BrandId == brandId).First();
 
-		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
-		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
+		ClassicAssert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
+		ClassicAssert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
 	}
 
 	[Test]
@@ -432,7 +402,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandMaintenanceInfoByIdAsync(brandMaintenanceId);
 
-		Assert.AreEqual("Content", actual.Content);
+		ClassicAssert.AreEqual("Content", actual.Content);
 	}
 
 	[Test]
@@ -483,7 +453,7 @@ public class BrandTests
 
 		var bm = dbContext.BrandMaintenances.Where(bm => bm.Id == brandMaintenanceId).First();
 
-		Assert.AreEqual("This is new content", bm.Content);
+		ClassicAssert.AreEqual("This is new content", bm.Content);
 	}
 
 	[Test]
@@ -533,8 +503,8 @@ public class BrandTests
 
 		var bm = dbContext.BrandMaintenances.Where(bm => bm.BrandId == brandId).First();
 
-		Assert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
-		Assert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
+		ClassicAssert.AreEqual(TimeOnly.Parse("09:30:00"), bm.BeginTime);
+		ClassicAssert.AreEqual(TimeOnly.Parse("10:30:00"), bm.EndTime);
 	}
 
 	[Test]
@@ -570,7 +540,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandIdsByTimeSpanMinutesAsync(timeSpanMinutes).ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -613,7 +583,7 @@ public class BrandTests
 
 		var brandInfo = await sut.GetBrandInfoAsync(brandId);
 
-		Assert.AreEqual(timeSpanMinutes, brandInfo?.TimeSpanMinutes);
+		ClassicAssert.AreEqual(timeSpanMinutes, brandInfo?.TimeSpanMinutes);
 	}
 
 	[Test]
@@ -662,7 +632,7 @@ public class BrandTests
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
 
-		Assert.AreEqual(2, actual.Length);
+		ClassicAssert.AreEqual(2, actual.Length);
 	}
 
 	[Test]
@@ -711,7 +681,7 @@ public class BrandTests
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -761,7 +731,7 @@ public class BrandTests
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
 
-		Assert.AreEqual(1, actual.Length);
+		ClassicAssert.AreEqual(1, actual.Length);
 	}
 
 	[Test]
@@ -850,7 +820,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandRelationsAsync().ToArrayAsync();
 
-		Assert.AreEqual(expected, actual);
+		ClassicAssert.AreEqual(expected, actual);
 	}
 
 	[Test]
@@ -885,7 +855,7 @@ public class BrandTests
 
 		var actual = await sut.GetAllBrandCurrenciesAsync().ToArrayAsync();
 
-		Assert.AreEqual(expected, actual);
+		ClassicAssert.AreEqual(expected, actual);
 	}
 
 	[Test]
@@ -920,7 +890,7 @@ public class BrandTests
 
 		await sut.UpdateBrandStatusAsync(brandId, BrandStatus.Inactive, "ModifyUser");
 
-		Assert.AreEqual((short)BrandStatus.Inactive, brand.Status);
+		ClassicAssert.AreEqual((short)BrandStatus.Inactive, brand.Status);
 	}
 
 	[Test]
@@ -962,7 +932,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandSmsSettingsAsync<TestSmsSettings>(brandId);
 
-		Assert.AreEqual(expected, actual);
+		ClassicAssert.AreEqual(expected, actual);
 	}
 
 	[Test]
@@ -990,7 +960,83 @@ public class BrandTests
 
 		var actual = await sut.GetBrandBetLimitIdAsync(brandId);
 
-		Assert.AreEqual(100, actual);
+		ClassicAssert.AreEqual(100, actual);
+	}
+
+	[Test]
+	public async Task 整合測試_取得平台資金檢查設定()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid(),
+			EnablePlatformAccountFundCheck = true
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var actual = await sut.GetBrandPlatformAccountFundAsync(brandId);
+
+		Assert.That(actual, Is.True);
+	}
+
+	[Test]
+	public async Task 整合測試_設定平台資金檢查設定()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+		var modifier = "test1";
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid(),
+			EnablePlatformAccountFundCheck = false
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		await sut.SetBrandPlatformAccountFundAsync(brandId, true, modifier);
+
+		Assert.That(brand.EnablePlatformAccountFundCheck, Is.True);
+		Assert.That(brand.UpdatedByUsername, Is.EqualTo(modifier));
 	}
 
 	[Test]
@@ -1284,7 +1330,6 @@ public class BrandTests
 
 		var actual = await sut.GetBrandFullInfoAsync(brandId);
 
-		Assert.IsNotNull(actual);
 		Assert.That(actual!.Id, Is.EqualTo(brandId));
 		Assert.That(actual.LicenseeId, Is.EqualTo(LicenseeId));
 		Assert.That(actual.LicenseeName, Is.EqualTo("licensee"));

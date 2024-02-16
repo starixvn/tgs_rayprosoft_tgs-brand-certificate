@@ -1,5 +1,6 @@
 ﻿using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
 
@@ -36,7 +37,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Inactive, actual);
+        ClassicAssert.AreEqual(BrandStatus.Inactive, actual);
     }
 
     [Test]
@@ -56,7 +57,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Active, actual);
+        ClassicAssert.AreEqual(BrandStatus.Active, actual);
     }
 
     [Test]
@@ -76,7 +77,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Archived, actual);
+        ClassicAssert.AreEqual(BrandStatus.Archived, actual);
     }
 
     [Test]
@@ -96,7 +97,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Archived, actual);
+        ClassicAssert.AreEqual(BrandStatus.Archived, actual);
     }
 
     [Test]
@@ -116,7 +117,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Archived, actual);
+        ClassicAssert.AreEqual(BrandStatus.Archived, actual);
     }
 
     [Test]
@@ -136,7 +137,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Inactive, actual);
+        ClassicAssert.AreEqual(BrandStatus.Inactive, actual);
     }
 
     [Test]
@@ -156,7 +157,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Inactive, actual);
+        ClassicAssert.AreEqual(BrandStatus.Inactive, actual);
     }
 
     [Test]
@@ -176,7 +177,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Inactive, actual);
+        ClassicAssert.AreEqual(BrandStatus.Inactive, actual);
     }
 
     [Test]
@@ -196,7 +197,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Maintenance, actual);
+        ClassicAssert.AreEqual(BrandStatus.Maintenance, actual);
     }
 
     [Test]
@@ -216,7 +217,7 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Maintenance, actual);
+        ClassicAssert.AreEqual(BrandStatus.Maintenance, actual);
     }
 
     [Test]
@@ -236,6 +237,6 @@ internal class BrandStatusTests
 
         var actual = await sut.GetAsync(query);
 
-        Assert.AreEqual(BrandStatus.Maintenance, actual);
+        ClassicAssert.AreEqual(BrandStatus.Maintenance, actual);
     }
 }
