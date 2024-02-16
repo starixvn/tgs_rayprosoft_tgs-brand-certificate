@@ -440,6 +440,8 @@ public class BrandController : ControllerBase
 				Id = brandInfo.Id,
 				LicenseeId = brandInfo.LicenseeId,
 				LicenseeName = brandInfo.LicenseeName,
+				ResellerId = brandInfo.ResellerId,
+				ResellerName = brandInfo.ResellerName,
 				Code = brandInfo.Code,
 				Name = brandInfo.Name,
 				Description = brandInfo.Description,

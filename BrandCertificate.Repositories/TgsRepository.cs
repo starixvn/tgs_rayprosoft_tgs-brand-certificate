@@ -516,6 +516,7 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 	{
 		var brand = await _dbContext.Brands
 			.Include(x => x.Licensee)
+			.ThenInclude(x => x.Reseller)
 			.FirstOrDefaultAsync(x => x.Id == brandId, cancellationToken)
 			.ConfigureAwait(false);
 
@@ -529,7 +530,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		return new BrandFullInfo(
 			brand.Id,
 			brand.LicenseeId,
+			brand.Licensee.ResellerId,
 			brand.Licensee.Name,
+			brand.Licensee.Reseller.Name,
 			brand.Code,
 			brand.Name,
 			brand.Description,

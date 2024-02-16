@@ -7,6 +7,8 @@ public class BrandFullInfoViewModel
 	public Guid Id { get; init; }
 	public Guid LicenseeId { get; init; }
 	public string LicenseeName { get; init; } = default!;
+	public Guid ResellerId { get; init; }
+	public string ResellerName { get; init; } = default!;
 	public string Code { get; init; } = default!;
 	public string Name { get; init; } = default!;
 	public string? Description { get; init; }
