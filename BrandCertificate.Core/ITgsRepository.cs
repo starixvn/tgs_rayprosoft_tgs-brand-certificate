@@ -26,6 +26,8 @@ public interface ITgsRepository
 
 	ValueTask<BrandStatusInfo?> GetBrandStatusInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 
+	IAsyncEnumerable<BrandAgentDividendInfo> GetBrandAgentDividendInfosAsync(CancellationToken cancellationToken = default);
+
 	IAsyncEnumerable<BrandListItem> QueryAllBrandsAsync(CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<BrandMaintenanceInfo> QueryBrandMaintenanceInfosAsync(string? brandCode, CancellationToken cancellationToken = default);
@@ -47,4 +49,20 @@ public interface ITgsRepository
 	ValueTask<bool?> GetBrandPlatformAccountFundCheckFlagAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	ValueTask SetBrandPlatformAccountFundCheckFlagAsync(Guid brandId, bool enabled, string modifier, CancellationToken cancellationToken = default);
+	
+	ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
+		Guid brandId,
+		DateTime previousSettlementFrom,
+		DateTime previousSettlementTo,
+		DateTime currentSettlementFrom,
+		DateTime currentSettlementTo,
+		DateTime nextSettlementFrom,
+		DateTime nextSettlementTo,
+		CancellationToken cancellationToken = default);
+
+	ValueTask CreateBrandAsync(CreateBrandInfo createBrand, CancellationToken cancellationToken = default);
+
+	ValueTask UpdateBrandAsync(UpdateBrandInfo updateBrand, CancellationToken cancellationToken = default);
+
+	ValueTask<BrandFullInfo?> GetBrandFullInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 }

@@ -44,7 +44,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": "tgs-local",
+   "UiHint": "tgs",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

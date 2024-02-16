@@ -30,7 +30,8 @@ public partial class TgsContext : DbContext
     {
         modelBuilder
             .HasPostgresExtension("ltree")
-            .HasPostgresExtension("pg_trgm");
+            .HasPostgresExtension("pg_trgm")
+            .HasPostgresExtension("uuid-ossp");
 
         modelBuilder.ApplyConfiguration(new Configurations.BrandConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.BrandBetLimitConfiguration());

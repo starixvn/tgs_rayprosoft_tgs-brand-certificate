@@ -1038,4 +1038,327 @@ public class BrandTests
 		Assert.That(brand.EnablePlatformAccountFundCheck, Is.True);
 		Assert.That(brand.UpdatedByUsername, Is.EqualTo(modifier));
 	}
+
+	[Test]
+	public async Task Get_Brand_Agent_Dividends()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "name",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			AgentDividendType = (short)AgentDividendType.OnePercentage,
+			SettlementIntervalType = (short)SettlementIntervalType.DoubleWeekly,
+			AutoSentAgentBonus = true,
+			CheckDividendActiveCount = true,
+			PlatformCharge = 10M,
+			PreviousSettlementFrom = DateTime.UtcNow,
+			PreviousSettlementTo = DateTime.UtcNow,
+			CurrentSettlementFrom = DateTime.UtcNow,
+			CurrentSettlementTo = DateTime.UtcNow,
+			NextSettlementFrom = DateTime.UtcNow,
+			NextSettlementTo = DateTime.UtcNow,
+			SettlementDay = null
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var actual = await sut.GetBrandAgentDividendInfosAsync(default).ToArrayAsync();
+
+		Assert.That(actual.Length, Is.EqualTo(1));
+	}
+
+	[Test]
+	public async Task Update_Brand_Agent_Dividend_Time_Interval()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var previousSettlementFrom = DateTimeOffset.Parse("2024-01-10 16:00:00+8").UtcDateTime;
+		var previousSettlementTo = DateTimeOffset.Parse("2024-01-10 16:00:00+8").UtcDateTime;
+		var currentSettlementFrom = DateTimeOffset.Parse("2024-01-11 16:00:00+8").UtcDateTime;
+		var currentSettlementTo = DateTimeOffset.Parse("2024-01-11 16:00:00+8").UtcDateTime;
+		var nextSettlementFrom = DateTimeOffset.Parse("2024-01-12 16:00:00+8").UtcDateTime;
+		var nextSettlementTo = DateTimeOffset.Parse("2024-01-12 16:00:00+8").UtcDateTime;
+
+		var brandId = Guid.NewGuid();
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid(),
+			PreviousSettlementFrom = DateTime.UtcNow,
+			PreviousSettlementTo = DateTime.UtcNow,
+			CurrentSettlementFrom = DateTime.UtcNow,
+			CurrentSettlementTo = DateTime.UtcNow,
+			NextSettlementFrom = DateTime.UtcNow,
+			NextSettlementTo = DateTime.UtcNow,
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		await sut.UpdateBrandAgentDividendTimeIntervalAsync(new UpdateBrandAgentDividendTimeIntervalRequest(brandId,
+			previousSettlementFrom,
+			previousSettlementTo,
+			currentSettlementFrom,
+			currentSettlementTo,
+			nextSettlementFrom,
+			nextSettlementTo));
+
+		Assert.That(brand.PreviousSettlementFrom, Is.EqualTo(previousSettlementFrom));
+		Assert.That(brand.PreviousSettlementTo, Is.EqualTo(previousSettlementTo));
+		Assert.That(brand.CurrentSettlementFrom, Is.EqualTo(currentSettlementFrom));
+		Assert.That(brand.CurrentSettlementTo, Is.EqualTo(currentSettlementTo));
+		Assert.That(brand.NextSettlementFrom, Is.EqualTo(nextSettlementFrom));
+		Assert.That(brand.NextSettlementTo, Is.EqualTo(nextSettlementTo));
+	}
+
+	[Test]
+	public async Task Create_Brand()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = await sut.CreateBrandAsync(new CreateBrandRequest
+		{
+			Code = "code",
+			Name = "name",
+			PlatformCharge = 10,
+			Description = "Description",
+			OperationalEmail = "OperationalEmail",
+			TimeSpanMinutes = 11,
+			EnablePlayerAgent = true,
+			LicenseeId = Guid.NewGuid(),
+			SettlementIntervalType = SettlementIntervalType.DoubleWeekly,
+			SettlementDay = 30,
+			AgentDividendType = AgentDividendType.OneLayer,
+			CheckDividendActiveCount = true,
+			AutoClearWageringRequirement = true,
+			AutoSendAgentBonus = true,
+			EnablePlayerIdentity = true,
+			AutoClearWageringRequirementBalance = 100,
+			DepositHandlingFeeRateTenPercentile = 11,
+			WithdrawHandlingFeeRateTenPercentile = 11,
+			EditorUsername = "test"
+		});
+
+		var brand = dbContext.Brands.First(x => x.Id == brandId);
+
+		Assert.That(brand.Id, Is.EqualTo(brandId));
+		Assert.That(brand.Code, Is.EqualTo("code"));
+		Assert.That(brand.Name, Is.EqualTo("name"));
+		Assert.That(brand.PlatformCharge, Is.EqualTo(10));
+		Assert.That(brand.Description, Is.EqualTo("Description"));
+		Assert.That(brand.OperationalEmail, Is.EqualTo("OperationalEmail"));
+		Assert.That(brand.EnablePlayerAgent, Is.EqualTo(true));
+		Assert.That(brand.SettlementIntervalType, Is.EqualTo((short)SettlementIntervalType.DoubleWeekly));
+		Assert.That(brand.SettlementDay, Is.EqualTo(30));
+		Assert.That(brand.CheckDividendActiveCount, Is.EqualTo(true));
+		Assert.That(brand.AutoClearWageringRequirement, Is.EqualTo(true));
+		Assert.That(brand.AutoSentAgentBonus, Is.EqualTo(true));
+		Assert.That(brand.EnablePlayerIdentity, Is.EqualTo(true));
+		Assert.That(brand.AutoClearWageringRequirementBalance, Is.EqualTo(100));
+		Assert.That(brand.EnablePlayerIdentity, Is.EqualTo(true));
+		Assert.That(brand.DepositHandlingFeeRateTenPercentile, Is.EqualTo(11));
+		Assert.That(brand.DepositHandlingFeeRateTenPercentile, Is.EqualTo(11));
+	}
+
+	[Test]
+	public async Task Update_Brand()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			Code = "Test1",
+			Name = "Test1",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			SecretKey = string.Empty,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			Status = (short)BrandStatus.Active,
+			LicenseeId = Guid.NewGuid(),
+			SettlementIntervalType = (short)SettlementIntervalType.DoubleWeekly,
+			PreviousSettlementFrom = DateTime.UtcNow,
+			PreviousSettlementTo = DateTime.UtcNow,
+			CurrentSettlementFrom = DateTime.UtcNow,
+			CurrentSettlementTo = DateTime.UtcNow,
+			NextSettlementFrom = DateTime.UtcNow,
+			NextSettlementTo = DateTime.UtcNow,
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var responseBrandId = await sut.UpdateBrandAsync(new UpdateBrandRequest
+		{
+			Id = brandId,
+			Name = "name1",
+			PlatformCharge = 11,
+			Description = "Description1",
+			OperationalEmail = "OperationalEmail1",
+			EnablePlayerAgent = true,
+			SettlementIntervalType = SettlementIntervalType.DoubleWeekly,
+			SettlementDay = 11,
+			CheckDividendActiveCount = true,
+			AutoClearWageringRequirement = true,
+			AutoSendAgentBonus = true,
+			EnablePlayerIdentity = true,
+			AutoClearWageringRequirementBalance = 100,
+			DepositHandlingFeeRateTenPercentile = 11,
+			WithdrawHandlingFeeRateTenPercentile = 11,
+			EditorUsername = "test"
+		});
+
+		var actualBrand = dbContext.Brands.First(x => x.Id == brandId);
+
+		Assert.That(actualBrand.Name, Is.EqualTo("name1"));
+		Assert.That(actualBrand.PlatformCharge, Is.EqualTo(11));
+		Assert.That(actualBrand.Description, Is.EqualTo("Description1"));
+		Assert.That(actualBrand.OperationalEmail, Is.EqualTo("OperationalEmail1"));
+		Assert.That(actualBrand.EnablePlayerAgent, Is.EqualTo(true));
+		Assert.That(actualBrand.SettlementIntervalType, Is.EqualTo((short)SettlementIntervalType.DoubleWeekly));
+		Assert.That(actualBrand.SettlementDay, Is.EqualTo(11));
+		Assert.That(actualBrand.CheckDividendActiveCount, Is.EqualTo(true));
+		Assert.That(actualBrand.AutoClearWageringRequirement, Is.EqualTo(true));
+		Assert.That(actualBrand.AutoSentAgentBonus, Is.EqualTo(true));
+		Assert.That(actualBrand.EnablePlayerIdentity, Is.EqualTo(true));
+		Assert.That(actualBrand.AutoClearWageringRequirementBalance, Is.EqualTo(100));
+		Assert.That(actualBrand.EnablePlayerIdentity, Is.EqualTo(true));
+		Assert.That(actualBrand.DepositHandlingFeeRateTenPercentile, Is.EqualTo(11));
+		Assert.That(actualBrand.DepositHandlingFeeRateTenPercentile, Is.EqualTo(11));
+	}
+
+	[Test]
+	public async Task Get_Brand_Full_Info_By_Id()
+	{
+		var brandId = Guid.NewGuid();
+		var LicenseeId = Guid.NewGuid();
+
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		_ = await dbContext.Brands.AddAsync(new Brand
+		{
+			Id = brandId,
+			Code = "Test",
+			ApiKey = string.Empty,
+			ClientId = string.Empty,
+			CreatedByUsername = string.Empty,
+			Name = "Test",
+			SecretKey = string.Empty,
+			AgentDividendType = (short)AgentDividendType.MultipleLayer,
+			SettlementIntervalType = (short)SettlementIntervalType.DoubleWeekly,
+			PlatformCharge = 10,
+			AutoSentAgentBonus = true,
+			EnablePlayerAgent = true,
+			AutoClearWageringRequirementBalance = 100,
+			UpdatedByUsername = string.Empty,
+			BrandCurrencies = new BrandCurrency[]
+			{
+				new BrandCurrency
+				{
+					BrandId = brandId,
+					CurrencyCode = "CNY",
+					BrandCurrencyCode = "CNY"
+				}
+			},
+			Licensee = new Licensee
+			{
+				Id = LicenseeId,
+				Code = "licensee",
+				Name = "licensee",
+				CreatedByUsername = "user",
+				UpdatedByUsername = "user"
+			}
+		});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandFullInfoAsync(brandId);
+
+		Assert.That(actual!.Id, Is.EqualTo(brandId));
+		Assert.That(actual.LicenseeId, Is.EqualTo(LicenseeId));
+		Assert.That(actual.LicenseeName, Is.EqualTo("licensee"));
+		Assert.That(actual.Code, Is.EqualTo("Test"));
+		Assert.That(actual.Name, Is.EqualTo("Test"));
+		Assert.That(actual.Description, Is.EqualTo(null));
+		Assert.That(actual.OperationalEmail, Is.EqualTo(null));
+		Assert.That(actual.Status, Is.EqualTo(BrandStatus.Active));
+		Assert.That(actual.Currency, Is.EqualTo("CNY"));
+		Assert.That(actual.ClientId, Is.EqualTo(string.Empty));
+		Assert.That(actual.SecretKey, Is.EqualTo(string.Empty));
+		Assert.That(actual.ApiKey, Is.EqualTo(string.Empty));
+		Assert.That(actual.SmsEnabled, Is.EqualTo(false));
+		Assert.That(actual.SmsRegisterFlowEnabled, Is.EqualTo(false));
+		Assert.That(actual.PlayerIdentityEnabled, Is.EqualTo(false));
+		Assert.That(actual.EmailRegisterFlowEnabled, Is.EqualTo(false));
+		Assert.That(actual.BankInfoRegisterFlowEnabled, Is.EqualTo(false));
+		Assert.That(actual.CheckDividendActiveCount, Is.EqualTo(false));
+		Assert.That(actual.EnablePlayerIdentity, Is.EqualTo(false));
+		Assert.That(actual.AutoClearWageringRequirement, Is.EqualTo(false));
+		Assert.That(actual.PlatformCharge, Is.EqualTo(10));
+		Assert.That(actual.AutoSendAgentBonus, Is.EqualTo(true));
+		Assert.That(actual.EnablePlayerAgent, Is.EqualTo(true));
+		Assert.That(actual.AutoClearWageringRequirementBalance, Is.EqualTo(100));
+		Assert.That(actual.DepositHandlingFeeRateTenPercentile, Is.EqualTo(0));
+		Assert.That(actual.WithdrawHandlingFeeRateTenPercentile, Is.EqualTo(0));
+		Assert.That(actual.AgentDividendType, Is.EqualTo(AgentDividendType.MultipleLayer));
+		Assert.That(actual.SettlementIntervalType, Is.EqualTo(SettlementIntervalType.DoubleWeekly));
+		Assert.That(actual.SettlementDay, Is.EqualTo(null));
+		Assert.That(actual.TimeSpanMinutes, Is.EqualTo(null));
+	}
 }

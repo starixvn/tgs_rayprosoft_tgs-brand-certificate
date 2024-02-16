@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.EntityFrameworkCore;
 using Tgs.BrandCertificate.Repositories.Entities;
 
@@ -180,6 +181,28 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 				(BrandStatus)b.Status))
 			.FirstOrDefaultAsync(cancellationToken)
 			.ConfigureAwait(false);
+
+	public IAsyncEnumerable<BrandAgentDividendInfo> GetBrandAgentDividendInfosAsync(
+		CancellationToken cancellationToken = default)
+	{
+		return _dbContext.Brands
+			.Select(x => new BrandAgentDividendInfo(x.Id,
+				x.Code,
+				(BrandStatus)x.Status,
+				(AgentDividendType)x.AgentDividendType,
+				(SettlementIntervalType)x.SettlementIntervalType,
+				x.AutoSentAgentBonus,
+				x.CheckDividendActiveCount,
+				x.PlatformCharge,
+				x.PreviousSettlementFrom,
+				x.PreviousSettlementTo,
+				x.CurrentSettlementFrom,
+				x.CurrentSettlementTo,
+				x.NextSettlementFrom,
+				x.NextSettlementTo,
+				x.SettlementDay))
+			.ToAsyncEnumerable();
+	}
 
 	public IAsyncEnumerable<BrandListItem> QueryAllBrandsAsync(CancellationToken cancellationToken = default)
 		=> _dbContext.Brands
@@ -392,5 +415,150 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		brand.UpdatedByUsername = modifier;
 
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(Guid brandId,
+		DateTime previousSettlementFrom,
+		DateTime previousSettlementTo,
+		DateTime currentSettlementFrom,
+		DateTime currentSettlementTo,
+		DateTime nextSettlementFrom,
+		DateTime nextSettlementTo,
+		CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FirstAsync(x => x.Id == brandId, cancellationToken: cancellationToken);
+
+		brand.PreviousSettlementFrom = previousSettlementFrom;
+		brand.PreviousSettlementTo = previousSettlementTo;
+		brand.CurrentSettlementFrom = currentSettlementFrom;
+		brand.CurrentSettlementTo = currentSettlementTo;
+		brand.NextSettlementFrom = nextSettlementFrom;
+		brand.NextSettlementTo = nextSettlementTo;
+
+		_ = _dbContext.Brands.Update(brand);
+
+		_ = _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public async ValueTask CreateBrandAsync(CreateBrandInfo createBrand, CancellationToken cancellationToken = default)
+	{
+		var brand = new Brand
+		{
+			Id = createBrand.BrandId,
+			LicenseeId = createBrand.LicenseeId,
+			Code = createBrand.Code,
+			Name = createBrand.Name,
+			PreviousSettlementFrom = createBrand.CurrentSettlementFrom.UtcDateTime,
+			PreviousSettlementTo = createBrand.CurrentSettlementTo.UtcDateTime,
+			CurrentSettlementFrom = createBrand.CurrentSettlementFrom.UtcDateTime,
+			CurrentSettlementTo = createBrand.CurrentSettlementTo.UtcDateTime,
+			NextSettlementFrom = createBrand.NextSettlementFrom.UtcDateTime,
+			NextSettlementTo = createBrand.NextSettlementTo.UtcDateTime,
+			AutoSentAgentBonus = createBrand.AutoSendAgentBonus,
+			AutoSentPlayerBonus = true,
+			Status = (short)BrandStatus.Active,
+			AgentDividendType = (short)createBrand.AgentDividendType,
+			Description = createBrand.Description,
+			OperationalEmail = createBrand.OperationalEmail,
+			SettlementDay = createBrand.SettlementDay,
+			SettlementIntervalType = (short)createBrand.SettlementIntervalType,
+			ApiKey = createBrand.ApiKey,
+			ClientId = createBrand.Code,
+			SecretKey = createBrand.SecretKey,
+			CreatedByUsername = createBrand.EditorUsername,
+			UpdatedByUsername = createBrand.EditorUsername,
+			CreatedOn = DateTime.UtcNow,
+			UpdatedOn = DateTime.UtcNow,
+			PlatformCharge = createBrand.PlatformCharge,
+			CheckDividendActiveCount = createBrand.CheckDividendActiveCount,
+			EnablePlayerIdentity = createBrand.EnablePlayerIdentity,
+			AutoClearWageringRequirement = createBrand.AutoClearWageringRequirement,
+			AutoClearWageringRequirementBalance = createBrand.AutoClearWageringRequirementBalance,
+			DepositHandlingFeeRateTenPercentile = createBrand.DepositHandlingFeeRateTenPercentile,
+			WithdrawHandlingFeeRateTenPercentile = createBrand.WithdrawHandlingFeeRateTenPercentile,
+			TimeSpanMinutes = createBrand.TimeSpanMinutes,
+			EnablePlayerAgent = createBrand.EnablePlayerAgent,
+		};
+
+		_ = await _dbContext.Brands.AddAsync(brand, cancellationToken).ConfigureAwait(false);
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public async ValueTask UpdateBrandAsync(UpdateBrandInfo updateBrand, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FirstAsync(x => x.Id == updateBrand.BrandId, cancellationToken);
+
+		brand.Name = updateBrand.Name;
+		brand.CurrentSettlementFrom = updateBrand.CurrentSettlementFrom.UtcDateTime;
+		brand.CurrentSettlementTo = updateBrand.CurrentSettlementTo.UtcDateTime;
+		brand.NextSettlementFrom = updateBrand.NextSettlementFrom.UtcDateTime;
+		brand.NextSettlementTo = updateBrand.NextSettlementTo.UtcDateTime;
+		brand.SettlementDay = updateBrand.SettlementDay;
+		brand.SettlementIntervalType = (short)updateBrand.SettlementIntervalType;
+		brand.Description = updateBrand.Description;
+		brand.OperationalEmail = updateBrand.OperationalEmail;
+		brand.UpdatedByUsername = updateBrand.EditorUsername;
+		brand.UpdatedOn = DateTime.UtcNow;
+		brand.PlatformCharge = updateBrand.PlatformCharge;
+		brand.CheckDividendActiveCount = updateBrand.CheckDividendActiveCount;
+		brand.EnablePlayerIdentity = updateBrand.EnablePlayerIdentity;
+		brand.AutoClearWageringRequirement = updateBrand.AutoClearWageringRequirement;
+		brand.AutoClearWageringRequirementBalance = updateBrand.AutoClearWageringRequirementBalance;
+		brand.DepositHandlingFeeRateTenPercentile = updateBrand.DepositHandlingFeeRateTenPercentile;
+		brand.WithdrawHandlingFeeRateTenPercentile = updateBrand.WithdrawHandlingFeeRateTenPercentile;
+		brand.AutoSentAgentBonus = updateBrand.AutoSendAgentBonus;
+		brand.EnablePlayerAgent = updateBrand.EnablePlayerAgent;
+
+		_ = _dbContext.Brands.Update(brand);
+	}
+
+	public async ValueTask<BrandFullInfo?> GetBrandFullInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands
+			.Include(x => x.Licensee)
+			.FirstOrDefaultAsync(x => x.Id == brandId, cancellationToken)
+			.ConfigureAwait(false);
+
+		if (brand is null)
+			return null;
+
+		var brandCurrency = await _dbContext.BrandCurrencies
+			.FirstAsync(bc => bc.BrandId == brandId, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		return new BrandFullInfo(
+			brand.Id,
+			brand.LicenseeId,
+			brand.Licensee.Name,
+			brand.Code,
+			brand.Name,
+			brand.Description,
+			brand.OperationalEmail,
+			(BrandStatus)brand.Status,
+			(AgentDividendType)brand.AgentDividendType,
+			(SettlementIntervalType)brand.SettlementIntervalType,
+			brandCurrency.CurrencyCode,
+			brand.ClientId,
+			brand.SecretKey,
+			brand.ApiKey,
+			brand.EnableSms,
+			brand.EnableSmsRegisterFlow,
+			brand.EnablePlayerIdentity,
+			brand.EnableEmailRegisterFlow,
+			brand.EnableBankInfoRegisterFlow,
+			brand.CheckDividendActiveCount,
+			brand.EnablePlayerIdentity,
+			brand.AutoClearWageringRequirement,
+			brand.AutoSentAgentBonus,
+			brand.EnablePlayerAgent,
+			brand.AutoClearWageringRequirementBalance,
+			brand.DepositHandlingFeeRateTenPercentile,
+			brand.WithdrawHandlingFeeRateTenPercentile,
+			brand.PlatformCharge,
+			brand.CreatedOn,
+			brand.UpdatedOn,
+			brand.SettlementDay,
+			brand.TimeSpanMinutes);
+
 	}
 }
