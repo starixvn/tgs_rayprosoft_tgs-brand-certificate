@@ -510,6 +510,8 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		brand.EnablePlayerAgent = updateBrand.EnablePlayerAgent;
 
 		_ = _dbContext.Brands.Update(brand);
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 
 	public async ValueTask<BrandFullInfo?> GetBrandFullInfoAsync(Guid brandId, CancellationToken cancellationToken = default)
