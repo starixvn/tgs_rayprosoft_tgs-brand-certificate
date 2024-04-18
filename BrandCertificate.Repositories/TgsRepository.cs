@@ -571,4 +571,74 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 	{
 		return _dbContext.BrandDomains.Where(x => x.BrandId == brandId).Select(x => x.Url).ToAsyncEnumerable();
 	}
+
+	public async ValueTask<BrandProductFeeInfo?> GetBrandProductFeeAsync(Guid brandId,
+		CancellationToken cancellationToken = default)
+	{
+		var fee = await _dbContext.BrandProductFees.FirstOrDefaultAsync(x => x.BrandId == brandId, cancellationToken);
+
+		return fee == null
+			? null
+			: new BrandProductFeeInfo(brandId,
+			fee.CardGameRebatePercentage,
+			fee.LiveDealerRebatePercentage,
+			fee.LotteryRebatePercentage,
+			fee.SlotRebatePercentage,
+			fee.SportsRebatePercentage,
+			fee.VirtualSportsRebatePercentage);
+	}
+
+	public async ValueTask CreateBrandProductFeeAsync(Guid brandId,
+		decimal cardGameRebatePercentage,
+		decimal liveDealerRebatePercentage,
+		decimal lotteryRebatePercentage,
+		decimal slotRebatePercentage,
+		decimal sportsRebatePercentage,
+		decimal virtualSportsRebatePercentage,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var fee = new BrandProductFee
+		{
+			BrandId = brandId,
+			CardGameRebatePercentage = cardGameRebatePercentage,
+			LiveDealerRebatePercentage = liveDealerRebatePercentage,
+			LotteryRebatePercentage = lotteryRebatePercentage,
+			SlotRebatePercentage = slotRebatePercentage,
+			SportsRebatePercentage = sportsRebatePercentage,
+			VirtualSportsRebatePercentage = virtualSportsRebatePercentage,
+			CreatedByUsername = modifier,
+			UpdatedByUsername = modifier,
+			CreatedOn = DateTime.UtcNow,
+			UpdatedOn = DateTime.UtcNow
+		};
+
+		_ = await _dbContext.BrandProductFees.AddAsync(fee, cancellationToken);
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken);
+	}
+
+	public async ValueTask UpdateBrandProductFeeAsync(Guid brandId,
+		decimal cardGameRebatePercentage,
+		decimal liveDealerRebatePercentage,
+		decimal lotteryRebatePercentage,
+		decimal slotRebatePercentage,
+		decimal sportsRebatePercentage,
+		decimal virtualSportsRebatePercentage,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var fee = await _dbContext.BrandProductFees.FirstAsync(x => x.BrandId == brandId, cancellationToken);
+
+		fee.CardGameRebatePercentage = cardGameRebatePercentage;
+		fee.LiveDealerRebatePercentage = liveDealerRebatePercentage;
+		fee.LotteryRebatePercentage = lotteryRebatePercentage;
+		fee.SlotRebatePercentage = slotRebatePercentage;
+		fee.SportsRebatePercentage = sportsRebatePercentage;
+		fee.VirtualSportsRebatePercentage = virtualSportsRebatePercentage;
+		fee.UpdatedByUsername = modifier;
+		fee.UpdatedOn = DateTime.UtcNow;
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken);
+	}
 }

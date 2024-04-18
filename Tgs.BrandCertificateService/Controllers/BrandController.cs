@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
+using Tgs.BrandCertificate.Repositories.Entities;
 using Tgs.BrandCertificateService.ViewModels;
 using Tgs.ServiceUtility;
 
@@ -472,5 +473,48 @@ public class BrandController : ControllerBase
 				SettlementDay = brandInfo.SettlementDay,
 				TimeSpanMinutes = brandInfo.TimeSpanMinutes
 			};
+	}
+
+	[HttpGet("product-fee/{brandId:Guid}", Name = "GetBrandProductFeeInfo")]
+	public async Task<BrandProductFeeInfoViewModel?> GetBrandProductFeeInfoAsync(
+	[FromServices] IGetService<GetBrandProductFeeInfoQuery, BrandProductFeeInfo?> getBrandService,
+	Guid brandId)
+	{
+		var query = new GetBrandProductFeeInfoQuery(brandId);
+
+		var brandInfo = await getBrandService
+			.GetAsync(query, HttpContext.RequestAborted)
+			.ConfigureAwait(false);
+
+		return brandInfo is null
+			? null
+			: new BrandProductFeeInfoViewModel
+			{
+				BrandId = brandId,
+				CardGameRebatePercentage = brandInfo.CardGameRebatePercentage,
+				LiveDealerRebatePercentage = brandInfo.LiveDealerRebatePercentage,
+				LotteryRebatePercentage = brandInfo.LotteryRebatePercentage,
+				SlotRebatePercentage = brandInfo.SlotRebatePercentage,
+				SportsRebatePercentage = brandInfo.SportsRebatePercentage,
+				VirtualSportsRebatePercentage = brandInfo.VirtualSportsRebatePercentage,
+			};
+	}
+
+	[HttpPut("product-fee",Name = "UpdateBrandProductFee")]
+	public ValueTask UpdateBrandProductFeeAsync(
+		[FromServices] ICommandService<UpdateBrandProductFeeCommand> getService,
+		[FromBody] CreateUpdateBrandProductFeeRequest request)
+	{
+		var query = new UpdateBrandProductFeeCommand(
+			request.BrandId,
+			request.CardGameRebatePercentage,
+			request.LiveDealerRebatePercentage,
+			request.LotteryRebatePercentage,
+			request.SlotRebatePercentage,
+			request.SportsRebatePercentage,
+			request.VirtualSportsRebatePercentage,
+			request.EditorUsername);
+
+		return getService.ExecuteAsync(query, HttpContext.RequestAborted);
 	}
 }

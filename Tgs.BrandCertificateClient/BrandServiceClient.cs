@@ -371,6 +371,43 @@ internal class BrandServiceClient : IBrandServiceClient
 		}
 	}
 
+	public async ValueTask<BrandProductFeeInfo?> GetBrandProductFeeInfoAsync(Guid brandId,
+		CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/product-fee/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var json = await response.Content
+			.ReadAsStringAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+		return string.IsNullOrEmpty(json)
+			? null
+			: JsonSerializer.Deserialize<BrandProductFeeInfo>(json, _SerializerOptions);
+	}
+
+	public async ValueTask CreateUpdateBrandProductFeeAsync(CreateUpdateBrandProductFeeRequest request,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = new StringContent(
+			JsonSerializer.Serialize(request, _SerializerOptions),
+			Encoding.UTF8,
+			MediaTypeNames.Application.Json);
+
+		var response = await _httpClient
+			.PutAsync(
+				"/brand/product-fee",
+				requestContent,
+				cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
+
+
 	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
 		UpdateBrandAgentDividendTimeIntervalRequest request,
 		CancellationToken cancellationToken = default)
@@ -382,7 +419,7 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		var response = await _httpClient
 			.PatchAsync(
-				$"/brand/agent-dividend-time-interval",
+				"/brand/agent-dividend-time-interval",
 				requestContent,
 				cancellationToken)
 			.ConfigureAwait(false);

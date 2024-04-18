@@ -17,12 +17,6 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
 
             entity.ToTable("resellers", "dbo");
 
-            entity.HasIndex(e => new { e.Code, e.Name, e.Description, e.OperationalEmail }, "ix_resellers_code_name_description_operational_email");
-
-            entity.HasIndex(e => new { e.Code, e.Name, e.Description, e.OperationalEmail }, "ix_trgm_resellers_code_name_description_operational_email")
-            .HasMethod("gin")
-            .HasOperators(new[] { "gin_trgm_ops", "gin_trgm_ops", "gin_trgm_ops", "gin_trgm_ops" });
-
             entity.Property(e => e.Id)
             .ValueGeneratedNever()
             .HasColumnName("id");
