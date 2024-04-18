@@ -62,4 +62,10 @@ public interface IBrandServiceClient
 	ValueTask<BrandFullInfo?> GetBrandFullInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<string?> GetBrandDomainsAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask<BrandProductFeeInfo?> GetBrandProductFeeInfoAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask CreateUpdateBrandProductFeeAsync(
+		CreateUpdateBrandProductFeeRequest request,
+		CancellationToken cancellationToken = default);
 }

@@ -7,9 +7,9 @@ namespace Tgs.BrandCertificate.Repositories.Entities;
 
 public partial class BrandBetLimit
 {
-    public Guid BrandId { get; set; }
-
     public int BetLimitId { get; set; }
+
+    public Guid BrandId { get; set; }
 
     public bool IsDefault { get; set; }
 

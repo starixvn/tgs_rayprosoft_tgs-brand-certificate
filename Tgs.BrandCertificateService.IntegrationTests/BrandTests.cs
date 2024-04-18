@@ -1407,4 +1407,135 @@ public class BrandTests
 
 		Assert.That(actual.Length, Is.EqualTo(2));
 	}
+
+
+	[Test]
+	public async Task Get_A_Brand_Product_Fee()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var brandId = Guid.NewGuid();
+
+		await dbContext.BrandProductFees.AddRangeAsync(
+			new BrandProductFee
+			{
+				BrandId = brandId,
+				CardGameRebatePercentage = 10,
+				LiveDealerRebatePercentage = 10,
+				LotteryRebatePercentage = 10,
+				SportsRebatePercentage = 10,
+				SlotRebatePercentage = 10,
+				VirtualSportsRebatePercentage = 10,
+				CreatedOn = DateTime.UtcNow,
+				UpdatedOn = DateTime.UtcNow,
+				CreatedByUsername = "test",
+				UpdatedByUsername = "test"
+			});
+
+		_ = await dbContext.SaveChangesAsync();
+
+		var sut = new BrandServiceClient(http);
+
+		var actual = await sut.GetBrandProductFeeInfoAsync(brandId);
+
+		Assert.That(actual.CardGameRebatePercentage, Is.EqualTo(10));
+		Assert.That(actual.SlotRebatePercentage, Is.EqualTo(10));
+		Assert.That(actual.SportsRebatePercentage, Is.EqualTo(10));
+		Assert.That(actual.LiveDealerRebatePercentage, Is.EqualTo(10));
+		Assert.That(actual.LotteryRebatePercentage, Is.EqualTo(10));
+		Assert.That(actual.VirtualSportsRebatePercentage, Is.EqualTo(10));
+	}
+
+	[Test]
+	public async Task Create_Brand_Product_Fee()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		await sut.CreateUpdateBrandProductFeeAsync(new CreateUpdateBrandProductFeeRequest
+		{
+			BrandId = brandId,
+			CardGameRebatePercentage = 20,
+			SlotRebatePercentage = 20,
+			SportsRebatePercentage = 20,
+			LiveDealerRebatePercentage = 20,
+			LotteryRebatePercentage = 20,
+			VirtualSportsRebatePercentage = 20,
+			EditorUsername = "test"
+		});
+
+		var actualBrand = dbContext.BrandProductFees.First(x => x.BrandId == brandId);
+
+		Assert.That(actualBrand.CardGameRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.SlotRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.SportsRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.LiveDealerRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.LotteryRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.VirtualSportsRebatePercentage, Is.EqualTo(20));
+	}
+
+	[Test]
+	public async Task Update_Brand_Product_Fee()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		var brand = new BrandProductFee
+		{
+			BrandId = brandId,
+			CardGameRebatePercentage = 10,
+			SlotRebatePercentage = 10,
+			SportsRebatePercentage = 10,
+			LiveDealerRebatePercentage = 10,
+			LotteryRebatePercentage = 10,
+			VirtualSportsRebatePercentage = 10,
+			CreatedByUsername = string.Empty,
+			UpdatedByUsername = string.Empty,
+			CreatedOn = DateTime.UtcNow,
+			UpdatedOn = DateTime.UtcNow,
+		};
+
+		_ = await dbContext.BrandProductFees.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		await sut.CreateUpdateBrandProductFeeAsync(new CreateUpdateBrandProductFeeRequest
+		{
+			BrandId = brandId,
+			CardGameRebatePercentage = 20,
+			SlotRebatePercentage = 20,
+			SportsRebatePercentage = 20,
+			LiveDealerRebatePercentage = 20,
+			LotteryRebatePercentage = 20,
+			VirtualSportsRebatePercentage = 20,
+			EditorUsername = "test"
+		});
+
+		var actualBrand = dbContext.BrandProductFees.First(x => x.BrandId == brandId);
+
+		Assert.That(actualBrand.CardGameRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.SlotRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.SportsRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.LiveDealerRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.LotteryRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.VirtualSportsRebatePercentage, Is.EqualTo(20));
+	}
 }

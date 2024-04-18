@@ -68,4 +68,27 @@ public interface ITgsRepository
 
 	IAsyncEnumerable<string> GetBrandDomainsAsync(Guid brandId, CancellationToken cancellationToken = default);
 
+	ValueTask<BrandProductFeeInfo?> GetBrandProductFeeAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask CreateBrandProductFeeAsync(
+		Guid brandId,
+		decimal cardGameRebatePercentage,
+		decimal liveDealerRebatePercentage,
+		decimal lotteryRebatePercentage,
+		decimal slotRebatePercentage,
+		decimal sportsRebatePercentage,
+		decimal virtualSportsRebatePercentage,
+		string modifier,
+		CancellationToken cancellationToken = default);
+
+	ValueTask UpdateBrandProductFeeAsync(
+		Guid brandId,
+		decimal cardGameRebatePercentage,
+		decimal liveDealerRebatePercentage,
+		decimal lotteryRebatePercentage,
+		decimal slotRebatePercentage,
+		decimal sportsRebatePercentage,
+		decimal virtualSportsRebatePercentage,
+		string modifier,
+		CancellationToken cancellationToken = default);
 }
