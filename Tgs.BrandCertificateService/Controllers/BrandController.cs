@@ -507,12 +507,12 @@ public class BrandController : ControllerBase
 	{
 		var query = new UpdateBrandProductFeeCommand(
 			request.BrandId,
-			request.CardGameRebatePercentage,
-			request.LiveDealerRebatePercentage,
-			request.LotteryRebatePercentage,
-			request.SlotRebatePercentage,
-			request.SportsRebatePercentage,
-			request.VirtualSportsRebatePercentage,
+			request.CardGamePercentage,
+			request.LiveDealerPercentage,
+			request.LotteryPercentage,
+			request.SlotPercentage,
+			request.SportsPercentage,
+			request.VirtualSportsPercentage,
 			request.EditorUsername);
 
 		return getService.ExecuteAsync(query, HttpContext.RequestAborted);
