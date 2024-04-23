@@ -9,17 +9,17 @@ public partial class BrandProductFee
 {
     public Guid BrandId { get; set; }
 
-    public decimal CardGameRebatePercentage { get; set; }
+    public decimal CardGamePercentage { get; set; }
 
-    public decimal LiveDealerRebatePercentage { get; set; }
+    public decimal LiveDealerPercentage { get; set; }
 
-    public decimal LotteryRebatePercentage { get; set; }
+    public decimal LotteryPercentage { get; set; }
 
-    public decimal SlotRebatePercentage { get; set; }
+    public decimal SlotPercentage { get; set; }
 
-    public decimal SportsRebatePercentage { get; set; }
+    public decimal SportsPercentage { get; set; }
 
-    public decimal VirtualSportsRebatePercentage { get; set; }
+    public decimal VirtualSportsPercentage { get; set; }
 
     public string CreatedByUsername { get; set; } = null!;
 

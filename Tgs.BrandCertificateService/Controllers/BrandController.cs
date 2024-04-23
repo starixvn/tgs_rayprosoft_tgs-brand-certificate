@@ -491,12 +491,12 @@ public class BrandController : ControllerBase
 			: new BrandProductFeeInfoViewModel
 			{
 				BrandId = brandId,
-				CardGameRebatePercentage = brandInfo.CardGameRebatePercentage,
-				LiveDealerRebatePercentage = brandInfo.LiveDealerRebatePercentage,
-				LotteryRebatePercentage = brandInfo.LotteryRebatePercentage,
-				SlotRebatePercentage = brandInfo.SlotRebatePercentage,
-				SportsRebatePercentage = brandInfo.SportsRebatePercentage,
-				VirtualSportsRebatePercentage = brandInfo.VirtualSportsRebatePercentage,
+				CardGamePercentage = brandInfo.CardGamePercentage,
+				LiveDealerPercentage = brandInfo.LiveDealerPercentage,
+				LotteryPercentage = brandInfo.LotteryPercentage,
+				SlotPercentage = brandInfo.SlotPercentage,
+				SportsPercentage = brandInfo.SportsPercentage,
+				VirtualSportsPercentage = brandInfo.VirtualSportsPercentage,
 			};
 	}
 
@@ -507,12 +507,12 @@ public class BrandController : ControllerBase
 	{
 		var query = new UpdateBrandProductFeeCommand(
 			request.BrandId,
-			request.CardGameRebatePercentage,
-			request.LiveDealerRebatePercentage,
-			request.LotteryRebatePercentage,
-			request.SlotRebatePercentage,
-			request.SportsRebatePercentage,
-			request.VirtualSportsRebatePercentage,
+			request.CardGamePercentage,
+			request.LiveDealerPercentage,
+			request.LotteryPercentage,
+			request.SlotPercentage,
+			request.SportsPercentage,
+			request.VirtualSportsPercentage,
 			request.EditorUsername);
 
 		return getService.ExecuteAsync(query, HttpContext.RequestAborted);

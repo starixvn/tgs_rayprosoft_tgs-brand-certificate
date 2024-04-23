@@ -4,10 +4,10 @@ namespace Tgs.BrandCertificateService.ViewModels;
 public class BrandProductFeeInfoViewModel
 {
 	public Guid BrandId { get; init; }
-	public decimal CardGameRebatePercentage { get; init; }
-	public decimal LiveDealerRebatePercentage { get; init; }
-	public decimal LotteryRebatePercentage { get; init; }
-	public decimal SlotRebatePercentage { get; init; }
-	public decimal SportsRebatePercentage { get; init; }
-	public decimal VirtualSportsRebatePercentage { get; init; }
+	public decimal CardGamePercentage { get; init; }
+	public decimal LiveDealerPercentage { get; init; }
+	public decimal LotteryPercentage { get; init; }
+	public decimal SlotPercentage { get; init; }
+	public decimal SportsPercentage { get; init; }
+	public decimal VirtualSportsPercentage { get; init; }
 }

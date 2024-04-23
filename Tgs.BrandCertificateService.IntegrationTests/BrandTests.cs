@@ -1424,12 +1424,12 @@ public class BrandTests
 			new BrandProductFee
 			{
 				BrandId = brandId,
-				CardGameRebatePercentage = 10,
-				LiveDealerRebatePercentage = 10,
-				LotteryRebatePercentage = 10,
-				SportsRebatePercentage = 10,
-				SlotRebatePercentage = 10,
-				VirtualSportsRebatePercentage = 10,
+				CardGamePercentage = 10,
+				LiveDealerPercentage = 10,
+				LotteryPercentage = 10,
+				SportsPercentage = 10,
+				SlotPercentage = 10,
+				VirtualSportsPercentage = 10,
 				CreatedOn = DateTime.UtcNow,
 				UpdatedOn = DateTime.UtcNow,
 				CreatedByUsername = "test",
@@ -1442,12 +1442,12 @@ public class BrandTests
 
 		var actual = await sut.GetBrandProductFeeInfoAsync(brandId);
 
-		Assert.That(actual.CardGameRebatePercentage, Is.EqualTo(10));
-		Assert.That(actual.SlotRebatePercentage, Is.EqualTo(10));
-		Assert.That(actual.SportsRebatePercentage, Is.EqualTo(10));
-		Assert.That(actual.LiveDealerRebatePercentage, Is.EqualTo(10));
-		Assert.That(actual.LotteryRebatePercentage, Is.EqualTo(10));
-		Assert.That(actual.VirtualSportsRebatePercentage, Is.EqualTo(10));
+		Assert.That(actual.CardGamePercentage, Is.EqualTo(10));
+		Assert.That(actual.SlotPercentage, Is.EqualTo(10));
+		Assert.That(actual.SportsPercentage, Is.EqualTo(10));
+		Assert.That(actual.LiveDealerPercentage, Is.EqualTo(10));
+		Assert.That(actual.LotteryPercentage, Is.EqualTo(10));
+		Assert.That(actual.VirtualSportsPercentage, Is.EqualTo(10));
 	}
 
 	[Test]
@@ -1466,23 +1466,23 @@ public class BrandTests
 		await sut.CreateUpdateBrandProductFeeAsync(new CreateUpdateBrandProductFeeRequest
 		{
 			BrandId = brandId,
-			CardGameRebatePercentage = 20,
-			SlotRebatePercentage = 20,
-			SportsRebatePercentage = 20,
-			LiveDealerRebatePercentage = 20,
-			LotteryRebatePercentage = 20,
-			VirtualSportsRebatePercentage = 20,
+			CardGamePercentage = 20,
+			SlotPercentage = 20,
+			SportsPercentage = 20,
+			LiveDealerPercentage = 20,
+			LotteryPercentage = 20,
+			VirtualSportsPercentage = 20,
 			EditorUsername = "test"
 		});
 
 		var actualBrand = dbContext.BrandProductFees.First(x => x.BrandId == brandId);
 
-		Assert.That(actualBrand.CardGameRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.SlotRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.SportsRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.LiveDealerRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.LotteryRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.VirtualSportsRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.CardGamePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.SlotPercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.SportsPercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.LiveDealerPercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.LotteryPercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.VirtualSportsPercentage, Is.EqualTo(20));
 	}
 
 	[Test]
@@ -1501,12 +1501,12 @@ public class BrandTests
 		var brand = new BrandProductFee
 		{
 			BrandId = brandId,
-			CardGameRebatePercentage = 10,
-			SlotRebatePercentage = 10,
-			SportsRebatePercentage = 10,
-			LiveDealerRebatePercentage = 10,
-			LotteryRebatePercentage = 10,
-			VirtualSportsRebatePercentage = 10,
+			CardGamePercentage = 10,
+			SlotPercentage = 10,
+			SportsPercentage = 10,
+			LiveDealerPercentage = 10,
+			LotteryPercentage = 10,
+			VirtualSportsPercentage = 10,
 			CreatedByUsername = string.Empty,
 			UpdatedByUsername = string.Empty,
 			CreatedOn = DateTime.UtcNow,
@@ -1520,22 +1520,22 @@ public class BrandTests
 		await sut.CreateUpdateBrandProductFeeAsync(new CreateUpdateBrandProductFeeRequest
 		{
 			BrandId = brandId,
-			CardGameRebatePercentage = 20,
-			SlotRebatePercentage = 20,
-			SportsRebatePercentage = 20,
-			LiveDealerRebatePercentage = 20,
-			LotteryRebatePercentage = 20,
-			VirtualSportsRebatePercentage = 20,
+			CardGamePercentage = 20,
+			SlotPercentage = 20,
+			SportsPercentage = 20,
+			LiveDealerPercentage = 20,
+			LotteryPercentage = 20,
+			VirtualSportsPercentage = 20,
 			EditorUsername = "test"
 		});
 
 		var actualBrand = dbContext.BrandProductFees.First(x => x.BrandId == brandId);
 
-		Assert.That(actualBrand.CardGameRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.SlotRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.SportsRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.LiveDealerRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.LotteryRebatePercentage, Is.EqualTo(20));
-		Assert.That(actualBrand.VirtualSportsRebatePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.CardGamePercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.SlotPercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.SportsPercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.LiveDealerPercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.LotteryPercentage, Is.EqualTo(20));
+		Assert.That(actualBrand.VirtualSportsPercentage, Is.EqualTo(20));
 	}
 }

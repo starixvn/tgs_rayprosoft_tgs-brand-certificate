@@ -20,28 +20,28 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
             entity.Property(e => e.BrandId)
             .ValueGeneratedNever()
             .HasColumnName("brand_id");
-            entity.Property(e => e.CardGameRebatePercentage)
+            entity.Property(e => e.CardGamePercentage)
             .HasPrecision(18, 6)
-            .HasColumnName("card_game_rebate_percentage");
+            .HasColumnName("card_game_percentage");
             entity.Property(e => e.CreatedByUsername).HasColumnName("created_by_username");
             entity.Property(e => e.CreatedOn).HasColumnName("created_on");
-            entity.Property(e => e.LiveDealerRebatePercentage)
+            entity.Property(e => e.LiveDealerPercentage)
             .HasPrecision(18, 6)
-            .HasColumnName("live_dealer_rebate_percentage");
-            entity.Property(e => e.LotteryRebatePercentage)
+            .HasColumnName("live_dealer_percentage");
+            entity.Property(e => e.LotteryPercentage)
             .HasPrecision(18, 6)
-            .HasColumnName("lottery_rebate_percentage");
-            entity.Property(e => e.SlotRebatePercentage)
+            .HasColumnName("lottery_percentage");
+            entity.Property(e => e.SlotPercentage)
             .HasPrecision(18, 6)
-            .HasColumnName("slot_rebate_percentage");
-            entity.Property(e => e.SportsRebatePercentage)
+            .HasColumnName("slot_percentage");
+            entity.Property(e => e.SportsPercentage)
             .HasPrecision(18, 6)
-            .HasColumnName("sports_rebate_percentage");
+            .HasColumnName("sports_percentage");
             entity.Property(e => e.UpdatedByUsername).HasColumnName("updated_by_username");
             entity.Property(e => e.UpdatedOn).HasColumnName("updated_on");
-            entity.Property(e => e.VirtualSportsRebatePercentage)
+            entity.Property(e => e.VirtualSportsPercentage)
             .HasPrecision(18, 6)
-            .HasColumnName("virtual_sports_rebate_percentage");
+            .HasColumnName("virtual_sports_percentage");
 
             OnConfigurePartial(entity);
         }

@@ -16,24 +16,24 @@ internal class UpdateBrandProductFeeCommandService(
 		if (fee == null)
 		{
 			await _tgsRepository.CreateBrandProductFeeAsync(command.BrandId,
-				command.CardGameRebatePercentage,
-				command.LiveDealerRebatePercentage,
-				command.LotteryRebatePercentage,
-				command.SlotRebatePercentage,
-				command.SportsRebatePercentage,
-				command.VirtualSportsRebatePercentage,
+				command.CardGamePercentage,
+				command.LiveDealerPercentage,
+				command.LotteryPercentage,
+				command.SlotPercentage,
+				command.SportsPercentage,
+				command.VirtualSportsPercentage,
 				command.EditorUsername,
 				cancellationToken);
 		}
 		else
 		{
 			await _tgsRepository.UpdateBrandProductFeeAsync(command.BrandId,
-				command.CardGameRebatePercentage,
-				command.LiveDealerRebatePercentage,
-				command.LotteryRebatePercentage,
-				command.SlotRebatePercentage,
-				command.SportsRebatePercentage,
-				command.VirtualSportsRebatePercentage,
+				command.CardGamePercentage,
+				command.LiveDealerPercentage,
+				command.LotteryPercentage,
+				command.SlotPercentage,
+				command.SportsPercentage,
+				command.VirtualSportsPercentage,
 				command.EditorUsername,
 				cancellationToken);
 		}

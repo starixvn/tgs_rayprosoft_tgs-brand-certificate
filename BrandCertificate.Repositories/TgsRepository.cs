@@ -580,33 +580,33 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		return fee == null
 			? null
 			: new BrandProductFeeInfo(brandId,
-			fee.CardGameRebatePercentage,
-			fee.LiveDealerRebatePercentage,
-			fee.LotteryRebatePercentage,
-			fee.SlotRebatePercentage,
-			fee.SportsRebatePercentage,
-			fee.VirtualSportsRebatePercentage);
+			fee.CardGamePercentage,
+			fee.LiveDealerPercentage,
+			fee.LotteryPercentage,
+			fee.SlotPercentage,
+			fee.SportsPercentage,
+			fee.VirtualSportsPercentage);
 	}
 
 	public async ValueTask CreateBrandProductFeeAsync(Guid brandId,
-		decimal cardGameRebatePercentage,
-		decimal liveDealerRebatePercentage,
-		decimal lotteryRebatePercentage,
-		decimal slotRebatePercentage,
-		decimal sportsRebatePercentage,
-		decimal virtualSportsRebatePercentage,
+		decimal cardGamePercentage,
+		decimal liveDealerPercentage,
+		decimal lotteryPercentage,
+		decimal slotPercentage,
+		decimal sportsPercentage,
+		decimal virtualSportsPercentage,
 		string modifier,
 		CancellationToken cancellationToken = default)
 	{
 		var fee = new BrandProductFee
 		{
 			BrandId = brandId,
-			CardGameRebatePercentage = cardGameRebatePercentage,
-			LiveDealerRebatePercentage = liveDealerRebatePercentage,
-			LotteryRebatePercentage = lotteryRebatePercentage,
-			SlotRebatePercentage = slotRebatePercentage,
-			SportsRebatePercentage = sportsRebatePercentage,
-			VirtualSportsRebatePercentage = virtualSportsRebatePercentage,
+			CardGamePercentage = cardGamePercentage,
+			LiveDealerPercentage = liveDealerPercentage,
+			LotteryPercentage = lotteryPercentage,
+			SlotPercentage = slotPercentage,
+			SportsPercentage = sportsPercentage,
+			VirtualSportsPercentage = virtualSportsPercentage,
 			CreatedByUsername = modifier,
 			UpdatedByUsername = modifier,
 			CreatedOn = DateTime.UtcNow,
@@ -619,23 +619,23 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 	}
 
 	public async ValueTask UpdateBrandProductFeeAsync(Guid brandId,
-		decimal cardGameRebatePercentage,
-		decimal liveDealerRebatePercentage,
-		decimal lotteryRebatePercentage,
-		decimal slotRebatePercentage,
-		decimal sportsRebatePercentage,
-		decimal virtualSportsRebatePercentage,
+		decimal cardGamePercentage,
+		decimal liveDealerPercentage,
+		decimal lotteryPercentage,
+		decimal slotPercentage,
+		decimal sportsPercentage,
+		decimal virtualSportsPercentage,
 		string modifier,
 		CancellationToken cancellationToken = default)
 	{
 		var fee = await _dbContext.BrandProductFees.FirstAsync(x => x.BrandId == brandId, cancellationToken);
 
-		fee.CardGameRebatePercentage = cardGameRebatePercentage;
-		fee.LiveDealerRebatePercentage = liveDealerRebatePercentage;
-		fee.LotteryRebatePercentage = lotteryRebatePercentage;
-		fee.SlotRebatePercentage = slotRebatePercentage;
-		fee.SportsRebatePercentage = sportsRebatePercentage;
-		fee.VirtualSportsRebatePercentage = virtualSportsRebatePercentage;
+		fee.CardGamePercentage = cardGamePercentage;
+		fee.LiveDealerPercentage = liveDealerPercentage;
+		fee.LotteryPercentage = lotteryPercentage;
+		fee.SlotPercentage = slotPercentage;
+		fee.SportsPercentage = sportsPercentage;
+		fee.VirtualSportsPercentage = virtualSportsPercentage;
 		fee.UpdatedByUsername = modifier;
 		fee.UpdatedOn = DateTime.UtcNow;
 
