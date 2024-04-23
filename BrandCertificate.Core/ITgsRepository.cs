@@ -72,12 +72,12 @@ public interface ITgsRepository
 
 	ValueTask CreateBrandProductFeeAsync(
 		Guid brandId,
-		decimal cardGameRebatePercentage,
-		decimal liveDealerRebatePercentage,
-		decimal lotteryRebatePercentage,
-		decimal slotRebatePercentage,
-		decimal sportsRebatePercentage,
-		decimal virtualSportsRebatePercentage,
+		decimal cardGamePercentage,
+		decimal liveDealerPercentage,
+		decimal lotteryPercentage,
+		decimal slotPercentage,
+		decimal sportsPercentage,
+		decimal virtualSportsPercentage,
 		string modifier,
 		CancellationToken cancellationToken = default);
 
