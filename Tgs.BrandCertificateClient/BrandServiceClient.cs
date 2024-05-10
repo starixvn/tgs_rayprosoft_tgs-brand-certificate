@@ -287,13 +287,17 @@ internal class BrandServiceClient : IBrandServiceClient
 		_ = response.EnsureSuccessStatusCode();
 	}
 
+	private static readonly JsonSerializerOptions _PropertyNameCaseInsensitiveSerializerOptions = new()
+	{
+		PropertyNameCaseInsensitive = true
+	};
+
 	public async ValueTask<Guid> CreateBrandAsync(CreateBrandFullInfoRequest request, CancellationToken cancellationToken = default)
 	{
 		var requestContent = new StringContent(
-			JsonSerializer.Serialize(request, new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			}),
+			JsonSerializer.Serialize(
+				request,
+				_PropertyNameCaseInsensitiveSerializerOptions),
 			Encoding.UTF8,
 			MediaTypeNames.Application.Json);
 
@@ -313,11 +317,9 @@ internal class BrandServiceClient : IBrandServiceClient
 
 	public async ValueTask<Guid> UpdateBrandAsync(UpdateBrandFullInfoRequest request, CancellationToken cancellationToken = default)
 	{
+
 		var requestContent = new StringContent(
-			JsonSerializer.Serialize(request, new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			}),
+			JsonSerializer.Serialize(request, _PropertyNameCaseInsensitiveSerializerOptions),
 			Encoding.UTF8,
 			MediaTypeNames.Application.Json);
 
@@ -406,7 +408,6 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		_ = response.EnsureSuccessStatusCode();
 	}
-
 
 	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
 		UpdateBrandAgentDividendTimeIntervalRequest request,

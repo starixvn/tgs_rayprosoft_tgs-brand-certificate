@@ -2,19 +2,12 @@
 
 namespace Tgs.BrandCertificate.ApplicationServices;
 
-internal class UpdateBrandQueryService : IGetService<UpdateBrandQuery, Guid>
+internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetService<UpdateBrandQuery, Guid>
 {
-	private readonly ITgsRepository _tgsRepository;
-
-	public UpdateBrandQueryService(ITgsRepository tgsRepository)
-	{
-		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
-	}
-
 	public async ValueTask<Guid> GetAsync(UpdateBrandQuery query,
 		CancellationToken cancellationToken = default)
 	{
-		var brandAgentDividendInterval = await _tgsRepository.GetBrandAgentDividendInfosAsync(cancellationToken)
+		var brandAgentDividendInterval = await tgsRepository.GetBrandAgentDividendInfosAsync(cancellationToken)
 			.FirstAsync(x => x.Id == query.Id, cancellationToken);
 
 		var currentSettlementFrom = brandAgentDividendInterval.CurrentSettlementFrom;
@@ -61,7 +54,7 @@ internal class UpdateBrandQueryService : IGetService<UpdateBrandQuery, Guid>
 			nextSettlementTo,
 			query.EditorUsername);
 
-		await _tgsRepository.UpdateBrandAsync(updateBrand, cancellationToken);
+		await tgsRepository.UpdateBrandAsync(updateBrand, cancellationToken);
 
 		return query.Id;
 	}
