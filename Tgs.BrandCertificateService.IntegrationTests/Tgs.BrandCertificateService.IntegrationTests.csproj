@@ -50,4 +50,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\Users\Phoenix\Develop\source\repos\Tgs.BrandCertificate\Tgs.BrandCertificateService.IntegrationTests\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\Users\Phoenix\Develop\source\repos\Tgs.BrandCertificate\Tgs.BrandCertificateService.IntegrationTests\.editorconfig" />
+  </ItemGroup>
+
 </Project>

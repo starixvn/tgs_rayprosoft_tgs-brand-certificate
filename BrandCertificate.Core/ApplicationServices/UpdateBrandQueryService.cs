@@ -8,7 +8,7 @@ internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetServi
 		CancellationToken cancellationToken = default)
 	{
 		var brandAgentDividendInterval = await tgsRepository.GetBrandAgentDividendInfosAsync(cancellationToken)
-			.FirstAsync(x => x.Id == query.Id, cancellationToken);
+			.FirstAsync(x => x.Id == query.Id, cancellationToken).ConfigureAwait(false);
 
 		var currentSettlementFrom = brandAgentDividendInterval.CurrentSettlementFrom;
 		var currentSettlementTo = brandAgentDividendInterval.CurrentSettlementTo;
@@ -54,7 +54,9 @@ internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetServi
 			nextSettlementTo,
 			query.EditorUsername);
 
-		await tgsRepository.UpdateBrandAsync(updateBrand, cancellationToken);
+		await tgsRepository.UpdateBrandAsync(
+			updateBrand,
+			cancellationToken).ConfigureAwait(false);
 
 		return query.Id;
 	}

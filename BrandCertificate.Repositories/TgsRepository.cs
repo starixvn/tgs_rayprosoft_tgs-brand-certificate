@@ -425,7 +425,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		DateTime nextSettlementTo,
 		CancellationToken cancellationToken = default)
 	{
-		var brand = await _dbContext.Brands.FirstAsync(x => x.Id == brandId, cancellationToken: cancellationToken);
+		var brand = await _dbContext.Brands.FirstAsync(
+			x => x.Id == brandId,
+			cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		brand.PreviousSettlementFrom = previousSettlementFrom;
 		brand.PreviousSettlementTo = previousSettlementTo;
@@ -486,7 +488,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 
 	public async ValueTask UpdateBrandAsync(UpdateBrandInfo updateBrand, CancellationToken cancellationToken = default)
 	{
-		var brand = await _dbContext.Brands.FirstAsync(x => x.Id == updateBrand.BrandId, cancellationToken);
+		var brand = await _dbContext.Brands.FirstAsync(
+			x => x.Id == updateBrand.BrandId,
+			cancellationToken).ConfigureAwait(false);
 
 		brand.Name = updateBrand.Name;
 		brand.CurrentSettlementFrom = updateBrand.CurrentSettlementFrom.UtcDateTime;
@@ -575,7 +579,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 	public async ValueTask<BrandProductFeeInfo?> GetBrandProductFeeAsync(Guid brandId,
 		CancellationToken cancellationToken = default)
 	{
-		var fee = await _dbContext.BrandProductFees.FirstOrDefaultAsync(x => x.BrandId == brandId, cancellationToken);
+		var fee = await _dbContext.BrandProductFees.FirstOrDefaultAsync(
+			x => x.BrandId == brandId,
+			cancellationToken).ConfigureAwait(false);
 
 		return fee == null
 			? null
@@ -613,9 +619,11 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 			UpdatedOn = DateTime.UtcNow
 		};
 
-		_ = await _dbContext.BrandProductFees.AddAsync(fee, cancellationToken);
+		_ = await _dbContext.BrandProductFees.AddAsync(
+			fee,
+			cancellationToken).ConfigureAwait(false);
 
-		_ = await _dbContext.SaveChangesAsync(cancellationToken);
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 
 	public async ValueTask UpdateBrandProductFeeAsync(Guid brandId,
@@ -628,7 +636,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		string modifier,
 		CancellationToken cancellationToken = default)
 	{
-		var fee = await _dbContext.BrandProductFees.FirstAsync(x => x.BrandId == brandId, cancellationToken);
+		var fee = await _dbContext.BrandProductFees.FirstAsync(
+			x => x.BrandId == brandId,
+			cancellationToken).ConfigureAwait(false);
 
 		fee.CardGamePercentage = cardGamePercentage;
 		fee.LiveDealerPercentage = liveDealerPercentage;
@@ -639,6 +649,6 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		fee.UpdatedByUsername = modifier;
 		fee.UpdatedOn = DateTime.UtcNow;
 
-		_ = await _dbContext.SaveChangesAsync(cancellationToken);
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 }

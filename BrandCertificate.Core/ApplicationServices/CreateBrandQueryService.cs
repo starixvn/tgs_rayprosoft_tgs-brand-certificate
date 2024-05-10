@@ -58,7 +58,9 @@ internal class CreateBrandQueryService(
 			nextToDate,
 			query.EditorUsername);
 
-		await tgsRepository.CreateBrandAsync(brand, cancellationToken);
+		await tgsRepository.CreateBrandAsync(
+			brand,
+			cancellationToken).ConfigureAwait(false);
 
 		return brandId;
 	}
