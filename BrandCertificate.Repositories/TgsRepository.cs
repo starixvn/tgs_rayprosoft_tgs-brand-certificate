@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.EntityFrameworkCore;
 using Tgs.BrandCertificate.Repositories.Entities;
 
@@ -651,4 +650,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
+
+	public ValueTask InsertBrandSocialMediaSettingAsync(SocialMediaSetting setting, string modifier, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+	public ValueTask DeleteBrandSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+	public ValueTask<SocialMediaSetting?> GetSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+	public IAsyncEnumerable<SocialMediaSetting> QueryBrandSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
 }
