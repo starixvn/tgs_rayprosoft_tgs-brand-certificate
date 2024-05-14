@@ -183,7 +183,7 @@ public class BrandTests
         var sut = new BrandListQueryService(fakeTgsRepository);
 
         var query = new BrandListQuery(
-            Array.Empty<Guid>(),
+            [],
             null,
             BrandStatus.Archived);
 

@@ -20,16 +20,16 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
             entity.HasIndex(e => e.BrandId, "ix_brand_domains_brand_id");
 
             entity.Property(e => e.Id)
-            .ValueGeneratedNever()
-            .HasColumnName("id");
+                .ValueGeneratedNever()
+                .HasColumnName("id");
             entity.Property(e => e.BrandId).HasColumnName("brand_id");
             entity.Property(e => e.Url)
-            .HasMaxLength(128)
-            .HasColumnName("url");
+                .HasMaxLength(128)
+                .HasColumnName("url");
 
             entity.HasOne(d => d.Brand).WithMany(p => p.BrandDomains)
-            .HasForeignKey(d => d.BrandId)
-            .HasConstraintName("fk_brand_domains_brands_brand_id");
+                .HasForeignKey(d => d.BrandId)
+                .HasConstraintName("fk_brand_domains_brands_brand_id");
 
             OnConfigurePartial(entity);
         }

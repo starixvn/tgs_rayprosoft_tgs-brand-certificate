@@ -29,7 +29,9 @@ public class CertificateController : ControllerBase
 		[FromServices] IGetService<MakeBrandTokenCommand, string> generateTokenService,
 		Guid brandId)
 	{
-		var brandInfo = await getBrandService.GetAsync(new GetBrandInfoQuery(brandId), HttpContext.RequestAborted);
+		var brandInfo = await getBrandService.GetAsync(
+			new GetBrandInfoQuery(brandId),
+			HttpContext.RequestAborted).ConfigureAwait(false);
 
 		return brandInfo == null
 			? null

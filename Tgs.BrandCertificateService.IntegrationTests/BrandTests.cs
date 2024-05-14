@@ -726,7 +726,7 @@ public class BrandTests
 
 		var query = new BrandListQuery
 		{
-			BrandIds = new[] { brandId }
+			BrandIds = [brandId]
 		};
 
 		var actual = await sut.QueryBrandListAsync(query).ToArrayAsync();
@@ -1306,15 +1306,14 @@ public class BrandTests
 			EnablePlayerAgent = true,
 			AutoClearWageringRequirementBalance = 100,
 			UpdatedByUsername = string.Empty,
-			BrandCurrencies = new BrandCurrency[]
-			{
+			BrandCurrencies = [
 				new BrandCurrency
 				{
 					BrandId = brandId,
 					CurrencyCode = "CNY",
 					BrandCurrencyCode = "CNY"
 				}
-			},
+			],
 			Licensee = new Licensee
 			{
 				Id = licenseeId,
@@ -1442,7 +1441,7 @@ public class BrandTests
 
 		var actual = await sut.GetBrandProductFeeInfoAsync(brandId);
 
-		Assert.That(actual.CardGamePercentage, Is.EqualTo(10));
+		Assert.That(actual!.CardGamePercentage, Is.EqualTo(10));
 		Assert.That(actual.SlotPercentage, Is.EqualTo(10));
 		Assert.That(actual.SportsPercentage, Is.EqualTo(10));
 		Assert.That(actual.LiveDealerPercentage, Is.EqualTo(10));

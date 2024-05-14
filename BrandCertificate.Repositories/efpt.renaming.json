@@ -4,8 +4,8 @@
       "Tables": [
          {
             "Columns": [ ],
-            "Name": "vip_levels",
-            "NewName": "VipLevelRow"
+            "Name": "social_media_settings",
+            "NewName": "SocialMediaSettingRow"
          }
       ],
       "UseSchemaName": false

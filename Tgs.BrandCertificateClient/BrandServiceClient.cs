@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
@@ -21,6 +20,11 @@ internal class BrandServiceClient : IBrandServiceClient
 		Converters = {
 			new JsonStringEnumConverter()
 		}
+	};
+
+	private static readonly JsonSerializerOptions _PropertyNameCaseInsensitiveSerializerOptions = new()
+	{
+		PropertyNameCaseInsensitive = true
 	};
 
 	private readonly HttpClient _httpClient;
@@ -290,10 +294,9 @@ internal class BrandServiceClient : IBrandServiceClient
 	public async ValueTask<Guid> CreateBrandAsync(CreateBrandFullInfoRequest request, CancellationToken cancellationToken = default)
 	{
 		var requestContent = new StringContent(
-			JsonSerializer.Serialize(request, new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			}),
+			JsonSerializer.Serialize(
+				request,
+				_PropertyNameCaseInsensitiveSerializerOptions),
 			Encoding.UTF8,
 			MediaTypeNames.Application.Json);
 
@@ -314,10 +317,7 @@ internal class BrandServiceClient : IBrandServiceClient
 	public async ValueTask<Guid> UpdateBrandAsync(UpdateBrandFullInfoRequest request, CancellationToken cancellationToken = default)
 	{
 		var requestContent = new StringContent(
-			JsonSerializer.Serialize(request, new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			}),
+			JsonSerializer.Serialize(request, _PropertyNameCaseInsensitiveSerializerOptions),
 			Encoding.UTF8,
 			MediaTypeNames.Application.Json);
 
@@ -406,7 +406,6 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		_ = response.EnsureSuccessStatusCode();
 	}
-
 
 	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
 		UpdateBrandAgentDividendTimeIntervalRequest request,
@@ -524,4 +523,68 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		_ = response.EnsureSuccessStatusCode();
 	}
+
+	public ValueTask<Guid> AddSocialMediaSettingAsync(
+		Guid brandId,
+		AddSocialMediaSetting setting,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = JsonContent.Create(
+			setting,
+			MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json),
+			_SerializerOptions);
+
+		requestContent.Headers.Add("Modifier", modifier);
+
+		return _httpClient.PutAsync(
+			$"/social/{brandId}",
+			requestContent,
+			cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsync<Guid>(_SerializerOptions, cancellationToken)
+				.ToAsyncEnumerable())
+			.Take(1)
+			.SingleAsync(cancellationToken);
+	}
+
+	public async ValueTask DeleteSocialMediaSettingAsync(Guid brandId, Guid settingId, CancellationToken cancellationToken = default)
+		=> _ = await _httpClient.DeleteAsync($"/social/{brandId}/{settingId}", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.Take(1)
+			.FirstOrDefaultAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+	public async ValueTask SetSocialMediaSettingOrderAsync(
+		Guid settingId,
+		int newOrder,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = JsonContent.Create(
+			newOrder,
+			MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json),
+			_SerializerOptions);
+
+		requestContent.Headers.Add("Modifier", modifier);
+
+		_ = await _httpClient.PatchAsync($"/social/order/{settingId}", requestContent, cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.Take(1)
+			.FirstOrDefaultAsync(cancellationToken)
+			.ConfigureAwait(false);
+	}
+
+	public IAsyncEnumerable<SocialMediaSetting> ListSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> _httpClient.GetAsync($"/social/{brandId}", cancellationToken)
+			.ToAsyncEnumerable()
+			.Do(response => response.EnsureSuccessStatusCode())
+			.SelectMany(response => response.Content
+				.ReadFromJsonAsAsyncEnumerable<SocialMediaSetting>(_SerializerOptions, cancellationToken))
+			.Where(setting => setting is not null)
+			.Select(setting => setting!);
 }

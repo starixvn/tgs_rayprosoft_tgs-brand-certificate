@@ -30,6 +30,8 @@ public partial class TgsContext : DbContext
 
     public virtual DbSet<Reseller> Resellers { get; set; }
 
+    public virtual DbSet<SocialMediaSettingRow> SocialMediaSettingRows { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -44,6 +46,7 @@ public partial class TgsContext : DbContext
         modelBuilder.ApplyConfiguration(new Configurations.BrandProductFeeConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.LicenseeConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.ResellerConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.SocialMediaSettingRowConfiguration());
         OnModelCreatingPartial(modelBuilder);
     }
 
