@@ -99,4 +99,6 @@ public interface ITgsRepository
 	ValueTask<SocialMediaSetting?> GetSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<SocialMediaSetting> QueryBrandSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask UpdateSocialMediaSettingOrderAsync(Guid settingId, int newOrder, string modifier, CancellationToken cancellationToken = default);
 }

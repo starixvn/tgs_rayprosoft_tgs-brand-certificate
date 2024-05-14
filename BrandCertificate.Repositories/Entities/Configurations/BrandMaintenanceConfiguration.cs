@@ -20,18 +20,18 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
             entity.HasIndex(e => e.BrandId, "ix_brand_maintenance_brand_id").IsUnique();
 
             entity.Property(e => e.Id)
-            .ValueGeneratedNever()
-            .HasColumnName("id");
+                .ValueGeneratedNever()
+                .HasColumnName("id");
             entity.Property(e => e.BeginTime).HasColumnName("begin_time");
             entity.Property(e => e.BrandId).HasColumnName("brand_id");
             entity.Property(e => e.Content)
-            .HasMaxLength(2000)
-            .HasColumnName("content");
+                .HasMaxLength(2000)
+                .HasColumnName("content");
             entity.Property(e => e.EndTime).HasColumnName("end_time");
 
             entity.HasOne(d => d.Brand).WithOne(p => p.BrandMaintenance)
-            .HasForeignKey<BrandMaintenance>(d => d.BrandId)
-            .HasConstraintName("fk_brand_maintenance_brands_brand_id");
+                .HasForeignKey<BrandMaintenance>(d => d.BrandId)
+                .HasConstraintName("fk_brand_maintenance_brands_brand_id");
 
             OnConfigurePartial(entity);
         }

@@ -415,6 +415,7 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
+
 	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(Guid brandId,
 		DateTime previousSettlementFrom,
 		DateTime previousSettlementTo,
@@ -567,7 +568,6 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 			brand.UpdatedOn,
 			brand.SettlementDay,
 			brand.TimeSpanMinutes);
-
 	}
 
 	public IAsyncEnumerable<string> GetBrandDomainsAsync(Guid brandId, CancellationToken cancellationToken = default)
@@ -651,8 +651,89 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 
-	public ValueTask InsertBrandSocialMediaSettingAsync(SocialMediaSetting setting, string modifier, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-	public ValueTask DeleteBrandSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-	public ValueTask<SocialMediaSetting?> GetSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-	public IAsyncEnumerable<SocialMediaSetting> QueryBrandSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+	public async ValueTask InsertBrandSocialMediaSettingAsync(
+		SocialMediaSetting setting,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var currentTime = DateTime.UtcNow;
+
+		_ = await dbContext.SocialMediaSettingRows.AddAsync(
+			new SocialMediaSettingRow
+			{
+				Id = setting.Id,
+				BrandId = setting.BrandId,
+				Type = setting.Type.ToString(),
+				Name = setting.Name,
+				Order = setting.Order,
+				Url = setting.Url.ToString(),
+				CreatedBy = modifier,
+				UpdatedBy = modifier,
+				CreatedOn = currentTime,
+				UpdatedOn = currentTime
+			},
+			cancellationToken).ConfigureAwait(false);
+
+		_ = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public async ValueTask DeleteBrandSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default)
+	{
+		var findRow = await dbContext.SocialMediaSettingRows.FindAsync(
+			[settingId],
+			cancellationToken).ConfigureAwait(false);
+
+		if (findRow is null)
+			return;
+
+		_ = dbContext.SocialMediaSettingRows.Remove(findRow);
+
+		_ = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public async ValueTask<SocialMediaSetting?> GetSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default)
+	{
+		var findRow = await dbContext.SocialMediaSettingRows.FindAsync(
+			[settingId],
+			cancellationToken).ConfigureAwait(false);
+
+		return findRow is null
+			? null
+			: new SocialMediaSetting(
+				findRow.Id,
+				findRow.BrandId,
+				findRow.Name,
+				Enum.Parse<SocialType>(findRow.Type),
+				new Uri(findRow.Url),
+				findRow.Order);
+	}
+
+	public IAsyncEnumerable<SocialMediaSetting> QueryBrandSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> dbContext.SocialMediaSettingRows
+			.Where(row => row.BrandId == brandId)
+			.AsNoTracking()
+			.ToAsyncEnumerable()
+			.Select(row => new SocialMediaSetting(
+				row.Id,
+				row.BrandId,
+				row.Name,
+				Enum.Parse<SocialType>(row.Type),
+				new Uri(row.Url),
+				row.Order));
+
+	public async ValueTask UpdateSocialMediaSettingOrderAsync(Guid settingId, int newOrder, string modifier, CancellationToken cancellationToken = default)
+	{
+		var findRow = await dbContext.SocialMediaSettingRows.FindAsync(
+			[settingId],
+			cancellationToken).ConfigureAwait(false);
+
+		if (findRow is null)
+			return;
+
+		findRow.Order = newOrder;
+		findRow.UpdatedBy = modifier;
+		findRow.UpdatedOn = DateTime.UtcNow;
+
+		_ = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
 }

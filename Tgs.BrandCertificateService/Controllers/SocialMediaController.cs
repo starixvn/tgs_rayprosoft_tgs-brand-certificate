@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
 using Tgs.BrandCertificateService.ViewModels;
@@ -7,7 +6,7 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.BrandCertificateService.Controllers;
 
-[Route("api/social")]
+[Route("social")]
 [ApiController]
 public class SocialMediaController : ControllerBase
 {
@@ -39,6 +38,18 @@ public class SocialMediaController : ControllerBase
 			settingId);
 
 		return deleteService.ExecuteAsync(command, HttpContext.RequestAborted);
+	}
+
+	[HttpPatch("order/{settingId:Guid}", Name = "SetSocialMediaSettingOrder")]
+	public ValueTask SetSettingOrderAsync(
+		[FromServices] ICommandService<SetSocialMediaSettingOrderCommand> setOrderService,
+		[FromHeader(Name = "Modifier")] string modifier,
+		Guid settingId,
+		[FromBody] int newOrder)
+	{
+		var command = new SetSocialMediaSettingOrderCommand(settingId, newOrder, modifier);
+
+		return setOrderService.ExecuteAsync(command, HttpContext.RequestAborted);
 	}
 
 	[HttpGet("{brandId:Guid}", Name = "ListSocialMediaSettings")]

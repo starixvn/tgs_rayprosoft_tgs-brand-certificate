@@ -25,7 +25,8 @@ public class DeleteSocialMediaSettingCommandServiceTests
                 command.BrandId,
                 "aaa",
                 SocialType.Facebook,
-                new Uri("https://localhost")));
+                new Uri("https://localhost"),
+                100));
 
         await sut.ExecuteAsync(command);
 

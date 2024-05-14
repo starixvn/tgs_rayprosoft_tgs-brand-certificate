@@ -6,5 +6,6 @@ internal class ListBrandSocialMediaSettingsQueryService(ITgsRepository tgsReposi
 	: IQueryService<ListBrandSocialMediaSettingsQuery, SocialMediaSetting>
 {
 	public IAsyncEnumerable<SocialMediaSetting> QueryAsync(ListBrandSocialMediaSettingsQuery query, CancellationToken cancellationToken = default)
-		=> tgsRepository.QueryBrandSocialMediaSettingsAsync(query.BrandId, cancellationToken);
+		=> tgsRepository.QueryBrandSocialMediaSettingsAsync(query.BrandId, cancellationToken)
+			.OrderBy(setting => setting.Order);
 }

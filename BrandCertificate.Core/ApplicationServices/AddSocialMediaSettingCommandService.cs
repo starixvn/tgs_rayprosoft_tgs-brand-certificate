@@ -12,7 +12,8 @@ internal class AddSocialMediaSettingCommandService(ITgsRepository tgsRepository)
 			command.BrandId,
 			command.Name,
 			command.Type,
-			command.Url);
+			command.Url,
+			100);
 
 		await tgsRepository.InsertBrandSocialMediaSettingAsync(
 			newSocialMediaSetting,

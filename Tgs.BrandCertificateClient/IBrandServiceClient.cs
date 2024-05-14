@@ -50,7 +50,7 @@ public interface IBrandServiceClient
 	ValueTask<bool?> GetBrandPlatformAccountFundAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	ValueTask SetBrandPlatformAccountFundAsync(Guid brandId, bool enabled, string modifier, CancellationToken cancellationToken = default);
-	
+
 	ValueTask<Guid> CreateBrandAsync(
 		CreateBrandFullInfoRequest request,
 		CancellationToken cancellationToken = default);
@@ -68,4 +68,19 @@ public interface IBrandServiceClient
 	ValueTask CreateUpdateBrandProductFeeAsync(
 		CreateUpdateBrandProductFeeRequest request,
 		CancellationToken cancellationToken = default);
+
+	ValueTask<Guid> AddSocialMediaSettingAsync(
+		Guid brandId,
+		AddSocialMediaSetting setting,
+		string modifier,
+		CancellationToken cancellationToken = default);
+
+	ValueTask DeleteSocialMediaSettingAsync(
+		Guid brandId,
+		Guid settingId,
+		CancellationToken cancellationToken = default);
+
+	ValueTask SetSocialMediaSettingOrderAsync(Guid settingId, int newOrder, string modifier, CancellationToken cancellationToken = default);
+
+	IAsyncEnumerable<SocialMediaSetting> ListSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
 }

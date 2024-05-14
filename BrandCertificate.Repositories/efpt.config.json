@@ -2,7 +2,6 @@
    "CodeGenerationMode": 4,
    "ContextClassName": "TgsContext",
    "ContextNamespace": "Entities",
-   "DefaultDacpacSchema": null,
    "FilterSchemas": true,
    "IncludeConnectionString": false,
    "ModelNamespace": "Entities",
@@ -50,10 +49,15 @@
       {
          "Name": "dbo.resellers",
          "ObjectType": 0
+      },
+      {
+         "Name": "dbo.social_media_settings",
+         "ObjectType": 0
       }
    ],
-   "UiHint": "tgs",
+   "UiHint": null,
    "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDateOnlyTimeOnly": false,
@@ -65,11 +69,12 @@
    "UseInflector": true,
    "UseLegacyPluralizer": false,
    "UseManyToManyEntity": true,
-   "UseNoDefaultConstructor": false,
+   "UseNoDefaultConstructor": true,
    "UseNoNavigations": false,
    "UseNoObjectFilter": false,
    "UseNodaTime": false,
    "UseNullableReferences": true,
+   "UsePrefixNavigationNaming": false,
    "UseSchemaFolders": false,
    "UseSchemaNamespaces": false,
    "UseSpatial": false,
