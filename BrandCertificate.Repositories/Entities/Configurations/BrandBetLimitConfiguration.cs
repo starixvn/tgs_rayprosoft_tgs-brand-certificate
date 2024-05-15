@@ -24,8 +24,8 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
             entity.Property(e => e.IsDefault).HasColumnName("is_default");
 
             entity.HasOne(d => d.Brand).WithMany(p => p.BrandBetLimits)
-            .HasForeignKey(d => d.BrandId)
-            .HasConstraintName("fk_brand_bet_limits_brands_brand_id");
+                .HasForeignKey(d => d.BrandId)
+                .HasConstraintName("fk_brand_bet_limits_brands_brand_id");
 
             OnConfigurePartial(entity);
         }

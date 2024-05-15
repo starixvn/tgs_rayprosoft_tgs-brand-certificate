@@ -3,19 +3,11 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.BrandCertificate.ApplicationServices;
 
-internal class CreateBrandQueryService : IGetService<CreateBrandQuery, Guid>
+internal class CreateBrandQueryService(
+	ITgsRepository tgsRepository,
+	ISerialNumberGenerator serialNumberGenerator,
+	ICredentialGenerator credentialGenerator) : IGetService<CreateBrandQuery, Guid>
 {
-	private readonly ITgsRepository _tgsRepository;
-	private readonly ISerialNumberGenerator _serialNumberGenerator;
-	private readonly ICredentialGenerator _credentialGenerator;
-
-	public CreateBrandQueryService(ITgsRepository tgsRepository, ISerialNumberGenerator serialNumberGenerator, ICredentialGenerator credentialGenerator)
-	{
-		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
-		_serialNumberGenerator = serialNumberGenerator;
-		_credentialGenerator = credentialGenerator;
-	}
-
 	public async ValueTask<Guid> GetAsync(CreateBrandQuery query,
 		CancellationToken cancellationToken = default)
 	{
@@ -30,13 +22,13 @@ internal class CreateBrandQueryService : IGetService<CreateBrandQuery, Guid>
 				query.SettlementDay,
 				now);
 
-		var brandId = await _serialNumberGenerator
+		var brandId = await serialNumberGenerator
 			.GenerateAsync(cancellationToken)
 			.ConfigureAwait(false);
 
-		var apiKey = _credentialGenerator.GetApiKey();
+		var apiKey = credentialGenerator.GetApiKey();
 
-		var secretKey = _credentialGenerator.GetSecretKey();
+		var secretKey = credentialGenerator.GetSecretKey();
 
 		var brand = new CreateBrandInfo(
 			brandId,
@@ -66,7 +58,9 @@ internal class CreateBrandQueryService : IGetService<CreateBrandQuery, Guid>
 			nextToDate,
 			query.EditorUsername);
 
-		await _tgsRepository.CreateBrandAsync(brand, cancellationToken);
+		await tgsRepository.CreateBrandAsync(
+			brand,
+			cancellationToken).ConfigureAwait(false);
 
 		return brandId;
 	}

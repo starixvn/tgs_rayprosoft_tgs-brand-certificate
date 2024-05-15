@@ -69,6 +69,21 @@ public interface IBrandServiceClient
 		CreateUpdateBrandProductFeeRequest request,
 		CancellationToken cancellationToken = default);
 
+	ValueTask<Guid> AddSocialMediaSettingAsync(
+		Guid brandId,
+		AddSocialMediaSetting setting,
+		string modifier,
+		CancellationToken cancellationToken = default);
+
+	ValueTask DeleteSocialMediaSettingAsync(
+		Guid brandId,
+		Guid settingId,
+		CancellationToken cancellationToken = default);
+
+	ValueTask SetSocialMediaSettingOrderAsync(Guid settingId, int newOrder, string modifier, CancellationToken cancellationToken = default);
+
+	IAsyncEnumerable<SocialMediaSetting> ListSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
+
 	ValueTask SetBrandEnableSmsAsync(
 		Guid brandId,
 		bool enableSms,

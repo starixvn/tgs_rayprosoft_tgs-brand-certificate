@@ -27,7 +27,8 @@ internal class BrandCertificateMiddleware
 			{
 				_logger.LogDebug("Receive brand-token: {jwt}", jwt);
 
-				var securityKey = await brandCertificateClient.GetSystemValidateSecurityKeyAsync(context.RequestAborted);
+				var securityKey = await brandCertificateClient.GetSystemValidateSecurityKeyAsync(
+					context.RequestAborted).ConfigureAwait(false);
 
 				var handler = new JwtSecurityTokenHandler();
 
@@ -62,6 +63,6 @@ internal class BrandCertificateMiddleware
 				}
 			}
 		}
-		await _next(context);
+		await _next(context).ConfigureAwait(false);
 	}
 }

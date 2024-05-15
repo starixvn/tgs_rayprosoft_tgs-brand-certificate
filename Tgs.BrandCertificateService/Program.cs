@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.Json.Serialization;
 using FluentdForward.OpenTelemetry.MessagePack;
 using Microsoft.EntityFrameworkCore;
 using NATS.Client.Core;
@@ -59,7 +60,9 @@ builder.Services
 
 builder.Services
 	.AddRouting(options => options.LowercaseUrls = true)
-	.AddControllers();
+	.AddControllers()
+	.AddJsonOptions(options => options
+		.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services
 	.AddHealthChecks();

@@ -425,7 +425,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		DateTime nextSettlementTo,
 		CancellationToken cancellationToken = default)
 	{
-		var brand = await _dbContext.Brands.FirstAsync(x => x.Id == brandId, cancellationToken: cancellationToken);
+		var brand = await _dbContext.Brands.FirstAsync(
+			x => x.Id == brandId,
+			cancellationToken: cancellationToken).ConfigureAwait(false);
 
 		brand.PreviousSettlementFrom = previousSettlementFrom;
 		brand.PreviousSettlementTo = previousSettlementTo;
@@ -486,7 +488,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 
 	public async ValueTask UpdateBrandAsync(UpdateBrandInfo updateBrand, CancellationToken cancellationToken = default)
 	{
-		var brand = await _dbContext.Brands.FirstAsync(x => x.Id == updateBrand.BrandId, cancellationToken);
+		var brand = await _dbContext.Brands.FirstAsync(
+			x => x.Id == updateBrand.BrandId,
+			cancellationToken).ConfigureAwait(false);
 
 		brand.Name = updateBrand.Name;
 		brand.CurrentSettlementFrom = updateBrand.CurrentSettlementFrom.UtcDateTime;
@@ -574,7 +578,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 	public async ValueTask<BrandProductFeeInfo?> GetBrandProductFeeAsync(Guid brandId,
 		CancellationToken cancellationToken = default)
 	{
-		var fee = await _dbContext.BrandProductFees.FirstOrDefaultAsync(x => x.BrandId == brandId, cancellationToken);
+		var fee = await _dbContext.BrandProductFees.FirstOrDefaultAsync(
+			x => x.BrandId == brandId,
+			cancellationToken).ConfigureAwait(false);
 
 		return fee == null
 			? null
@@ -612,9 +618,11 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 			UpdatedOn = DateTime.UtcNow
 		};
 
-		_ = await _dbContext.BrandProductFees.AddAsync(fee, cancellationToken);
+		_ = await _dbContext.BrandProductFees.AddAsync(
+			fee,
+			cancellationToken).ConfigureAwait(false);
 
-		_ = await _dbContext.SaveChangesAsync(cancellationToken);
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 
 	public async ValueTask UpdateBrandProductFeeAsync(Guid brandId,
@@ -627,7 +635,9 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		string modifier,
 		CancellationToken cancellationToken = default)
 	{
-		var fee = await _dbContext.BrandProductFees.FirstAsync(x => x.BrandId == brandId, cancellationToken);
+		var fee = await _dbContext.BrandProductFees.FirstAsync(
+			x => x.BrandId == brandId,
+			cancellationToken).ConfigureAwait(false);
 
 		fee.CardGamePercentage = cardGamePercentage;
 		fee.LiveDealerPercentage = liveDealerPercentage;
@@ -638,7 +648,93 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		fee.UpdatedByUsername = modifier;
 		fee.UpdatedOn = DateTime.UtcNow;
 
-		_ = await _dbContext.SaveChangesAsync(cancellationToken);
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public async ValueTask InsertBrandSocialMediaSettingAsync(
+		SocialMediaSetting setting,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var currentTime = DateTime.UtcNow;
+
+		_ = await dbContext.SocialMediaSettingRows.AddAsync(
+			new SocialMediaSettingRow
+			{
+				Id = setting.Id,
+				BrandId = setting.BrandId,
+				Type = setting.Type.ToString(),
+				Name = setting.Name,
+				Order = setting.Order,
+				Url = setting.Url.ToString(),
+				CreatedBy = modifier,
+				UpdatedBy = modifier,
+				CreatedOn = currentTime,
+				UpdatedOn = currentTime
+			},
+			cancellationToken).ConfigureAwait(false);
+
+		_ = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public async ValueTask DeleteBrandSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default)
+	{
+		var findRow = await dbContext.SocialMediaSettingRows.FindAsync(
+			[settingId],
+			cancellationToken).ConfigureAwait(false);
+
+		if (findRow is null)
+			return;
+
+		_ = dbContext.SocialMediaSettingRows.Remove(findRow);
+
+		_ = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public async ValueTask<SocialMediaSetting?> GetSocialMediaSettingAsync(Guid settingId, CancellationToken cancellationToken = default)
+	{
+		var findRow = await dbContext.SocialMediaSettingRows.FindAsync(
+			[settingId],
+			cancellationToken).ConfigureAwait(false);
+
+		return findRow is null
+			? null
+			: new SocialMediaSetting(
+				findRow.Id,
+				findRow.BrandId,
+				findRow.Name,
+				Enum.Parse<SocialType>(findRow.Type),
+				new Uri(findRow.Url),
+				findRow.Order);
+	}
+
+	public IAsyncEnumerable<SocialMediaSetting> QueryBrandSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default)
+		=> dbContext.SocialMediaSettingRows
+			.Where(row => row.BrandId == brandId)
+			.AsNoTracking()
+			.ToAsyncEnumerable()
+			.Select(row => new SocialMediaSetting(
+				row.Id,
+				row.BrandId,
+				row.Name,
+				Enum.Parse<SocialType>(row.Type),
+				new Uri(row.Url),
+				row.Order));
+
+	public async ValueTask UpdateSocialMediaSettingOrderAsync(Guid settingId, int newOrder, string modifier, CancellationToken cancellationToken = default)
+	{
+		var findRow = await dbContext.SocialMediaSettingRows.FindAsync(
+			[settingId],
+			cancellationToken).ConfigureAwait(false);
+
+		if (findRow is null)
+			return;
+
+		findRow.Order = newOrder;
+		findRow.UpdatedBy = modifier;
+		findRow.UpdatedOn = DateTime.UtcNow;
+
+		_ = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 
 	public async ValueTask SetBrandEnableSmsAsync(
