@@ -407,7 +407,6 @@ internal class BrandServiceClient : IBrandServiceClient
 		_ = response.EnsureSuccessStatusCode();
 	}
 
-
 	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
 		UpdateBrandAgentDividendTimeIntervalRequest request,
 		CancellationToken cancellationToken = default)
@@ -519,6 +518,27 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		var response = await _httpClient.PatchAsync(
 			$"/brand/platform-account-fund/{brandId}",
+			requestContent,
+			cancellationToken).ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
+
+	public async ValueTask SetBrandEnableSmsAsync(
+		Guid brandId,
+		bool enableSms,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = JsonContent.Create(
+			enableSms,
+			MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json),
+			_SerializerOptions);
+
+		requestContent.Headers.Add("Modifier", modifier);
+
+		var response = await _httpClient.PatchAsync(
+			$"/brand/enable-sms/{brandId}",
 			requestContent,
 			cancellationToken).ConfigureAwait(false);
 

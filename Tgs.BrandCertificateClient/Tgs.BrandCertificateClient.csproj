@@ -4,7 +4,7 @@
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <RootNamespace>Tgs.BrandCertificate.Clients</RootNamespace>
     <Nullable>enable</Nullable>
-    <Version>0.1.6</Version>
+    <Version>0.1.7</Version>
     <Authors>Raypro</Authors>
     <PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-brand-certificate</PackageProjectUrl>
     <RepositoryUrl>https://gitlab.com/rayprosoft/tgs-brand-certificate.git</RepositoryUrl>

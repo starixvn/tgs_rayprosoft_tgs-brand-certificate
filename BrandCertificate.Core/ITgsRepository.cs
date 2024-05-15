@@ -49,7 +49,7 @@ public interface ITgsRepository
 	ValueTask<bool?> GetBrandPlatformAccountFundCheckFlagAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	ValueTask SetBrandPlatformAccountFundCheckFlagAsync(Guid brandId, bool enabled, string modifier, CancellationToken cancellationToken = default);
-	
+
 	ValueTask UpdateBrandAgentDividendTimeIntervalAsync(
 		Guid brandId,
 		DateTime previousSettlementFrom,
@@ -89,6 +89,12 @@ public interface ITgsRepository
 		decimal slotRebatePercentage,
 		decimal sportsRebatePercentage,
 		decimal virtualSportsRebatePercentage,
+		string modifier,
+		CancellationToken cancellationToken = default);
+
+	ValueTask SetBrandEnableSmsAsync(
+		Guid brandId,
+		bool enableSms,
 		string modifier,
 		CancellationToken cancellationToken = default);
 }

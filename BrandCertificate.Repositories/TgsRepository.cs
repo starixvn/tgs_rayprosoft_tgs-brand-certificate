@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using DocumentFormat.OpenXml.Office2016.Excel;
 using Microsoft.EntityFrameworkCore;
 using Tgs.BrandCertificate.Repositories.Entities;
 
@@ -416,6 +415,7 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
+
 	public async ValueTask UpdateBrandAgentDividendTimeIntervalAsync(Guid brandId,
 		DateTime previousSettlementFrom,
 		DateTime previousSettlementTo,
@@ -564,7 +564,6 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 			brand.UpdatedOn,
 			brand.SettlementDay,
 			brand.TimeSpanMinutes);
-
 	}
 
 	public IAsyncEnumerable<string> GetBrandDomainsAsync(Guid brandId, CancellationToken cancellationToken = default)
@@ -640,5 +639,25 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		fee.UpdatedOn = DateTime.UtcNow;
 
 		_ = await _dbContext.SaveChangesAsync(cancellationToken);
+	}
+
+	public async ValueTask SetBrandEnableSmsAsync(
+		Guid brandId,
+		bool enableSms,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FindAsync(
+			[brandId],
+			cancellationToken).ConfigureAwait(false);
+
+		if (brand is null)
+			return;
+
+		brand.EnableSms = enableSms;
+		brand.UpdatedByUsername = modifier;
+		brand.UpdatedOn = DateTime.UtcNow;
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
 }

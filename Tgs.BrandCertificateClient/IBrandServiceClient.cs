@@ -50,7 +50,7 @@ public interface IBrandServiceClient
 	ValueTask<bool?> GetBrandPlatformAccountFundAsync(Guid brandId, CancellationToken cancellationToken = default);
 
 	ValueTask SetBrandPlatformAccountFundAsync(Guid brandId, bool enabled, string modifier, CancellationToken cancellationToken = default);
-	
+
 	ValueTask<Guid> CreateBrandAsync(
 		CreateBrandFullInfoRequest request,
 		CancellationToken cancellationToken = default);
@@ -67,5 +67,11 @@ public interface IBrandServiceClient
 
 	ValueTask CreateUpdateBrandProductFeeAsync(
 		CreateUpdateBrandProductFeeRequest request,
+		CancellationToken cancellationToken = default);
+
+	ValueTask SetBrandEnableSmsAsync(
+		Guid brandId,
+		bool enableSms,
+		string modifier,
 		CancellationToken cancellationToken = default);
 }

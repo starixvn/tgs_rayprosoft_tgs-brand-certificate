@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tgs.BrandCertificate;
 using Tgs.BrandCertificate.ApplicationServices;
-using Tgs.BrandCertificate.Repositories.Entities;
 using Tgs.BrandCertificateService.ViewModels;
 using Tgs.ServiceUtility;
 
@@ -500,7 +499,7 @@ public class BrandController : ControllerBase
 			};
 	}
 
-	[HttpPut("product-fee",Name = "UpdateBrandProductFee")]
+	[HttpPut("product-fee", Name = "UpdateBrandProductFee")]
 	public ValueTask UpdateBrandProductFeeAsync(
 		[FromServices] ICommandService<UpdateBrandProductFeeCommand> getService,
 		[FromBody] CreateUpdateBrandProductFeeRequest request)
@@ -517,4 +516,19 @@ public class BrandController : ControllerBase
 
 		return getService.ExecuteAsync(query, HttpContext.RequestAborted);
 	}
+
+	[HttpPatch("enable-sms/{brandId:Guid}", Name = "SetBrandEnableSms")]
+	public ValueTask SetBrandEnableSmsAsync(
+		[FromServices] ICommandService<SetBrandEnableSmsCommand> commandService,
+		[FromHeader(Name = "Modifier")] string modifier,
+		Guid brandId,
+		[FromBody] bool enableSms)
+	{
+		var command = new SetBrandEnableSmsCommand(
+			brandId,
+			enableSms,
+			modifier);
+
+		return commandService.ExecuteAsync(command, HttpContext.RequestAborted);
+	}	
 }
