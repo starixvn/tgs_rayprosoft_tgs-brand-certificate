@@ -3,4 +3,5 @@ public record SocialMediaSetting(
 	Guid Id,
 	string Name,
 	SocialType Type,
-	Uri Url);
+	Uri Url,
+	int Order);
