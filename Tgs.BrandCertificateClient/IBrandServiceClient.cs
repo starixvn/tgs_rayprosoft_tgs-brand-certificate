@@ -83,4 +83,10 @@ public interface IBrandServiceClient
 	ValueTask SetSocialMediaSettingOrderAsync(Guid settingId, int newOrder, string modifier, CancellationToken cancellationToken = default);
 
 	IAsyncEnumerable<SocialMediaSetting> ListSocialMediaSettingsAsync(Guid brandId, CancellationToken cancellationToken = default);
+
+	ValueTask SetBrandEnableSmsAsync(
+		Guid brandId,
+		bool enableSms,
+		string modifier,
+		CancellationToken cancellationToken = default);
 }

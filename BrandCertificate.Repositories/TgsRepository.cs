@@ -736,4 +736,24 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 
 		_ = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 	}
+
+	public async ValueTask SetBrandEnableSmsAsync(
+		Guid brandId,
+		bool enableSms,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var brand = await _dbContext.Brands.FindAsync(
+			[brandId],
+			cancellationToken).ConfigureAwait(false);
+
+		if (brand is null)
+			return;
+
+		brand.EnableSms = enableSms;
+		brand.UpdatedByUsername = modifier;
+		brand.UpdatedOn = DateTime.UtcNow;
+
+		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
 }

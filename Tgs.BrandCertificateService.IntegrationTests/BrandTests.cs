@@ -1407,7 +1407,6 @@ public class BrandTests
 		Assert.That(actual.Length, Is.EqualTo(2));
 	}
 
-
 	[Test]
 	public async Task Get_A_Brand_Product_Fee()
 	{
@@ -1536,5 +1535,43 @@ public class BrandTests
 		Assert.That(actualBrand.LiveDealerPercentage, Is.EqualTo(20));
 		Assert.That(actualBrand.LotteryPercentage, Is.EqualTo(20));
 		Assert.That(actualBrand.VirtualSportsPercentage, Is.EqualTo(20));
+	}
+
+	[Test]
+	public async Task 整合測試_開啟或關閉平台簡訊開關()
+	{
+		await using var web = new TestBrandCertificateApplication();
+
+		var http = web.CreateClient();
+
+		var dbContext = web.Services.GetRequiredService<TgsContext>();
+
+		var sut = new BrandServiceClient(http);
+
+		var brandId = Guid.NewGuid();
+
+		var brand = new Brand
+		{
+			Id = brandId,
+			EnableSms = false,
+			UpdatedByUsername = "system",
+			ApiKey = "apiKey",
+			ClientId = "clientId",
+			Code = "GPI",
+			CreatedByUsername = "system",
+			Name = "GPI",
+			SecretKey = "secretKey",
+		};
+
+		_ = await dbContext.Brands.AddAsync(brand);
+
+		_ = await dbContext.SaveChangesAsync();
+
+		await sut.SetBrandEnableSmsAsync(brandId, true, "test");
+
+		var actual = dbContext.Brands.First(x => x.Id == brandId);
+
+		Assert.That(actual.EnableSms, Is.True);
+		Assert.That(actual.UpdatedByUsername, Is.EqualTo("test"));
 	}
 }
