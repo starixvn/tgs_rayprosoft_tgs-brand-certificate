@@ -6,5 +6,6 @@ public enum SocialType
 	Facebook,
 	X,
 	Instagram,
-	Threads
+	Threads,
+	Tiktok
 }
