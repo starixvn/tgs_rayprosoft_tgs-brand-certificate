@@ -30,10 +30,10 @@ internal class BrandCertificateManager
 
 	public string MakeJwt(Guid brandId, string brandCode)
 	{
-		var id = new ClaimsIdentity(new[]{
+		var id = new ClaimsIdentity([
 			new Claim(JwtRegisteredClaimNames.Name, brandCode),
 			new Claim(JwtRegisteredClaimNames.Sub, brandId.ToString())
-		});
+		]);
 
 		var token = _jwtSecurityTokenHandler.CreateToken(new SecurityTokenDescriptor
 		{
