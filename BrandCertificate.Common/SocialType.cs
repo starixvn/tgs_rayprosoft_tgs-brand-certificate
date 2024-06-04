@@ -7,5 +7,7 @@ public enum SocialType
 	X,
 	Instagram,
 	Threads,
-	Tiktok
+	Tiktok,
+	Telegram,
+	WhatsApp
 }
