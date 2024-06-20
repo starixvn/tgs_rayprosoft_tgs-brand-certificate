@@ -64,16 +64,15 @@ public static class AgentDividendSettlementIntervalGenerator
 				if (startDate.Day <= dayOfMonth)
 				{
 					return (currentFromDate,
-						startDate,
-						startDate.AddDays(1),
-						DateGenerator.GetSpecifyDayOfMonth(startDate, dayOfMonth.Value!));
+						DateGenerator.GetSpecifyDayOfMonth(startDate, dayOfMonth.Value),
+						DateGenerator.GetSpecifyDayOfMonth(startDate, dayOfMonth.Value).AddDays(1),
+						DateGenerator.GetSpecifyDayOfMonth(startDate.AddMonths(1), dayOfMonth.Value));
 				}
 
 				return (currentFromDate,
-					startDate,
-					startDate.AddDays(1),
-					DateGenerator.GetSpecifyDayOfMonth(startDate.AddMonths(1),
-						dayOfMonth.Value!));
+					DateGenerator.GetSpecifyDayOfMonth(startDate.AddMonths(1), dayOfMonth.Value),
+					DateGenerator.GetSpecifyDayOfMonth(startDate.AddMonths(1), dayOfMonth.Value).AddDays(1),
+					DateGenerator.GetSpecifyDayOfMonth(startDate.AddMonths(2), dayOfMonth.Value));
 
 			default:
 				throw new ArgumentOutOfRangeException(nameof(type), type, null);
