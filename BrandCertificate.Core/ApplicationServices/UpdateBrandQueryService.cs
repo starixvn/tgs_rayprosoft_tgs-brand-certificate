@@ -15,7 +15,8 @@ internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetServi
 		var nextSettlementFrom = brandAgentDividendInterval.NextSettlementFrom;
 		var nextSettlementTo = brandAgentDividendInterval.NextSettlementTo;
 
-		if (query.SettlementIntervalType != brandAgentDividendInterval.SettlementIntervalType)
+		if (query.SettlementIntervalType != brandAgentDividendInterval.SettlementIntervalType ||
+		    query.SettlementDay != brandAgentDividendInterval.SettlementDay)
 		{
 			var timeSpan = new TimeSpan(8, 0, 0);
 			var now = new DateTimeOffset(DateTimeOffset.Now.Year, DateTimeOffset.Now.Month,
