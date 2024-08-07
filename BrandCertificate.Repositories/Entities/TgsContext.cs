@@ -24,6 +24,8 @@ public partial class TgsContext : DbContext
 
     public virtual DbSet<BrandMaintenance> BrandMaintenances { get; set; }
 
+    public virtual DbSet<BrandPlayerContractDisplay> BrandPlayerContractDisplays { get; set; }
+
     public virtual DbSet<BrandProductFee> BrandProductFees { get; set; }
 
     public virtual DbSet<Licensee> Licensees { get; set; }
@@ -43,6 +45,7 @@ public partial class TgsContext : DbContext
         modelBuilder.ApplyConfiguration(new Configurations.BrandCurrencyConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.BrandDomainConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.BrandMaintenanceConfiguration());
+        modelBuilder.ApplyConfiguration(new Configurations.BrandPlayerContractDisplayConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.BrandProductFeeConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.LicenseeConfiguration());
         modelBuilder.ApplyConfiguration(new Configurations.ResellerConfiguration());

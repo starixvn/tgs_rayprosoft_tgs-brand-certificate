@@ -89,4 +89,15 @@ public interface IBrandServiceClient
 		bool enableSms,
 		string modifier,
 		CancellationToken cancellationToken = default);
+
+	IAsyncEnumerable<BrandPlayerContractDisplayInfo> ListBrandPlayerContractDisplayAsync(
+		Guid brandId,
+		CancellationToken cancellationToken = default);
+
+	ValueTask SetBrandPlayerContractDisplayAsync(
+		Guid brandId,
+		string name,
+		bool isVisualized,
+		string modifier,
+		CancellationToken cancellationToken = default);
 }

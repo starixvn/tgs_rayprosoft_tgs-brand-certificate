@@ -35,6 +35,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "dbo.brand_player_contract_display",
+         "ObjectType": 0
+      },
+      {
          "Name": "dbo.brand_product_fees",
          "ObjectType": 0
       },
@@ -57,7 +61,6 @@
    ],
    "UiHint": null,
    "UncountableWords": null,
-   "UseAsyncStoredProcedureCalls": true,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDateOnlyTimeOnly": false,
