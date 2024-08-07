@@ -51,6 +51,8 @@ public class BrandPlayerContractTests
         var actual = await sut.ListBrandPlayerContractDisplayAsync(brandId).ToArrayAsync();
 
         Assert.That(actual.Length, Is.EqualTo(2));
+        ClassicAssert.AreEqual("Qq", actual.First().Name);
+        Assert.That(actual.First().IsVisualized, Is.EqualTo(true));
     }
 
     [Test]
