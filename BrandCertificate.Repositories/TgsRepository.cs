@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Tgs.BrandCertificate.ApplicationServices;
 using Tgs.BrandCertificate.Repositories.Entities;
 
 namespace Tgs.BrandCertificate.Repositories;
@@ -755,5 +756,55 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		brand.UpdatedOn = DateTime.UtcNow;
 
 		_ = await _dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+	}
+
+	public IAsyncEnumerable<BrandPlayerContractDisplayInfo> QueryBrandPlayerContractDisplayAsync(
+		Guid brandId,
+		CancellationToken cancellationToken = default)
+		=> dbContext.BrandPlayerContractDisplays
+			.Where(row => row.BrandId == brandId)
+			.AsNoTracking()
+			.ToAsyncEnumerable()
+			.Select(row => new BrandPlayerContractDisplayInfo(
+				row.Name,
+				row.IsVisualized));
+
+	public async ValueTask UpsertBrandPlayerContractDisplayAsync(
+		Guid brandId,
+		string name,
+		bool isVisualized,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var displayInfo = await _dbContext.BrandPlayerContractDisplays
+			.FirstOrDefaultAsync(b => b.BrandId == brandId && b.Name == name, cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		if (displayInfo != null)
+		{
+			displayInfo.IsVisualized = isVisualized;
+			displayInfo.UpdatedBy = modifier;
+			displayInfo.UpdatedOn = DateTime.UtcNow;
+			_ = _dbContext.BrandPlayerContractDisplays.Update(displayInfo);
+		}
+		else
+		{
+			var addDisplayItem = new BrandPlayerContractDisplay
+			{
+				Id = Guid.NewGuid(),
+				BrandId = brandId,
+				Name = name,
+				IsVisualized = isVisualized,
+				CreatedBy = modifier,
+				CreatedOn = DateTime.UtcNow,
+				UpdatedBy = modifier,
+				UpdatedOn = DateTime.UtcNow,
+			};
+			_ = _dbContext.BrandPlayerContractDisplays.Add(addDisplayItem);
+		}
+
+		_ = await _dbContext
+			.SaveChangesAsync(cancellationToken)
+			.ConfigureAwait(false);
 	}
 }

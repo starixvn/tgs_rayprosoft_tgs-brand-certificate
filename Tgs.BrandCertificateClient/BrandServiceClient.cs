@@ -608,4 +608,50 @@ internal class BrandServiceClient : IBrandServiceClient
 
 		_ = response.EnsureSuccessStatusCode();
 	}
+
+	public async IAsyncEnumerable<BrandPlayerContractDisplayInfo> ListBrandPlayerContractDisplayAsync(
+		Guid brandId,
+		[EnumeratorCancellation] CancellationToken cancellationToken = default)
+	{
+		var response = await _httpClient
+			.GetAsync($"/brand/player-contract/{brandId}", cancellationToken)
+			.ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+
+		var json = await response.Content
+			.ReadAsStringAsync(cancellationToken)
+			.ConfigureAwait(false);
+
+		var displayInfo = JsonSerializer.Deserialize<BrandPlayerContractDisplayInfo[]>(json, _SerializerOptions);
+
+		foreach (var info in displayInfo!)
+			yield return info;
+	}
+
+	public async ValueTask SetBrandPlayerContractDisplayAsync(
+		Guid brandId,
+		string name,
+		bool isVisualized,
+		string modifier,
+		CancellationToken cancellationToken = default)
+	{
+		var requestContent = JsonContent.Create(
+			new
+			{
+				name,
+				isVisualized
+			},
+		MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json),
+		_SerializerOptions);
+
+		requestContent.Headers.Add("Modifier", modifier);
+
+		var response = await _httpClient.PatchAsync(
+			$"/brand/player-contract/{brandId}",
+			requestContent,
+			cancellationToken).ConfigureAwait(false);
+
+		_ = response.EnsureSuccessStatusCode();
+	}
 }

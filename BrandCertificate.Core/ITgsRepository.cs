@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Tgs.BrandCertificate.ApplicationServices;
 
 namespace Tgs.BrandCertificate;
 
@@ -105,6 +106,17 @@ public interface ITgsRepository
 	ValueTask SetBrandEnableSmsAsync(
 		Guid brandId,
 		bool enableSms,
+		string modifier,
+		CancellationToken cancellationToken = default);
+
+	IAsyncEnumerable<BrandPlayerContractDisplayInfo> QueryBrandPlayerContractDisplayAsync(
+		Guid brandId,
+		CancellationToken cancellationToken = default);	
+
+	ValueTask UpsertBrandPlayerContractDisplayAsync(
+		Guid brandId,
+		string name,
+		bool isVisualized,
 		string modifier,
 		CancellationToken cancellationToken = default);
 }
