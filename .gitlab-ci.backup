@@ -1,0 +1,114 @@
+include:
+  - project: rayprosoft/tgs-ci-scripts
+    ref: main
+    file: GitLab/Templates/gitlab-job-templates.yml
+
+variables:
+  ImageName: pgtgs/brand-cert-api
+  TgsSettingKey: brand-cert-api
+  HelmTemplateFolderName: brand-cert-api
+  BuildCacheKey: Tgs.Brand-Cert.$CI_PIPELINE_IID
+
+stages:
+  - build
+  - test
+  - publish
+  - deploy-dev
+  - deploy-staging
+  - deploy-prod
+
+build-code:
+  extends: .build-code-template
+
+unit-test:
+  extends: .unit-test-template
+
+push-nuget:
+  extends: .push-nuget-template
+  script:
+    - push_package 'Tgs.BrandCertificateClient'
+  artifacts:
+    paths:
+      - Tgs.BrandCertificateClient/bin/$BuildConfiguration/*.nupkg
+
+push-docker-image:
+  extends: .push-docker-image-template
+  script:
+    - push_docker 'Tgs.BrandCertificateService' $ImageName $Tag
+
+push-k8s-template:
+  extends: .push-k8s-template
+  script:
+    - push_k8s_template $HelmTemplateFolderName
+
+.brand-cert-deploy:
+  extends: .deploy-template
+  script:
+    - |
+      cat << EOF | deploy_k8s $TgsSettingKey $HelmTemplateFolderName $namespace
+        {
+          "ingress": {
+            "enabled": true,
+            "hosts": [{
+              "host": "$ingress_host",
+              "paths": [{"path":"/", "pathType": "Prefix"}]
+            }],
+            "tls": [{
+              "secretName": "$ingress_host",
+              "hosts": ["$ingress_host"]
+            }]
+          }
+        }
+      EOF
+
+deploy-dev:
+  extends: .brand-cert-deploy
+  variables:
+    namespace: dev
+    kube_config: KubeConfig_Raypro_dev
+    ingress_host: dev-brand-cert.rpgp.cc
+  environment:
+    name: dev
+  stage: deploy-dev
+  needs:
+    - push-docker-image
+    - job: push-k8s-template
+      artifacts: true
+  only:
+    - main
+  when: always
+  
+
+deploy-staging:
+  extends: .brand-cert-deploy
+  variables:
+    namespace: staging
+    kube_config: KubeConfig_Raypro_staging
+    ingress_host: stg-brand-cert.rpgp.cc
+  environment:
+    name: staging
+  stage: deploy-staging
+  needs:
+    - deploy-dev
+    - job: push-k8s-template
+      artifacts: true
+  only:
+    - main
+
+deploy-prod:
+  extends: .brand-cert-deploy
+  variables:
+    namespace: prod
+    kube_config: KubeConfig_Raypro_prod
+    ingress_host: brand-cert.rpgp.cc
+    replica: 2
+  environment:
+    name: prod
+  stage: deploy-prod
+  needs:
+    - deploy-staging
+    - job: push-k8s-template
+      artifacts: true
+  only:
+    - main
+  when: manual
