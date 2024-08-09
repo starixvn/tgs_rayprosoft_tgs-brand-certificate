@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using FluentdForward.OpenTelemetry.MessagePack;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using NATS.Client.Core;
 using Npgsql;
 using OpenTelemetry.Exporter;
@@ -10,12 +10,6 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile("appsettings.json",
-		optional: true,
-		reloadOnChange: true);
-
-builder.WebHost.UseUrls($"http://0.0.0.0:{builder.Configuration["HostingPort"]}");
-
 builder.Logging
 	.AddOpenTelemetry(options =>
 	{
@@ -72,25 +66,24 @@ builder.Services
 builder.Services
 	.AddHealthChecks();
 
-builder.Services
-	.AddSwaggerGen(c =>
-	{
-		c.SwaggerDoc(
-			"v1",
-			new()
-			{
-				Title = "Tgs BrandCertificate Service",
-				Version = "v1"
-			});
 
-		var xml = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-		var path = Path.Combine(AppContext.BaseDirectory, xml);
+builder.Services.AddSwaggerGen(c =>
+{
+	c.SwaggerDoc("v1",
+		new OpenApiInfo
+		{
+			Title = "Tgs BrandCertificate Service",
+			Version = "v1"
+		});
 
-		if (File.Exists(path))
-			c.IncludeXmlComments(path);
+	c.CustomSchemaIds(type => type.FullName.Replace('.', '_'));
 
-		c.ApplyWebApiToolkitSupport();
-	});
+	var xml = "Tgs.BrandCertificate.Service.xml";
+	var path = Path.Combine(AppContext.BaseDirectory, xml);
+
+	if (System.IO.File.Exists(path))
+		c.IncludeXmlComments(path);
+});
 
 var excludeExtensions = new[] { "html", "ico", "png", "jpg" };
 builder.Services
@@ -131,16 +124,12 @@ builder.Services
 
 var app = builder.Build();
 
-app.UseSwaggerUI(options =>
-{
-	options.SwaggerEndpoint(
-		"/swagger/v1/swagger.yaml",
-		"Tgs BrandCertificate Service");
-});
-
 app.MapControllers();
-app.MapSwagger();
 app.MapHealthChecks("/healthz");
 app.MapProfileViewer();
+
+
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tgs BrandCertificate Service"));
 
 app.Run();
