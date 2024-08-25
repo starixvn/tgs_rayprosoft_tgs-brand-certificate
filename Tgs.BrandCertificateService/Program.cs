@@ -10,6 +10,9 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseSentry();
+
 builder.Logging
 	.AddOpenTelemetry(options =>
 	{
@@ -17,9 +20,9 @@ builder.Logging
 		options.ParseStateValues = true;
 		_ = options.AddFluentdForwardExporter(fluentOptions =>
 		{
-			var nodeIp = builder.Configuration.GetValue<string>("NODE_IP")!;
+			var nodeIp = builder.Configuration.GetValue<string>("Otel:NodeIp")!;
 			fluentOptions.Host = nodeIp;
-			fluentOptions.Tag = builder.Configuration.GetValue<string>("OTEL_SERVICE_NAME")!;
+			fluentOptions.Tag = builder.Configuration.GetValue<string>("Otel:ServiceName")!;
 			fluentOptions.UseMessagePack(LogRecordFormatterResolver.GetResolverInstanceWithExtendInfo(
 				"MachineName",
 				() => Environment.MachineName));
@@ -100,7 +103,7 @@ builder.Services
 	.Services
 	.AddProfileViewer()
 	.AddOpenTelemetry()
-	.ConfigureResource(_ => ResourceBuilder.CreateDefault()
+	.ConfigureResource(_ => _.AddService(builder.Configuration.GetValue<string>("Otel:ServiceName"))
 		.AddEnvironmentVariableDetector())
 	.WithTracing(tracerProviderBuilder => tracerProviderBuilder
 		.AddSource("Tgs.*")
@@ -115,7 +118,7 @@ builder.Services
 		.AddHttpClientInstrumentation()
 		.AddNpgsql()
 		.AddProfileViewExporter()
-		.AddOtlpExporter())
+		.AddOtlpExporter(options => options.Endpoint = builder.Configuration.GetValue<Uri>("Otel:Collector")))
 	.WithMetrics(meterProviderBuilder => meterProviderBuilder
 		.AddRuntimeInstrumentation()
 		.AddAspNetCoreInstrumentation()
@@ -131,5 +134,7 @@ app.MapProfileViewer();
 
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tgs BrandCertificate Service"));
+
+SentrySdk.CaptureMessage($"Started result Tgs-BrandCertificateService at {DateTime.Now.ToString()}");
 
 app.Run();
