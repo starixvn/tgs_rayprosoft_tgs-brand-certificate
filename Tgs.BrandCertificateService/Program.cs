@@ -45,6 +45,8 @@ builder.Services
 	.AddMemoryCache()
 	.AddBrandCertificateCache();
 
+var natPrefix = builder.Configuration.GetValue<string>("NatPrefix");
+
 builder.Services
 	.AddKeyedSingleton(
 		"Nats",
@@ -57,7 +59,7 @@ builder.Services
 		.ConfigureResolveConnection(sp => sp.GetRequiredKeyedService<NatsConnection>("Nats"))
 		.AddHandler(
 			Tgs.BrandCertificate.Cache.MessageQueue.ProcessorTypes.BrandFrontendInfoChangedEventHandlerType,
-			"tgs.brand.frontendinfo.changed"))
+			natPrefix + "tgs.brand.frontendinfo.changed"))
 	.AddNatsGlobPatternExchange("*");
 
 builder.Services
