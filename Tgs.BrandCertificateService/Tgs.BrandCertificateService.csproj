@@ -48,6 +48,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="appsettings.UAT.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="Demo\key.pem">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
