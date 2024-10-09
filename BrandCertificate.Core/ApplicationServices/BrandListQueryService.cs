@@ -23,7 +23,9 @@ internal class BrandListQueryService(
 		{
 			brands = brands
 				.Where(b => b.BrandCode.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase)
-							|| b.BrandName.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase));
+							|| b.BrandName.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase)
+							|| b.Description.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase)
+							|| b.OperationalEmail.Contains(query.Keyword, StringComparison.OrdinalIgnoreCase));
 		}
 
 		return brands;
