@@ -1277,7 +1277,7 @@ public class BrandTests
         Assert.That(actualBrand.EnablePlayerIdentity, Is.EqualTo(true));
         Assert.That(actualBrand.DepositHandlingFeeRateTenPercentile, Is.EqualTo(11));
         Assert.That(actualBrand.DepositHandlingFeeRateTenPercentile, Is.EqualTo(11));
-        Assert.That(actualBrand.AreaCodes, Is.EquivalentTo(JsonSerializer.Serialize(new[] { "+86", "+852" })));
+        Assert.That(actualBrand.AreaCodes, Is.EquivalentTo(string.Join(',', ["+86", "+852"])));
     }
 
     [Test]
