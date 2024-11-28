@@ -20,4 +20,6 @@ public record UpdateBrandRequest
 	public decimal DepositHandlingFeeRateTenPercentile { get; init; }
 	public decimal WithdrawHandlingFeeRateTenPercentile { get; init; }
 	public string EditorUsername { get; init; } = string.Empty;
+
+	public IEnumerable<string> AreaCodes { get; init; } = [];
 }

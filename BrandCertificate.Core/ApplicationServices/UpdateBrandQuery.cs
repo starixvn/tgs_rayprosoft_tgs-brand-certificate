@@ -16,4 +16,5 @@ public record UpdateBrandQuery(
 	decimal AutoClearWageringRequirementBalance,
 	decimal DepositHandlingFeeRateTenPercentile,
 	decimal WithdrawHandlingFeeRateTenPercentile,
-	string EditorUsername);
+	string EditorUsername,
+	IEnumerable<string> AreaCodes);
