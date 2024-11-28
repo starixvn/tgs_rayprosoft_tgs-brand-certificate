@@ -26,4 +26,5 @@ public record CreateBrandInfo(
 	DateTimeOffset CurrentSettlementTo,
 	DateTimeOffset NextSettlementFrom,
 	DateTimeOffset NextSettlementTo,
-	string EditorUsername);
+	string EditorUsername,
+	string AreaCodes);

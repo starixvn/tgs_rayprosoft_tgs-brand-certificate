@@ -23,4 +23,5 @@ public record CreateBrandRequest
 	public decimal DepositHandlingFeeRateTenPercentile { get; set; }
 	public decimal WithdrawHandlingFeeRateTenPercentile { get; set; }
 	public string EditorUsername { get; set; } = string.Empty;
+	public List<string> AreaCodes { get; set; } = default!;
 }
