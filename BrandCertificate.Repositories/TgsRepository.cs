@@ -514,7 +514,7 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 		brand.WithdrawHandlingFeeRateTenPercentile = updateBrand.WithdrawHandlingFeeRateTenPercentile;
 		brand.AutoSentAgentBonus = updateBrand.AutoSendAgentBonus;
 		brand.EnablePlayerAgent = updateBrand.EnablePlayerAgent;
-		brand.AreaCodes = JsonSerializer.Serialize(updateBrand.AreaCodes);
+		brand.AreaCodes = updateBrand.AreaCodes;
 
 		_ = _dbContext.Brands.Update(brand);
 

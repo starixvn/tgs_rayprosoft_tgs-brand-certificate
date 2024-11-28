@@ -18,7 +18,7 @@ internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetServi
 		var nextSettlementFrom = brandAgentDividendInterval.NextSettlementFrom;
 		var nextSettlementTo = brandAgentDividendInterval.NextSettlementTo;
 
-		if (query.SettlementIntervalType != brandAgentDividendInterval.SettlementIntervalType 
+		if (query.SettlementIntervalType != brandAgentDividendInterval.SettlementIntervalType
 			|| query.SettlementDay != brandAgentDividendInterval.SettlementDay)
 		{
 			var timeSpan = new TimeSpan(8, 0, 0);
@@ -28,8 +28,8 @@ internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetServi
 
 			var (currentFromDate, currentToDate, nextFromDate, nextToDate) =
 				AgentDividendSettlementIntervalGenerator.GetInterval(
-					query.SettlementIntervalType, 
-					now, 
+					query.SettlementIntervalType,
+					now,
 					query.SettlementDay,
 					brandAgentDividendInterval.CurrentSettlementFrom);
 
@@ -60,7 +60,7 @@ internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetServi
 			nextSettlementFrom,
 			nextSettlementTo,
 			query.EditorUsername,
-			query.AreaCodes);
+			string.Join(',', query.AreaCodes));
 
 		await tgsRepository.UpdateBrandAsync(
 			updateBrand,
