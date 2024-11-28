@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		NuGet.Config = NuGet.Config
+		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BrandCertificate.Core.UnitTests", "BrandCertificate.Core.UnitTests\BrandCertificate.Core.UnitTests.csproj", "{CC0A33B7-590F-4652-835B-F6548FF4D546}"

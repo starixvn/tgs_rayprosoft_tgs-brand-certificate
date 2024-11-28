@@ -1,5 +1,5 @@
 ﻿services:
-  brandcertificateservice:
+  brand-cert-api:
     build:
       context: .
       dockerfile: ./Tgs.BrandCertificateService/Dockerfile
