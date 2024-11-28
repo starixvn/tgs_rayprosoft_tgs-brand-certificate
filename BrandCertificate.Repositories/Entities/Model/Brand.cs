@@ -99,6 +99,8 @@ public partial class Brand
 
     public bool EnablePlatformAccountFundCheck { get; set; }
 
+    public string? AreaCodes { get; set; }
+
     public virtual ICollection<BrandBetLimit> BrandBetLimits { get; set; } = new List<BrandBetLimit>();
 
     public virtual ICollection<BrandCurrency> BrandCurrencies { get; set; } = new List<BrandCurrency>();

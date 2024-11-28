@@ -34,6 +34,9 @@ namespace Tgs.BrandCertificate.Repositories.Entities.Configurations
             entity.Property(e => e.ApiKey)
                 .HasMaxLength(64)
                 .HasColumnName("api_key");
+            entity.Property(e => e.AreaCodes)
+                .HasMaxLength(60)
+                .HasColumnName("area_codes");
             entity.Property(e => e.AutoClearWageringRequirement)
                 .HasDefaultValue(false)
                 .HasColumnName("auto_clear_wagering_requirement");
