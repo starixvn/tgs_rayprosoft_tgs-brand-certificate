@@ -4,19 +4,22 @@ namespace Tgs.BrandCertificate.ApplicationServices;
 
 internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetService<UpdateBrandQuery, Guid>
 {
-	public async ValueTask<Guid> GetAsync(UpdateBrandQuery query,
+	public async ValueTask<Guid> GetAsync(
+		UpdateBrandQuery query,
 		CancellationToken cancellationToken = default)
 	{
-		var brandAgentDividendInterval = await tgsRepository.GetBrandAgentDividendInfosAsync(cancellationToken)
-			.FirstAsync(x => x.Id == query.Id, cancellationToken).ConfigureAwait(false);
+		var brandAgentDividendInterval = await tgsRepository
+			.GetBrandAgentDividendInfosAsync(cancellationToken)
+			.FirstAsync(x => x.Id == query.Id, cancellationToken)
+			.ConfigureAwait(false);
 
 		var currentSettlementFrom = brandAgentDividendInterval.CurrentSettlementFrom;
 		var currentSettlementTo = brandAgentDividendInterval.CurrentSettlementTo;
 		var nextSettlementFrom = brandAgentDividendInterval.NextSettlementFrom;
 		var nextSettlementTo = brandAgentDividendInterval.NextSettlementTo;
 
-		if (query.SettlementIntervalType != brandAgentDividendInterval.SettlementIntervalType ||
-		    query.SettlementDay != brandAgentDividendInterval.SettlementDay)
+		if (query.SettlementIntervalType != brandAgentDividendInterval.SettlementIntervalType 
+			|| query.SettlementDay != brandAgentDividendInterval.SettlementDay)
 		{
 			var timeSpan = new TimeSpan(8, 0, 0);
 			var now = new DateTimeOffset(DateTimeOffset.Now.Year, DateTimeOffset.Now.Month,
@@ -24,7 +27,10 @@ internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetServi
 				0, 0, timeSpan);
 
 			var (currentFromDate, currentToDate, nextFromDate, nextToDate) =
-				AgentDividendSettlementIntervalGenerator.GetInterval(query.SettlementIntervalType, now, query.SettlementDay,
+				AgentDividendSettlementIntervalGenerator.GetInterval(
+					query.SettlementIntervalType, 
+					now, 
+					query.SettlementDay,
 					brandAgentDividendInterval.CurrentSettlementFrom);
 
 			currentSettlementFrom = currentFromDate.UtcDateTime;
@@ -53,7 +59,8 @@ internal class UpdateBrandQueryService(ITgsRepository tgsRepository) : IGetServi
 			currentSettlementTo,
 			nextSettlementFrom,
 			nextSettlementTo,
-			query.EditorUsername);
+			query.EditorUsername,
+			query.AreaCodes);
 
 		await tgsRepository.UpdateBrandAsync(
 			updateBrand,

@@ -20,4 +20,5 @@ public record UpdateBrandInfo(
 	DateTimeOffset CurrentSettlementTo,
 	DateTimeOffset NextSettlementFrom,
 	DateTimeOffset NextSettlementTo,
-	string EditorUsername);
+	string EditorUsername,
+	IEnumerable<string> AreaCodes);
