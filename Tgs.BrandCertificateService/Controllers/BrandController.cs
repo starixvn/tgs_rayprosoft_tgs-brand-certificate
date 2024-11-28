@@ -418,7 +418,8 @@ public class BrandController : ControllerBase
 			request.AutoClearWageringRequirementBalance,
 			request.DepositHandlingFeeRateTenPercentile,
 			request.WithdrawHandlingFeeRateTenPercentile,
-			request.EditorUsername);
+			request.EditorUsername,
+			request.AreaCodes);
 
 		return getService.GetAsync(query, HttpContext.RequestAborted);
 	}

@@ -1,4 +1,6 @@
-﻿namespace Tgs.BrandCertificate.Clients;
+﻿using System.Diagnostics;
+
+namespace Tgs.BrandCertificate.Clients;
 
 public record CreateBrandFullInfoRequest
 {
@@ -21,4 +23,5 @@ public record CreateBrandFullInfoRequest
 	public decimal DepositHandlingFeeRateTenPercentile { get; init; }
 	public decimal WithdrawHandlingFeeRateTenPercentile { get; init; }
 	public string EditorUsername { get; init; } = string.Empty;
+	public List<string> AreaCodes { get; set; } = new ();
 }

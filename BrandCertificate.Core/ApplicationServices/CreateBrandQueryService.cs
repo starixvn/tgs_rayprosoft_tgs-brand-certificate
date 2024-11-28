@@ -56,7 +56,8 @@ internal class CreateBrandQueryService(
 			currentToDate,
 			nextFromDate,
 			nextToDate,
-			query.EditorUsername);
+			query.EditorUsername,
+			string.Join(",", query.AreaCodes));
 
 		await tgsRepository.CreateBrandAsync(
 			brand,

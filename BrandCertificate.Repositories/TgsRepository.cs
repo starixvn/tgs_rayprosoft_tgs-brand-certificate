@@ -480,6 +480,7 @@ internal class TgsRepository(TgsContext dbContext) : ITgsRepository
 			WithdrawHandlingFeeRateTenPercentile = createBrand.WithdrawHandlingFeeRateTenPercentile,
 			TimeSpanMinutes = createBrand.TimeSpanMinutes,
 			EnablePlayerAgent = createBrand.EnablePlayerAgent,
+			AreaCodes = createBrand.AreaCodes
 		};
 
 		_ = await _dbContext.Brands.AddAsync(brand, cancellationToken).ConfigureAwait(false);

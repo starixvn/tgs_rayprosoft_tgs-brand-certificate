@@ -19,4 +19,5 @@ public record CreateBrandQuery(
 	decimal AutoClearWageringRequirementBalance,
 	decimal DepositHandlingFeeRateTenPercentile,
 	decimal WithdrawHandlingFeeRateTenPercentile,
-	string EditorUsername);
+	string EditorUsername,
+	List<string> AreaCodes);
