@@ -9,6 +9,8 @@ public class BrandViewModel
 	public string Code { get; init; } = default!;
 
 	public string Currency { get; init; } = default!;
+	
+	public List<string> AreaCodes { get; init; } = default!;
 
 	public BrandStatus Status { get; init; }
 

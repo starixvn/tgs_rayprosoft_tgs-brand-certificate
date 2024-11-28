@@ -8,6 +8,8 @@ public record BrandInfo
 	public BrandStatus Status { get; init; } = default!;
 
 	public string Currency { get; init; } = default!;
+	
+	public List<string> AreaCodes { get; init; } = default!;
 
 	public bool SmsEnabled { get; init; }
 

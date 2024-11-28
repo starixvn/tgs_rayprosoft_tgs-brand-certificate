@@ -5,6 +5,7 @@ public record BrandInfo(
 	string Code,
 	BrandStatus Status,
 	string Currency,
+	List<string> AreaCodes,
 	bool SmsEnabled,
 	bool SmsRegisterFlowEnabled,
 	bool PlayerIdentityEnabled,

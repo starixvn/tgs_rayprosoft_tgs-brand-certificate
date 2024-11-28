@@ -1,0 +1,26 @@
+﻿services:
+  brandcertificateservice:
+    build:
+      context: .
+      dockerfile: ./Tgs.BrandCertificateService/Dockerfile
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Local
+    links:
+      - postgres
+      - natsserver
+    ports:
+      - 8899:8080
+
+  postgres:
+    build:
+      context: ../tgs-database
+      dockerfile: ./Dockerfile
+    ports:
+      - "5432:5432"
+  
+  natsserver:
+    image: nats
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "8222:8222"
